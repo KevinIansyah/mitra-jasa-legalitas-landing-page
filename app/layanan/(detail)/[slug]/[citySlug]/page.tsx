@@ -6,9 +6,9 @@ import {
   getServiceCityPage,
   getServiceDetail,
   getServicesList,
-} from '@/lib/api/endpoints/service';
+} from '@/lib/api/endpoints/service.server';
 import { ApiUnavailableFallback } from '@/components/api-unavailable-fallback';
-import { ApiError } from '@/lib/types/api';
+import { getApiErrorStatus } from '@/lib/types/api';
 import { ReadingProgress } from '@/app/blog/[slug]/_components/reading-progress';
 import { BackToTop } from '@/app/blog/[slug]/_components/reading-progress';
 import { ChevronRight, MapPin, Tag } from 'lucide-react';
@@ -73,7 +73,7 @@ export default async function ServiceCityPageRoute({
 }) {
   const { slug, citySlug } = await params;
   const data = await getServiceCityPage(slug, citySlug).catch((e: unknown) => {
-    if (e instanceof ApiError && e.status === 404) notFound();
+    if (getApiErrorStatus(e) === 404) notFound();
     return null;
   });
 
@@ -167,6 +167,7 @@ export default async function ServiceCityPageRoute({
                 alt={data.heading}
                 fill
                 priority
+                unoptimized
                 className="object-cover"
                 sizes="(max-width: 1200px) 100vw, 1152px"
               />

@@ -5,7 +5,7 @@ import { ServiceHero } from './_components/service-hero';
 import {
   getServiceCategories,
   getServicesList,
-} from '@/lib/api/endpoints/service';
+} from '@/lib/api/endpoints/service.server';
 import { ServiceList } from './_components/service-list';
 
 const getCachedServicesList = cache(() => getServicesList({ sort: 'popular' }));

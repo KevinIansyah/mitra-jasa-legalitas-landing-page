@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { cache } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Clock, Sparkles, Tag } from 'lucide-react';
 import { getBlogDetail } from '@/lib/api/endpoints/blog.server';
 import { ApiUnavailableFallback } from '@/components/api-unavailable-fallback';
-import { ApiError } from '@/lib/types/api';
+import { getApiErrorStatus } from '@/lib/types/api';
 import { addHeadingIdsToHtml } from '@/lib/blog-heading-html';
 import { authorInitials, formatBlogDate } from '@/lib/blog-utils';
 import type { BlogCard, BlogSeo } from '@/lib/types/blog';
@@ -16,6 +17,15 @@ import { SectionHeading } from '@/components/section-heading';
 import { buildBlogListQuery } from '@/lib/blog-list-url';
 
 const BRAND_BLUE = 'oklch(0.3811 0.1315 260.22)';
+
+const getCachedBlogDetail = cache(async (slug: string) => {
+  try {
+    return await getBlogDetail(slug);
+  } catch (e: unknown) {
+    if (getApiErrorStatus(e) === 404) notFound();
+    return null;
+  }
+});
 
 function defaultSiteUrl(): string {
   return process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mitrajasalegalitas.co.id';
@@ -63,49 +73,47 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  try {
-    const post = await getBlogDetail(slug);
-    const seo = post.seo;
-    const titleBase =
-      seo?.meta_title ??
-      seo?.og_title ??
-      `${post.title} – Mitra Jasa Legalitas`;
-    const desc =
-      seo?.meta_description ??
-      seo?.og_description ??
-      post.short_description ??
-      undefined;
+  const post = await getCachedBlogDetail(slug);
+  if (!post) return { title: 'Artikel – Mitra Jasa Legalitas' };
 
-    return {
-      title: titleBase,
-      description: desc,
-      alternates: seo?.canonical_url
-        ? { canonical: seo.canonical_url }
-        : undefined,
-      robots: seo?.robots,
-      openGraph: {
-        title: seo?.og_title ?? seo?.meta_title ?? post.title,
-        description: seo?.og_description ?? seo?.meta_description ?? desc,
-        images: seo?.og_image ? [{ url: seo.og_image }] : undefined,
-        url: seo?.canonical_url ?? undefined,
-      },
-      twitter: {
-        card:
-          (seo?.twitter_card as 'summary_large_image' | 'summary') ??
-          'summary_large_image',
-        title:
-          seo?.twitter_title ?? seo?.og_title ?? seo?.meta_title ?? undefined,
-        description:
-          seo?.twitter_description ??
-          seo?.og_description ??
-          seo?.meta_description ??
-          undefined,
-        images: seo?.twitter_image ? [seo.twitter_image] : undefined,
-      },
-    };
-  } catch {
-    return { title: 'Artikel – Mitra Jasa Legalitas' };
-  }
+  const seo = post.seo;
+  const titleBase =
+    seo?.meta_title ??
+    seo?.og_title ??
+    `${post.title} – Mitra Jasa Legalitas`;
+  const desc =
+    seo?.meta_description ??
+    seo?.og_description ??
+    post.short_description ??
+    undefined;
+
+  return {
+    title: titleBase,
+    description: desc,
+    alternates: seo?.canonical_url
+      ? { canonical: seo.canonical_url }
+      : undefined,
+    robots: seo?.robots,
+    openGraph: {
+      title: seo?.og_title ?? seo?.meta_title ?? post.title,
+      description: seo?.og_description ?? seo?.meta_description ?? desc,
+      images: seo?.og_image ? [{ url: seo.og_image }] : undefined,
+      url: seo?.canonical_url ?? undefined,
+    },
+    twitter: {
+      card:
+        (seo?.twitter_card as 'summary_large_image' | 'summary') ??
+        'summary_large_image',
+      title:
+        seo?.twitter_title ?? seo?.og_title ?? seo?.meta_title ?? undefined,
+      description:
+        seo?.twitter_description ??
+        seo?.og_description ??
+        seo?.meta_description ??
+        undefined,
+      images: seo?.twitter_image ? [seo.twitter_image] : undefined,
+    },
+  };
 }
 
 function RelatedCard({ p }: { p: BlogCard }) {
@@ -165,12 +173,8 @@ export default async function BlogDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-
-  let post: Awaited<ReturnType<typeof getBlogDetail>>;
-  try {
-    post = await getBlogDetail(slug);
-  } catch (e) {
-    if (e instanceof ApiError && e.status === 404) notFound();
+  const post = await getCachedBlogDetail(slug);
+  if (!post) {
     return (
       <ApiUnavailableFallback
         retryHref={`/blog/${slug}`}

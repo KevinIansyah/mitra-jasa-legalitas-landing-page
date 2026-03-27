@@ -6,7 +6,19 @@ import { cookies } from 'next/headers';
 import { parseApiErrorResponse } from './parse-api-error';
 import { ApiSuccessResponse } from '../types/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+/** Server boleh pakai `API_URL` (internal Docker/VPS); client tetap `NEXT_PUBLIC_*`. */
+function getApiBaseUrl(): string {
+  const raw =
+    process.env.API_URL?.trim() ||
+    process.env.NEXT_PUBLIC_API_URL?.trim() ||
+    '';
+  if (!raw) {
+    throw new Error(
+      'Missing API_URL or NEXT_PUBLIC_API_URL — set salah satu di environment production.',
+    );
+  }
+  return raw.replace(/\/$/, '');
+}
 
 // ============================================================================
 // INTERNALS
@@ -34,14 +46,22 @@ function extractData<T>(responseData: unknown): T {
 }
 
 async function buildHeaders(): Promise<HeadersInit> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
-
-  return {
+  const headers: HeadersInit = {
     'Content-Type': 'application/json',
     Accept: 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
   };
+
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('auth_token')?.value;
+    if (token) {
+      return { ...headers, Authorization: `Bearer ${token}` };
+    }
+  } catch {
+    // cookies() tidak tersedia di beberapa konteks — GET publik tetap jalan tanpa auth
+  }
+
+  return headers;
 }
 
 async function handleResponse<T>(res: Response): Promise<T> {
@@ -60,7 +80,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
 async function get<T>(url: string): Promise<T> {
   const headers = await buildHeaders();
 
-  const res = await fetch(`${API_URL}${url}`, {
+  const res = await fetch(`${getApiBaseUrl()}${url}`, {
     method: 'GET',
     headers,
     cache: 'no-store',
@@ -72,7 +92,7 @@ async function get<T>(url: string): Promise<T> {
 async function post<T>(url: string, body?: unknown): Promise<T> {
   const headers = await buildHeaders();
 
-  const res = await fetch(`${API_URL}${url}`, {
+  const res = await fetch(`${getApiBaseUrl()}${url}`, {
     method: 'POST',
     headers,
     cache: 'no-store',
@@ -85,7 +105,7 @@ async function post<T>(url: string, body?: unknown): Promise<T> {
 async function put<T>(url: string, body?: unknown): Promise<T> {
   const headers = await buildHeaders();
 
-  const res = await fetch(`${API_URL}${url}`, {
+  const res = await fetch(`${getApiBaseUrl()}${url}`, {
     method: 'PUT',
     headers,
     cache: 'no-store',
@@ -98,7 +118,7 @@ async function put<T>(url: string, body?: unknown): Promise<T> {
 async function patch<T>(url: string, body?: unknown): Promise<T> {
   const headers = await buildHeaders();
 
-  const res = await fetch(`${API_URL}${url}`, {
+  const res = await fetch(`${getApiBaseUrl()}${url}`, {
     method: 'PATCH',
     headers,
     cache: 'no-store',
@@ -111,7 +131,7 @@ async function patch<T>(url: string, body?: unknown): Promise<T> {
 async function del<T>(url: string): Promise<T> {
   const headers = await buildHeaders();
 
-  const res = await fetch(`${API_URL}${url}`, {
+  const res = await fetch(`${getApiBaseUrl()}${url}`, {
     method: 'DELETE',
     headers,
     cache: 'no-store',

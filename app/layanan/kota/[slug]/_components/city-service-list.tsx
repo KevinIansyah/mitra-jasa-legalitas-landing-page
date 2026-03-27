@@ -8,15 +8,18 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { buildServicesByCityPath } from '@/lib/api/services-list';
-import { apiClient } from '@/lib/api/client';
+import {
+  buildServicesByCityPath,
+  fetchCities,
+  fetchServiceCategories,
+  fetchServicesByCity,
+} from '@/lib/api/endpoints/service';
 import { ApiError } from '@/lib/types/api';
 import { mapCityServiceToListItem } from '@/lib/map-city-service-list';
 import type {
   CityListItem,
   ServiceCategoryOption,
   ServiceListItem,
-  ServicesByCityData,
 } from '@/lib/types/service';
 import { useLayananListUrl } from '@/hooks/use-layanan-list-url';
 import { ServiceFilter } from '../../../_components/service-filter';
@@ -57,10 +60,7 @@ export function CityServiceList({ citySlug }: { citySlug: string }) {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      apiClient.get<ServiceCategoryOption[]>('/service-categories'),
-      apiClient.get<CityListItem[]>('/cities'),
-    ])
+    Promise.all([fetchServiceCategories(), fetchCities()])
       .then(([cats, cits]) => {
         if (!cancelled) {
           setCategoryOptions(
@@ -93,8 +93,11 @@ export function CityServiceList({ citySlug }: { citySlug: string }) {
   useEffect(() => {
     const key = `${listPath}::${retryKey}`;
     let cancelled = false;
-    apiClient
-      .get<ServicesByCityData>(listPath)
+    fetchServicesByCity(citySlug, {
+      category: selectedCategories,
+      price: selectedPrices,
+      sort,
+    })
       .then((data) => {
         if (!cancelled) {
           const mapped = data.services.map((row) =>

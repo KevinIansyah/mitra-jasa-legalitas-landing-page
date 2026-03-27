@@ -37,9 +37,10 @@ export function LegalBasesSection({ bases }: { bases: LegalBase[] }) {
             .map((base) => {
               const color =
                 TYPE_COLORS[base.document_type] ?? 'oklch(0.45 0.1 270)';
-              const year = base.issued_date
-                ? new Date(base.issued_date).getFullYear()
-                : '';
+
+              // const year = base.issued_date
+              //   ? new Date(base.issued_date).getFullYear()
+              //   : '';
 
               return (
                 <div
@@ -56,8 +57,7 @@ export function LegalBasesSection({ bases }: { bases: LegalBase[] }) {
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0 pr-2">
                         <p className="text-xs font-bold text-gray-500 dark:text-gray-400 mb-0.5">
-                          {base.document_type} {base.document_number}{' '}
-                          {year && `• ${year}`}
+                          {base.document_type} {base.document_number}
                         </p>
                         <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug transition-colors group-hover/legal:text-brand-blue">
                           {base.title}

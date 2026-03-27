@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Sparkles, Star, Tag } from 'lucide-react';
 import { getCompanyInformation } from '@/lib/api/endpoints/company-information.server';
-import { getServiceDetail, getServicesList } from '@/lib/api/endpoints/service';
+import { getServiceDetail, getServicesList } from '@/lib/api/endpoints/service.server';
 import { ApiUnavailableFallback } from '@/components/api-unavailable-fallback';
-import { ApiError } from '@/lib/types/api';
+import { getApiErrorStatus } from '@/lib/types/api';
 import { PackagesSection } from './_components/packages-section';
 import { ProcessSection } from './_components/process-section';
 import { RequirementsSection } from './_components/requirements-section';
@@ -24,6 +24,15 @@ const BRAND_BLUE = 'oklch(0.3811 0.1315 260.22)';
 
 const getCachedCompanyInformation = cache(getCompanyInformation);
 
+const getCachedServiceDetail = cache(async (slug: string) => {
+  try {
+    return await getServiceDetail(slug);
+  } catch (e: unknown) {
+    if (getApiErrorStatus(e) === 404) notFound();
+    return null;
+  }
+});
+
 export async function generateStaticParams() {
   try {
     const data = await getServicesList({ sort: 'popular' });
@@ -39,33 +48,31 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  try {
-    const service = await getServiceDetail(slug);
-    const seo = service.seo;
-    if (!seo?.meta_title && !service.name) return { title: 'Layanan' };
+  const service = await getCachedServiceDetail(slug);
+  if (!service) return { title: 'Layanan' };
 
-    return {
-      title: seo?.meta_title ?? `${service.name} | Mitra Jasa Legalitas`,
-      description:
-        seo?.meta_description ?? service.short_description ?? undefined,
-      robots: seo?.robots,
-      openGraph: {
-        title: seo?.og_title ?? seo?.meta_title ?? service.name,
-        description: seo?.og_description ?? seo?.meta_description ?? undefined,
-        images: seo?.og_image ? [{ url: seo.og_image }] : undefined,
-      },
-      twitter: {
-        card:
-          (seo?.twitter_card as 'summary_large_image' | 'summary') ??
-          'summary_large_image',
-        title: seo?.og_title ?? seo?.meta_title ?? undefined,
-        description: seo?.og_description ?? seo?.meta_description ?? undefined,
-        images: seo?.twitter_image ? [seo.twitter_image] : undefined,
-      },
-    };
-  } catch {
-    return { title: 'Layanan' };
-  }
+  const seo = service.seo;
+  if (!seo?.meta_title && !service.name) return { title: 'Layanan' };
+
+  return {
+    title: seo?.meta_title ?? `${service.name} | Mitra Jasa Legalitas`,
+    description:
+      seo?.meta_description ?? service.short_description ?? undefined,
+    robots: seo?.robots,
+    openGraph: {
+      title: seo?.og_title ?? seo?.meta_title ?? service.name,
+      description: seo?.og_description ?? seo?.meta_description ?? undefined,
+      images: seo?.og_image ? [{ url: seo.og_image }] : undefined,
+    },
+    twitter: {
+      card:
+        (seo?.twitter_card as 'summary_large_image' | 'summary') ??
+        'summary_large_image',
+      title: seo?.og_title ?? seo?.meta_title ?? undefined,
+      description: seo?.og_description ?? seo?.meta_description ?? undefined,
+      images: seo?.twitter_image ? [seo.twitter_image] : undefined,
+    },
+  };
 }
 
 export default async function ServiceDetailPage({
@@ -74,10 +81,7 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = await getServiceDetail(slug).catch((e: unknown) => {
-    if (e instanceof ApiError && e.status === 404) notFound();
-    return null;
-  });
+  const service = await getCachedServiceDetail(slug);
 
   if (!service) {
     return (
@@ -173,6 +177,7 @@ export default async function ServiceDetailPage({
                 alt={service.name}
                 fill
                 priority
+                unoptimized
                 className="object-cover"
                 sizes="(max-width: 1200px) 100vw, 1152px"
               />

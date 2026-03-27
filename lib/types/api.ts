@@ -54,3 +54,22 @@ export function isApiErrorResponse(data: unknown): data is ApiErrorResponse {
     typeof (data as ApiErrorResponse).message === 'string'
   );
 }
+
+/**
+ * Status HTTP dari error API. Di production, `instanceof ApiError` sering gagal
+ * karena class terduplikasi di bundle — pakai ini di server untuk 404/5xx.
+ */
+export function getApiErrorStatus(error: unknown): number | undefined {
+  if (error instanceof ApiError) {
+    return error.status;
+  }
+  if (
+    typeof error === 'object' &&
+    error !== null &&
+    'status' in error &&
+    typeof (error as { status: unknown }).status === 'number'
+  ) {
+    return (error as { status: number }).status;
+  }
+  return undefined;
+}

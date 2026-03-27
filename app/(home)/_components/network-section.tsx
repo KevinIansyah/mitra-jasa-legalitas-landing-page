@@ -186,8 +186,7 @@ export function NetworkSection() {
             badge="Ekosistem Layanan"
             title={
               <>
-                Jaringan Layanan Lengkap{' '}
-                <br className="hidden sm:block" />
+                Jaringan Layanan Lengkap <br className="hidden sm:block" />
                 <span style={{ color: 'oklch(0.7319 0.1856 52.89)' }}>
                   untuk Setiap Kebutuhan Bisnis
                 </span>

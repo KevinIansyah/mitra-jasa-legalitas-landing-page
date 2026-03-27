@@ -8,14 +8,17 @@
 
 import { useMemo, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { buildServicesListPath } from '@/lib/api/services-list';
-import { apiClient } from '@/lib/api/client';
+import {
+  buildServicesListPath,
+  fetchCities,
+  fetchServiceCategories,
+  fetchServicesList,
+} from '@/lib/api/endpoints/service';
 import { ApiError } from '@/lib/types/api';
 import type {
   CityListItem,
   ServiceCategoryOption,
   ServiceListItem,
-  ServicesListData,
 } from '@/lib/types/service';
 import { useLayananListUrl } from '@/hooks/use-layanan-list-url';
 import { ServiceFilter } from './service-filter';
@@ -56,10 +59,7 @@ export function ServiceList() {
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      apiClient.get<ServiceCategoryOption[]>('/service-categories'),
-      apiClient.get<CityListItem[]>('/cities'),
-    ])
+    Promise.all([fetchServiceCategories(), fetchCities()])
       .then(([cats, cits]) => {
         if (!cancelled) {
           setCategoryOptions(
@@ -92,8 +92,11 @@ export function ServiceList() {
   useEffect(() => {
     const key = `${listPath}::${retryKey}`;
     let cancelled = false;
-    apiClient
-      .get<ServicesListData>(listPath)
+    fetchServicesList({
+      category: selectedCategories,
+      price: selectedPrices,
+      sort,
+    })
       .then((data) => {
         if (!cancelled) {
           setApiServices(data.services);
