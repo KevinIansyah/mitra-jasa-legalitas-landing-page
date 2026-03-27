@@ -1,0 +1,91 @@
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import { BlogHero } from './_components/blog-hero';
+import { BlogListClient } from './_components/blog-list-client';
+import { BlogNewsletter } from './_components/blog-newsletter';
+import {
+  getBlogsList,
+  getBlogCategories,
+} from '@/lib/api/endpoints/blog.server';
+import {
+  parseBlogListQueryFromRecord,
+  serializeBlogListState,
+} from '@/lib/blog-list-url';
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const { seo } = await getBlogsList({ page: 1 });
+    const og = seo.open_graph ?? {};
+    const tw = seo.twitter ?? {};
+    return {
+      title: seo.meta_title ?? 'Blog – Mitra Jasa Legalitas',
+      description: seo.meta_description ?? undefined,
+      alternates: seo.canonical_url
+        ? { canonical: seo.canonical_url }
+        : undefined,
+      robots: seo.robots ?? undefined,
+      openGraph: {
+        type: 'website',
+        siteName: og['og:site_name'] ?? undefined,
+        title: og['og:title'] ?? seo.meta_title ?? undefined,
+        description: og['og:description'] ?? seo.meta_description ?? undefined,
+        url: og['og:url'] ?? undefined,
+        locale: og['og:locale'] ?? 'id_ID',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: tw['twitter:title'] ?? seo.meta_title ?? undefined,
+        description:
+          tw['twitter:description'] ?? seo.meta_description ?? undefined,
+      },
+    };
+  } catch {
+    return {
+      title: 'Blog & Artikel – Mitra Jasa Legalitas',
+      description:
+        'Insight, panduan, dan tips seputar legalitas bisnis di Indonesia dari tim konsultan Mitra Jasa Legalitas.',
+    };
+  }
+}
+
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = await searchParams;
+  const urlState = parseBlogListQueryFromRecord(sp);
+  const initialUrlKey = serializeBlogListState(urlState);
+
+  const [listData, categories] = await Promise.all([
+    getBlogsList({
+      page: 1,
+      category: urlState.category.length > 0 ? urlState.category : undefined,
+      tag: urlState.tag.length > 0 ? urlState.tag : undefined,
+    }).catch(() => null),
+    getBlogCategories().catch(() => []),
+  ]);
+
+  return (
+    <>
+      <BlogHero
+        totalArticles={listData?.meta.total ?? 0}
+        categoryCount={categories.length}
+      />
+      <div className="bg-surface-subtle min-h-screen">
+        <Suspense
+          fallback={
+            <div className="min-h-[50vh] bg-gray-50 dark:bg-surface-subtle animate-pulse" />
+          }
+        >
+          <BlogListClient
+            initialListData={listData}
+            categories={categories}
+            initialUrlKey={initialUrlKey}
+          />
+        </Suspense>
+      </div>
+      <BlogNewsletter />
+    </>
+  );
+}
