@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { DM_Sans, Playfair_Display } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-import { ChatWidget } from '@/components/chat-widget';
+import { ConditionalChatWidget } from '@/components/conditional-chat-widget';
 
 const dmSans = DM_Sans({
   variable: '--font-sans',
@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
-      <body className={`${dmSans.variable} ${playfair.variable} antialiased`}>
+      <body className={`${dmSans.variable} ${playfair.variable} antialiased bg-surface-page`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -39,7 +39,7 @@ export default function RootLayout({
           disableTransitionOnChange={false}
         >
           {children}
-          <ChatWidget />
+          <ConditionalChatWidget />
         </ThemeProvider>
       </body>
     </html>

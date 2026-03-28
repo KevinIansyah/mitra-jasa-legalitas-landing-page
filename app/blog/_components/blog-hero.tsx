@@ -43,7 +43,7 @@ export function BlogHero({
   };
 
   return (
-    <section className="relative overflow-hidden bg-surface-page pt-28 pb-16 lg:pb-20">
+    <section className="relative overflow-hidden bg-surface-page pt-16 pb-16 lg:pb-20">
       <motion.div
         aria-hidden
         className="absolute top-[-60px] right-[-40px] w-[520px] h-[520px] rounded-full pointer-events-none"

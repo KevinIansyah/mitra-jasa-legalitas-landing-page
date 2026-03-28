@@ -12,12 +12,12 @@ import { getApiErrorStatus } from '@/lib/types/api';
 import { ReadingProgress } from '@/app/blog/[slug]/_components/reading-progress';
 import { BackToTop } from '@/app/blog/[slug]/_components/reading-progress';
 import { ChevronRight, MapPin, Tag } from 'lucide-react';
-import { ServiceSidebar } from '../_components/sidebar';
+import { ServiceSidebar } from '../_components/service-sidebar';
 import { PackagesSection } from '../_components/packages-section';
 import { ProcessSection } from '../_components/process-section';
 import { RequirementsSection } from '../_components/requirements-section';
 import { LegalBasesSection } from '../_components/legal-bases-section';
-import { ServiceFaqSection } from '../_components/service-faq';
+import { FaqSection } from '../_components/faq-section';
 import { BottomCta } from '../_components/bottom-cta';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -96,13 +96,14 @@ export default async function ServiceCityPageRoute({
     ...f,
     sort_order: i,
   }));
+  const hasDescription = Boolean(data.introduction || data.content);
 
   return (
     <>
       <ReadingProgress />
       <BackToTop />
 
-      <div className="bg-surface-page pt-24">
+      <div className="bg-surface-page pt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 mb-6 flex-wrap">
             <Link
@@ -179,8 +180,15 @@ export default async function ServiceCityPageRoute({
 
       <div className="bg-surface-card">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <div className="flex flex-col lg:flex-row gap-10">
-            <div className="flex-1 min-w-0 space-y-8">
+          <div className="flex flex-col lg:flex-row lg:items-stretch gap-10">
+            <section
+              id={hasDescription ? 'deskripsi' : undefined}
+              className={
+                hasDescription
+                  ? 'flex-1 min-w-0 min-h-0 space-y-8 scroll-mt-28'
+                  : 'flex-1 min-w-0 min-h-0 space-y-8'
+              }
+            >
               {data.introduction || data.content ? (
                 <>
                   {data.introduction && (
@@ -209,17 +217,20 @@ export default async function ServiceCityPageRoute({
                   tim kami untuk informasi lebih lengkap.
                 </p>
               )}
-            </div>
+            </section>
 
-            <ServiceSidebar
-              serviceName={service.name}
-              whatsapp={whatsapp}
-              packages={data.packages}
-              processSteps={data.process_steps}
-              requirementCategories={data.requirement_categories}
-              legalBases={data.legal_bases}
-              faqCount={data.faq.length}
-            />
+            <div className="w-full shrink-0 lg:w-[280px] xl:w-[300px] flex flex-col min-h-0 lg:self-stretch">
+              <ServiceSidebar
+                serviceName={service.name}
+                whatsapp={whatsapp}
+                packages={data.packages}
+                processSteps={data.process_steps}
+                requirementCategories={data.requirement_categories}
+                legalBases={data.legal_bases}
+                faqCount={data.faq.length}
+                hasDescription={hasDescription}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -240,7 +251,7 @@ export default async function ServiceCityPageRoute({
         <LegalBasesSection bases={data.legal_bases} />
       )}
 
-      {faqsForSection.length > 0 && <ServiceFaqSection faqs={faqsForSection} />}
+      {faqsForSection.length > 0 && <FaqSection faqs={faqsForSection} />}
 
       <BottomCta name={data.heading} whatsapp={whatsapp} />
     </>

@@ -18,7 +18,12 @@ import {
   ChevronRight,
   Sun,
   Moon,
+  Loader2,
 } from 'lucide-react';
+import { DropdownMenu } from 'radix-ui';
+import { useAuth } from '@/hooks/use-auth';
+import { User } from '@/lib/types/user';
+import { BRAND_BLUE } from '@/lib/types/service';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -29,11 +34,40 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import navLogo from '@/public/nav-logo.svg';
 import Image from 'next/image';
 import { NavigationData } from '@/lib/types/navigation';
 
-const BRAND = 'oklch(0.3811 0.1315 260.22)';
+function userInitials(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return '?';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function NavbarUserAvatar({
+  user,
+  size = 'default',
+}: {
+  user: User;
+  size?: 'default' | 'large';
+}) {
+  return (
+    <Avatar className={cn(size === 'large' ? 'h-10 w-10  border-none shadow-none' : 'h-9 w-9  border-none shadow-none')}>
+      {user.avatar ? <AvatarImage src={user.avatar} alt="Foto profil" /> : null}
+      <AvatarFallback
+        className={cn(
+          'font-semibold',
+          size === 'large' ? 'text-sm' : 'text-xs',
+        )}
+        style={{ backgroundColor: BRAND_BLUE }}
+      >
+        {userInitials(user.name)}
+      </AvatarFallback>
+    </Avatar>
+  );
+}
 
 const CATEGORY_ICONS = [
   Building2,
@@ -69,9 +103,15 @@ function ThemeToggle() {
 
 interface NavbarProps {
   navigation: NavigationData;
+  initialUser?: User | null;
 }
 
-export function Navbar({ navigation }: NavbarProps) {
+export function Navbar({ navigation, initialUser = null }: NavbarProps) {
+  const { user, logout, isAuthenticated, isLoading, isError } = useAuth({
+    initialUser: initialUser ?? undefined,
+  });
+  const showAccount = Boolean(isAuthenticated && user && !isError);
+
   const [isOpen, setIsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
   const [activeCategoryId, setActiveCategoryId] = useState<number | null>(null);
@@ -95,7 +135,7 @@ export function Navbar({ navigation }: NavbarProps) {
     serviceCategories[0];
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md ">
+    <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur-md">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -142,7 +182,7 @@ export function Navbar({ navigation }: NavbarProps) {
                           <Link
                             href="/layanan"
                             className="font-semibold underline-offset-4 hover:underline"
-                            style={{ color: BRAND }}
+                            style={{ color: BRAND_BLUE }}
                           >
                             Lihat halaman layanan
                           </Link>
@@ -179,7 +219,7 @@ export function Navbar({ navigation }: NavbarProps) {
                                   >
                                     <IconComponent
                                       className="mt-0.5 h-4 w-4 shrink-0"
-                                      style={{ color: BRAND }}
+                                      style={{ color: BRAND_BLUE }}
                                     />
                                     <span className="min-w-0 flex-1 leading-snug">
                                       {category.name}
@@ -216,7 +256,7 @@ export function Navbar({ navigation }: NavbarProps) {
                                                 <span
                                                   className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white"
                                                   style={{
-                                                    backgroundColor: BRAND,
+                                                    backgroundColor: BRAND_BLUE,
                                                   }}
                                                 >
                                                   Populer
@@ -248,7 +288,7 @@ export function Navbar({ navigation }: NavbarProps) {
                         <Link
                           href="/layanan"
                           className="flex items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                          style={{ backgroundColor: BRAND }}
+                          style={{ backgroundColor: BRAND_BLUE }}
                         >
                           Lihat Semua Layanan
                         </Link>
@@ -305,38 +345,164 @@ export function Navbar({ navigation }: NavbarProps) {
           {/* Auth Buttons + Theme Toggle */}
           <div className="hidden lg:flex items-center gap-2 shrink-0">
             <ThemeToggle />
-            <Link
-              href="/masuk"
-              className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors px-3"
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/daftar"
-              className="px-5 py-2.5 text-sm font-semibold text-white rounded-full hover:opacity-90 transition-opacity shadow-sm"
-              style={{ backgroundColor: BRAND }}
-            >
-              Mulai Sekarang
-            </Link>
+            {isLoading ? (
+              <div
+                className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-white/10"
+                aria-hidden
+              />
+            ) : showAccount && user ? (
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger asChild>
+                  <button
+                    type="button"
+                    className="shrink-0 rounded-full outline-none transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-blue"
+                    aria-label="Menu akun"
+                  >
+                    <NavbarUserAvatar user={user} />
+                  </button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content
+                    sideOffset={8}
+                    align="end"
+                    className="z-100 min-w-56 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 text-gray-900 shadow-lg dark:border-white/10 dark:bg-[oklch(0.13_0.02_260)] dark:text-gray-100"
+                  >
+                    <div className="border-b border-gray-100 px-3 py-2.5 dark:border-white/10">
+                      <p className="truncate text-sm font-semibold">
+                        {user.name}
+                      </p>
+                      <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                        {user.email}
+                      </p>
+                    </div>
+                    <DropdownMenu.Item asChild>
+                      <Link
+                        href="/portal"
+                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
+                      >
+                        Portal
+                      </Link>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <Link
+                        href="/portal/pengaturan-profil"
+                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
+                      >
+                        Pengaturan profil
+                      </Link>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Separator className="my-1 h-px bg-gray-100 dark:bg-white/10" />
+                    <DropdownMenu.Item
+                      className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-red-600 outline-none data-highlighted:bg-red-50 dark:text-red-400 dark:data-highlighted:bg-red-950/40"
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        void logout();
+                      }}
+                    >
+                      Keluar
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu.Root>
+            ) : (
+              <>
+                <Link
+                  href="/masuk"
+                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors px-3"
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/daftar"
+                  className="px-5 py-2.5 text-sm font-semibold text-white rounded-full hover:opacity-90 transition-opacity shadow-sm"
+                  style={{ backgroundColor: BRAND_BLUE }}
+                >
+                  Mulai Sekarang
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile right: toggle + hamburger */}
           <div className="lg:hidden flex items-center gap-1 md:gap-2">
             <ThemeToggle />
             <div className="hidden md:flex items-center gap-2 shrink-0">
-              <Link
-                href="/masuk"
-                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors px-3"
-              >
-                Masuk
-              </Link>
-              <Link
-                href="/daftar"
-                className="px-5 py-2.5 text-sm font-semibold text-white rounded-full hover:opacity-90 transition-opacity shadow-sm"
-                style={{ backgroundColor: BRAND }}
-              >
-                Mulai Sekarang
-              </Link>
+              {isLoading ? (
+                <div
+                  className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-white/10"
+                  aria-hidden
+                />
+              ) : showAccount && user ? (
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <button
+                      type="button"
+                      className="shrink-0 rounded-full outline-none transition hover:opacity-95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-blue"
+                      aria-label="Menu akun"
+                    >
+                      <NavbarUserAvatar user={user} />
+                    </button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                      sideOffset={8}
+                      align="end"
+                      className="z-100 min-w-56 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 text-gray-900 shadow-lg dark:border-white/10 dark:bg-[oklch(0.13_0.02_260)] dark:text-gray-100"
+                    >
+                      <div className="border-b border-gray-100 px-3 py-2.5 dark:border-white/10">
+                        <p className="truncate text-sm font-semibold">
+                          {user.name}
+                        </p>
+                        <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                          {user.email}
+                        </p>
+                      </div>
+                      <DropdownMenu.Item asChild>
+                        <Link
+                          href="/portal"
+                          className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
+                        >
+                          Portal
+                        </Link>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item asChild>
+                        <Link
+                          href="/portal/pengaturan-profil"
+                          className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
+                        >
+                          Pengaturan profil
+                        </Link>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Separator className="my-1 h-px bg-gray-100 dark:bg-white/10" />
+                      <DropdownMenu.Item
+                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-red-600 outline-none data-highlighted:bg-red-50 dark:text-red-400 dark:data-highlighted:bg-red-950/40"
+                        onSelect={(e) => {
+                          e.preventDefault();
+                          void logout();
+                        }}
+                      >
+                        Keluar
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+              ) : (
+                <>
+                  <Link
+                    href="/masuk"
+                    className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors px-3"
+                  >
+                    Masuk
+                  </Link>
+                  <Link
+                    href="/daftar"
+                    className="px-5 py-2.5 text-sm font-semibold text-white rounded-full hover:opacity-90 transition-opacity shadow-sm"
+                    style={{ backgroundColor: BRAND_BLUE }}
+                  >
+                    Mulai Sekarang
+                  </Link>
+                </>
+              )}
             </div>
             <button
               className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
@@ -407,7 +573,7 @@ export function Navbar({ navigation }: NavbarProps) {
                             {service.is_popular && (
                               <span
                                 className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white"
-                                style={{ backgroundColor: BRAND }}
+                                style={{ backgroundColor: BRAND_BLUE }}
                               >
                                 Populer
                               </span>
@@ -450,21 +616,68 @@ export function Navbar({ navigation }: NavbarProps) {
           </Link>
 
           <div className="pt-3 border-t border-gray-100 dark:border-white/8 flex flex-col gap-2 md:hidden">
-            <Link
-              href="/masuk"
-              className="px-4 py-2.5 text-sm text-center text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/daftar"
-              className="px-4 py-2.5 text-sm font-semibold text-white rounded-full text-center hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: BRAND }}
-              onClick={() => setIsOpen(false)}
-            >
-              Mulai Sekarang
-            </Link>
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2 px-4 py-3 text-sm text-gray-500">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                Memuat akun…
+              </div>
+            ) : showAccount && user ? (
+              <>
+                <div className="flex items-center gap-3 px-4 py-2">
+                  <NavbarUserAvatar user={user} size="large" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-gray-800 dark:text-gray-100">
+                      {user.name}
+                    </p>
+                    <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                      {user.email}
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  href="/portal"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Portal
+                </Link>
+                <Link
+                  href="/portal/pengaturan-profil"
+                  className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Pengaturan profil
+                </Link>
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+                  onClick={() => {
+                    setIsOpen(false);
+                    void logout();
+                  }}
+                >
+                  Keluar
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/masuk"
+                  className="px-4 py-2.5 text-sm text-center text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/daftar"
+                  className="px-4 py-2.5 text-sm font-semibold text-white rounded-full text-center hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: BRAND_BLUE }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  Mulai Sekarang
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -2,13 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Send,
-  CheckCircle2,
-} from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -87,8 +81,7 @@ type Props = {
 };
 
 export function ContactSection({ data }: Props) {
-  const { contact, address } =
-    data;
+  const { contact, address } = data;
 
   const [form, setForm] = useState<FormState>(emptyForm);
   const [submitted, setSubmitted] = useState(false);
@@ -193,7 +186,7 @@ export function ContactSection({ data }: Props) {
                     style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
                   />
                 </div>
-                <div className='space-y-1'>
+                <div className="space-y-1">
                   <p className="text-xs font-semibold text-gray-400">Email</p>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 group-hover:text-brand-blue transition-colors wrap-break-word leading-snug">
                     {contact.email}
@@ -216,8 +209,10 @@ export function ContactSection({ data }: Props) {
                     style={{ color: 'oklch(0.55 0.15 160)' }}
                   />
                 </div>
-                <div className='space-y-1'>
-                  <p className="text-xs font-semibold text-gray-400">WhatsApp</p>
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold text-gray-400">
+                    WhatsApp
+                  </p>
                   <a
                     href={whatsappWaMeUrl(contact.whatsapp)}
                     target="_blank"
@@ -252,7 +247,7 @@ export function ContactSection({ data }: Props) {
                     style={{ color: 'oklch(0.7319 0.1856 52.89)' }}
                   />
                 </div>
-                <div className='space-y-1'>
+                <div className="space-y-1">
                   <p className="text-xs font-semibold text-gray-400">Alamat</p>
                   <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 group-hover:text-brand-blue transition-colors leading-snug line-clamp-4">
                     {address.street || address.full}
@@ -354,8 +349,8 @@ export function ContactSection({ data }: Props) {
                     Pesan terkirim!
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
-                    Terima kasih. Tim kami akan menghubungi Anda melalui WhatsApp
-                    atau email sesuai data yang Anda kirim.
+                    Terima kasih. Tim kami akan menghubungi Anda melalui
+                    WhatsApp atau email sesuai data yang Anda kirim.
                   </p>
                 </div>
                 <button
@@ -393,7 +388,7 @@ export function ContactSection({ data }: Props) {
                       value={form.name}
                       onChange={handleChange}
                       required
-                      className="rounded-xl border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 text-sm"
+                      className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                     />
                     {fieldErrors.name && (
                       <p className="text-xs text-red-600">{fieldErrors.name}</p>
@@ -414,7 +409,7 @@ export function ContactSection({ data }: Props) {
                       value={form.whatsapp_number}
                       onChange={handleChange}
                       required
-                      className="rounded-xl border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 text-sm"
+                      className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                     />
                     {fieldErrors.whatsapp_number && (
                       <p className="text-xs text-red-600">
@@ -427,7 +422,9 @@ export function ContactSection({ data }: Props) {
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-xs text-gray-500">
                     Email{' '}
-                    <span className="text-gray-400 font-semibold">(opsional)</span>
+                    <span className="text-gray-400 font-semibold">
+                      (opsional)
+                    </span>
                   </Label>
                   <Input
                     id="email"
@@ -436,7 +433,7 @@ export function ContactSection({ data }: Props) {
                     placeholder="anda@email.com"
                     value={form.email}
                     onChange={handleChange}
-                    className="rounded-xl border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 text-sm"
+                    className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                   />
                   {fieldErrors.email && (
                     <p className="text-xs text-red-600">{fieldErrors.email}</p>
@@ -446,7 +443,9 @@ export function ContactSection({ data }: Props) {
                 <div className="space-y-1.5">
                   <Label htmlFor="topic" className="text-xs text-gray-500">
                     Topik{' '}
-                    <span className="text-gray-400 font-semibold">(opsional)</span>
+                    <span className="text-gray-400 font-semibold">
+                      (opsional)
+                    </span>
                   </Label>
                   <SelectGroup>
                     <Select
@@ -455,7 +454,7 @@ export function ContactSection({ data }: Props) {
                     >
                       <SelectTrigger
                         id="topic"
-                        className="rounded-xl border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 text-sm w-full"
+                        className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm w-full shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                       >
                         <SelectValue placeholder="Pilih topik..." />
                       </SelectTrigger>
@@ -488,13 +487,15 @@ export function ContactSection({ data }: Props) {
                     required
                     rows={4}
                     maxLength={2000}
-                    className="rounded-xl border-gray-200 dark:border-white/15 bg-white dark:bg-white/5 text-sm resize-none"
+                    className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm resize-none shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                   />
                   <p className="text-[10px] font-semibold text-gray-400 text-right">
                     {form.message.length}/2000
                   </p>
                   {fieldErrors.message && (
-                    <p className="text-xs text-red-600">{fieldErrors.message}</p>
+                    <p className="text-xs text-red-600">
+                      {fieldErrors.message}
+                    </p>
                   )}
                 </div>
 

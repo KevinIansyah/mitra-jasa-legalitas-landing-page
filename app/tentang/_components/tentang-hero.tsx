@@ -6,7 +6,7 @@ import { EASE, hero } from '../_data/about';
 
 export function TentangHero() {
   return (
-    <section className="relative overflow-hidden bg-surface-page pt-28 pb-16 lg:pb-20">
+    <section className="relative overflow-hidden bg-surface-page pt-16 pb-16 lg:pb-20">
       {/* Blobs */}
       <motion.div
         aria-hidden

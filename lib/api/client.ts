@@ -5,28 +5,52 @@
 import { parseApiErrorResponse } from "./parse-api-error";
 import { ApiSuccessResponse } from "../types/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+/** Base URL API untuk fetch (tanpa trailing slash). Sama dengan yang dipakai chat widget. */
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.trim() ?? "";
+
+export function getPublicApiBaseUrl(): string {
+  return API_URL;
+}
+
+export function hasPublicApiBaseUrl(): boolean {
+  return API_URL.length > 0;
+}
 
 // ============================================================================
 // COOKIE HELPERS
 // ============================================================================
 
+function cookieSecureSuffix(): string {
+  if (typeof window === 'undefined') return '';
+  // `Secure` membuat cookie tidak ikut ke server HTTP (mis. localhost dev) → layout RSC tidak baca token.
+  return window.location.protocol === 'https:' ? '; Secure' : '';
+}
+
 export const cookieHelpers = {
-  setToken(token: string): void {
+  /** Tanpa remember: 7 hari (default). Ingat saya: 30 hari. */
+  setToken(token: string, rememberMe = false): void {
     if (typeof document === 'undefined') return;
-    const maxAge = 60 * 60 * 24 * 7; // 7 hari
-    document.cookie = `auth_token=${token}; path=/; max-age=${maxAge}; SameSite=Lax; Secure`;
+    const maxAge = rememberMe
+      ? 60 * 60 * 24 * 30
+      : 60 * 60 * 24 * 7;
+    const value = encodeURIComponent(token);
+    document.cookie = `auth_token=${value}; path=/; max-age=${maxAge}; SameSite=Lax${cookieSecureSuffix()}`;
   },
 
   getToken(): string | null {
     if (typeof document === 'undefined') return null;
-    const match = document.cookie.match(/auth_token=([^;]+)/);
-    return match ? match[1] : null;
+    const match = document.cookie.match(/(?:^|;\s*)auth_token=([^;]+)/);
+    if (!match) return null;
+    try {
+      return decodeURIComponent(match[1]);
+    } catch {
+      return match[1];
+    }
   },
 
   removeToken(): void {
     if (typeof document === 'undefined') return;
-    document.cookie = 'auth_token=; path=/; max-age=0';
+    document.cookie = `auth_token=; path=/; max-age=0${cookieSecureSuffix()}`;
   },
 };
 
@@ -49,7 +73,15 @@ function extractData<T>(responseData: unknown): T {
       } as T;
     }
 
-    return apiResponse.data;
+    const inner = apiResponse.data;
+    if (inner != null) {
+      return inner as T;
+    }
+    // Laravel sering kirim `data: null` dengan `message` di envelope (mis. resend OTP).
+    if (typeof apiResponse.message === 'string') {
+      return { message: apiResponse.message } as T;
+    }
+    return inner as T;
   }
 
   return responseData as T;

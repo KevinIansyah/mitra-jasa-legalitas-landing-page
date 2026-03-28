@@ -4,45 +4,17 @@ import useSWR from 'swr';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/types/user';
 import { apiClient } from '@/lib/api/client';
+import {
+  AUTH_API,
+  LoginResponse,
+  RegisterResponse,
+  VerifyOtpResponse,
+  ResendOtpResponse,
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
+  UseAuthOptions,
+} from '@/lib/types/auth';
 import { ApiError } from '@/lib/types/api';
-
-// ============================================================================
-// TYPES
-// ============================================================================
-
-interface LoginResponse {
-  user: User;
-  token: string;
-  token_type: string;
-}
-
-interface RegisterResponse {
-  email: string;
-  message: string;
-}
-
-interface VerifyOtpResponse {
-  user: User;
-  token: string;
-  token_type: string;
-}
-
-interface ResendOtpResponse {
-  message: string;
-}
-
-interface ForgotPasswordResponse {
-  email: string;
-  message: string;
-}
-
-interface ResetPasswordResponse {
-  message: string;
-}
-
-interface UseAuthOptions {
-  initialUser?: User | null;
-}
 
 // ============================================================================
 // SESSION STORAGE HELPERS
@@ -81,7 +53,7 @@ export function useAuth(options: UseAuthOptions = {}) {
     data: user,
     error,
     mutate,
-  } = useSWR<User>(hasToken ? '/api/me' : null, apiClient.get, {
+  } = useSWR<User>(hasToken ? AUTH_API.me : null, apiClient.get, {
     fallbackData: initialUser ?? undefined,
     revalidateOnFocus: true,
     revalidateOnReconnect: true,
@@ -90,29 +62,28 @@ export function useAuth(options: UseAuthOptions = {}) {
 
   // ------------------------------------------------------------------
   // Login
-  // Jika email belum terverifikasi, BE return 403 + { email_verified: false }
-  // Frontend simpan email ke sessionStorage lalu redirect ke /verify-otp
   // ------------------------------------------------------------------
   const login = async (
     email: string,
     password: string,
-  ): Promise<LoginResponse> => {
+    rememberMe = false,
+  ): Promise<LoginResponse | void> => {
     try {
-      const response = await apiClient.post<LoginResponse>('/api/login', {
+      const response = await apiClient.post<LoginResponse>(AUTH_API.login, {
         email,
         password,
       });
 
-      apiClient.setToken(response.token);
+      apiClient.setToken(response.token, rememberMe);
       mutate(response.user, false);
 
       return response;
     } catch (error) {
       if (error instanceof ApiError) {
-        // Email belum diverifikasi — BE sudah kirim OTP baru
         if (error.status === 403 && error.errors?.email_verified === false) {
           otpSession.setEmail(email);
           router.push('/verify-otp');
+          return;
         }
         throw error;
       }
@@ -122,23 +93,25 @@ export function useAuth(options: UseAuthOptions = {}) {
 
   // ------------------------------------------------------------------
   // Register
-  // BE akan handle: email baru → buat user + kirim OTP
-  //                 email belum verified → kirim OTP baru (tidak buat user baru)
-  // Frontend cukup simpan email ke sessionStorage lalu redirect
   // ------------------------------------------------------------------
   const register = async (
     name: string,
     email: string,
+    phone: string,
     password: string,
     password_confirmation: string,
   ): Promise<RegisterResponse> => {
     try {
-      const response = await apiClient.post<RegisterResponse>('/api/register', {
-        name,
-        email,
-        password,
-        password_confirmation,
-      });
+      const response = await apiClient.post<RegisterResponse>(
+        AUTH_API.register,
+        {
+          name,
+          email,
+          phone,
+          password,
+          password_confirmation,
+        },
+      );
 
       otpSession.setEmail(response.email);
 
@@ -150,7 +123,7 @@ export function useAuth(options: UseAuthOptions = {}) {
   };
 
   // ------------------------------------------------------------------
-  // Verifikasi OTP → langsung dapat token & login
+  // Verify OTP
   // ------------------------------------------------------------------
   const verifyOtp = async (otp: string): Promise<VerifyOtpResponse> => {
     const email = otpSession.getEmail();
@@ -164,7 +137,7 @@ export function useAuth(options: UseAuthOptions = {}) {
 
     try {
       const response = await apiClient.post<VerifyOtpResponse>(
-        '/api/verify-email',
+        AUTH_API.verifyEmail,
         {
           email,
           otp,
@@ -196,9 +169,10 @@ export function useAuth(options: UseAuthOptions = {}) {
     }
 
     try {
-      return await apiClient.post<ResendOtpResponse>('/api/resend-otp', {
-        email,
-      });
+      return await apiClient.post<ResendOtpResponse>(
+        AUTH_API.resendVerificationOtp,
+        { email },
+      );
     } catch (error) {
       if (error instanceof ApiError) throw error;
       throw new ApiError('An unexpected error occurred', 500);
@@ -206,20 +180,19 @@ export function useAuth(options: UseAuthOptions = {}) {
   };
 
   // ------------------------------------------------------------------
-  // Forgot Password → BE kirim OTP ke email
+  // Forgot Password
   // ------------------------------------------------------------------
   const forgotPassword = async (
     email: string,
   ): Promise<ForgotPasswordResponse> => {
     try {
       const response = await apiClient.post<ForgotPasswordResponse>(
-        '/api/forgot-password',
+        AUTH_API.forgotPassword,
         {
           email,
         },
       );
 
-      // Simpan email untuk dipakai di halaman reset-password
       otpSession.setEmail(response.email);
 
       return response;
@@ -230,7 +203,7 @@ export function useAuth(options: UseAuthOptions = {}) {
   };
 
   // ------------------------------------------------------------------
-  // Reset Password → verifikasi OTP + set password baru
+  // Reset Password
   // ------------------------------------------------------------------
   const resetPassword = async (
     otp: string,
@@ -248,7 +221,7 @@ export function useAuth(options: UseAuthOptions = {}) {
 
     try {
       const response = await apiClient.post<ResetPasswordResponse>(
-        '/api/reset-password',
+        AUTH_API.resetPassword,
         {
           email,
           otp,
@@ -271,13 +244,13 @@ export function useAuth(options: UseAuthOptions = {}) {
   // ------------------------------------------------------------------
   const logout = async (): Promise<void> => {
     try {
-      await apiClient.post('/api/logout');
+      await apiClient.post(AUTH_API.logout);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
       apiClient.removeToken();
       mutate(undefined, false);
-      router.push('/login');
+      router.push('/masuk');
       router.refresh();
     }
   };

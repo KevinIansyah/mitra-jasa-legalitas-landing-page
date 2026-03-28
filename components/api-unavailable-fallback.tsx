@@ -2,16 +2,11 @@ import Link from 'next/link';
 import { Home, RefreshCw, WifiOff } from 'lucide-react';
 
 type ApiUnavailableFallbackProps = {
-  /** Untuk tautan "Muat ulang" (full navigation ke URL yang sama). */
   retryHref: string;
   title?: string;
   description?: string;
 };
 
-/**
- * Fallback saat API tidak terjangkau (jaringan mati, timeout, dll.).
- * Bukan untuk 404 — gunakan `notFound()` untuk konten tidak ada.
- */
 export function ApiUnavailableFallback({
   retryHref,
   title = 'Tidak dapat memuat konten',

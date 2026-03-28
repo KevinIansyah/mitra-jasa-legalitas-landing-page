@@ -51,11 +51,7 @@ export function TableOfContents({ items }: { items: BlogTocItem[] }) {
                   ? 'font-semibold border-brand-blue'
                   : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-white/30'
               } ${item.level === 3 ? 'ml-3 text-xs' : ''}`}
-              style={
-                active === item.id
-                  ? { color: BRAND_BLUE }
-                  : {}
-              }
+              style={active === item.id ? { color: BRAND_BLUE } : {}}
             >
               {item.title}
             </a>
@@ -68,9 +64,9 @@ export function TableOfContents({ items }: { items: BlogTocItem[] }) {
 
 /* ── Author Card ── */
 export function AuthorCard({ author }: { author: BlogAuthor }) {
-  const ini = authorInitials(author.name);
+  const initials = authorInitials(author.name);
   return (
-    <div className="flex items-start gap-3">
+    <div className="flex items-center gap-3">
       <div
         className="relative w-11 h-11 rounded-full shrink-0 overflow-hidden flex items-center justify-center text-sm font-bold text-white"
         style={{ backgroundColor: BRAND_BLUE }}
@@ -84,14 +80,14 @@ export function AuthorCard({ author }: { author: BlogAuthor }) {
             sizes="44px"
           />
         ) : (
-          <span>{ini}</span>
+          <span>{initials}</span>
         )}
       </div>
-      <div>
+      <div className="space-y-0.5">
         <p className="text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight">
           {author.name}
         </p>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+        <p className="text-xs text-gray-500 dark:text-gray-400">
           {author.position ?? '—'}
         </p>
       </div>
@@ -163,7 +159,8 @@ export function SidebarCta() {
         Butuh konsultasi legalitas bisnis?
       </p>
       <p className="text-xs text-white/70 leading-relaxed">
-        Tim konsultan kami siap membantu proses legalitas bisnis Anda dari awal hingga selesai.
+        Tim konsultan kami siap membantu proses legalitas bisnis Anda dari awal
+        hingga selesai.
       </p>
       <Link
         href="/daftar"

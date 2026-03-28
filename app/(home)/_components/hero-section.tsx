@@ -45,7 +45,7 @@ export function HeroSection({
   const consultExternal = Boolean(whatsappCta);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-surface-page pt-16">
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-surface-page">
       {/* ── Background blobs ── */}
 
       {/* BLUE — top right, dominan tapi ga terlalu besar */}

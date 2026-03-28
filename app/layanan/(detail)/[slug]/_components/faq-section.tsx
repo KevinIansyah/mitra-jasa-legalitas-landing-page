@@ -8,7 +8,7 @@ import { SectionHeading } from '@/components/section-heading';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
-export function ServiceFaqSection({ faqs }: { faqs: ServiceFaq[] }) {
+export function FaqSection({ faqs }: { faqs: ServiceFaq[] }) {
   const [openId, setOpenId] = useState<number | null>(0);
 
   if (!faqs.length) return null;

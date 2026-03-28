@@ -58,7 +58,6 @@ export interface NavigationData {
   company?: NavigationCompany | null;
 }
 
-/** Dipakai saat API tidak terjangkau (mis. jaringan mati) agar layout tetap render. */
 export const EMPTY_NAVIGATION: NavigationData = {
   service_categories: [],
   featured_services: [],

@@ -12,15 +12,15 @@ export default async function PortalLayout({
   const token = cookieStore.get('auth_token')?.value;
 
   if (!token) {
-    redirect('/login');
+    redirect('/masuk');
   }
 
   let user: User | null = null;
 
   try {
-    user = await apiServer.get<User>('/api/me');
+    user = await apiServer.get<User>('/auth/me');
   } catch {
-    redirect('/login');
+    redirect('/masuk');
   }
 
   return (

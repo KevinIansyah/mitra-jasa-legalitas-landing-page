@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 import { SectionHeading } from '@/components/section-heading';
+import { Input } from '@/components/ui/input';
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
@@ -66,13 +67,15 @@ export function BlogNewsletter() {
               onSubmit={handleSubmit}
               className="flex flex-col sm:flex-row gap-3"
             >
-              <input
+              <Input
+                id="email"
+                name="email"
                 type="email"
                 required
                 placeholder="alamat@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-full border border-gray-200 bg-white text-sm focus:outline-none focus:border-brand-blue transition-colors placeholder:text-gray-400"
+                 className="flex-1 py-3 px-4 h-11 rounded-full border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
               />
               <button
                 type="submit"

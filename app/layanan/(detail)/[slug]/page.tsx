@@ -5,19 +5,22 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Sparkles, Star, Tag } from 'lucide-react';
 import { getCompanyInformation } from '@/lib/api/endpoints/company-information.server';
-import { getServiceDetail, getServicesList } from '@/lib/api/endpoints/service.server';
+import {
+  getServiceDetail,
+  getServicesList,
+} from '@/lib/api/endpoints/service.server';
 import { ApiUnavailableFallback } from '@/components/api-unavailable-fallback';
 import { getApiErrorStatus } from '@/lib/types/api';
 import { PackagesSection } from './_components/packages-section';
 import { ProcessSection } from './_components/process-section';
 import { RequirementsSection } from './_components/requirements-section';
-import { ServiceFaqSection } from './_components/service-faq';
+import { FaqSection } from './_components/faq-section';
 import {
   ReadingProgress,
   BackToTop,
 } from '../../../blog/[slug]/_components/reading-progress';
 import { LegalBasesSection } from './_components/legal-bases-section';
-import { ServiceSidebar } from './_components/sidebar';
+import { ServiceSidebar } from './_components/service-sidebar';
 import { BottomCta } from './_components/bottom-cta';
 
 const BRAND_BLUE = 'oklch(0.3811 0.1315 260.22)';
@@ -97,6 +100,7 @@ export default async function ServiceDetailPage({
   const whatsapp = company?.contact.whatsapp?.trim() ?? '';
 
   const categoryColor = service.category?.palette_color?.trim() || BRAND_BLUE;
+  const hasDescription = Boolean(service.introduction || service.content);
 
   return (
     <>
@@ -104,7 +108,7 @@ export default async function ServiceDetailPage({
       <BackToTop />
 
       {/* ── Hero ── */}
-      <div className="bg-surface-page pt-24">
+      <div className="bg-surface-page pt-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 mb-6">
@@ -190,15 +194,35 @@ export default async function ServiceDetailPage({
       {/* ── Body  ── */}
       <div className="bg-surface-card">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <div className="flex flex-col lg:flex-row gap-10">
+          <div className="flex flex-col lg:flex-row lg:items-stretch gap-10">
+            <div className="block lg:hidden shrink-0">
+              <ServiceSidebar
+                serviceName={service.name}
+                whatsapp={whatsapp}
+                packages={service.packages}
+                processSteps={service.process_steps}
+                requirementCategories={service.requirement_categories}
+                legalBases={service.legal_bases}
+                faqCount={service.faqs.length}
+                hasDescription={hasDescription}
+              />
+            </div>
+
             {/* Main content */}
-            <div className="flex-1 min-w-0 space-y-8">
+            <section
+              id={hasDescription ? 'deskripsi' : undefined}
+              className={
+                hasDescription
+                  ? 'flex-1 min-w-0 min-h-0 space-y-8 scroll-mt-28'
+                  : 'flex-1 min-w-0 min-h-0 space-y-8'
+              }
+            >
               {service.introduction || service.content ? (
                 <>
                   {service.introduction && (
                     <div className="mb-14">
                       <div
-                        className="service-prose"
+                        className="service-prose -mt-2"
                         dangerouslySetInnerHTML={{
                           __html: service.introduction,
                         }}
@@ -209,7 +233,7 @@ export default async function ServiceDetailPage({
                   {service.content && (
                     <div className="pt-6 border-t border-gray-100 dark:border-white/8">
                       <div
-                        className="service-prose"
+                        className="service-prose -mt-2"
                         dangerouslySetInnerHTML={{ __html: service.content }}
                       />
                     </div>
@@ -223,17 +247,22 @@ export default async function ServiceDetailPage({
                   </p>
                 </>
               )}
-            </div>
+            </section>
 
-            <ServiceSidebar
-              serviceName={service.name}
-              whatsapp={whatsapp}
-              packages={service.packages}
-              processSteps={service.process_steps}
-              requirementCategories={service.requirement_categories}
-              legalBases={service.legal_bases}
-              faqCount={service.faqs.length}
-            />
+            <div className="hidden lg:flex lg:w-[280px] xl:w-[300px] shrink-0 flex-col min-h-0 self-stretch">
+              <div className="sticky top-24">
+                <ServiceSidebar
+                  serviceName={service.name}
+                  whatsapp={whatsapp}
+                  packages={service.packages}
+                  processSteps={service.process_steps}
+                  requirementCategories={service.requirement_categories}
+                  legalBases={service.legal_bases}
+                  faqCount={service.faqs.length}
+                  hasDescription={hasDescription}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -254,7 +283,7 @@ export default async function ServiceDetailPage({
         <LegalBasesSection bases={service.legal_bases} />
       )}
 
-      {service.faqs.length > 0 && <ServiceFaqSection faqs={service.faqs} />}
+      {service.faqs.length > 0 && <FaqSection faqs={service.faqs} />}
 
       <BottomCta name={service.name} whatsapp={whatsapp} />
     </>

@@ -252,7 +252,6 @@ export interface ServiceCityPage {
     ServiceDetail,
     'id' | 'name' | 'slug' | 'short_description' | 'featured_image'
   > & {
-    /** Opsional — ikut bila API mengirim (sama seperti detail layanan global). */
     category?: ServiceDetail['category'];
   };
   city: City;

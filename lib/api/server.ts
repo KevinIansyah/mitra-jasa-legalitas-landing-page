@@ -39,7 +39,14 @@ function extractData<T>(responseData: unknown): T {
       } as T;
     }
 
-    return apiResponse.data;
+    const inner = apiResponse.data;
+    if (inner != null) {
+      return inner as T;
+    }
+    if (typeof apiResponse.message === 'string') {
+      return { message: apiResponse.message } as T;
+    }
+    return inner as T;
   }
 
   return responseData as T;

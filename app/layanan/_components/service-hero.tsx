@@ -18,7 +18,7 @@ export function ServiceHero({
   const hasStats = serviceCount > 0 && categoryCount > 0;
 
   return (
-    <section className="relative overflow-hidden bg-surface-page pt-28 pb-16 lg:pb-20">
+    <section className="relative overflow-hidden bg-surface-page pt-16 pb-16 lg:pb-20">
       {/* Blobs */}
       <motion.div
         aria-hidden

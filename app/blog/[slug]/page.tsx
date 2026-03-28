@@ -10,7 +10,11 @@ import { getApiErrorStatus } from '@/lib/types/api';
 import { addHeadingIdsToHtml } from '@/lib/blog-heading-html';
 import { authorInitials, formatBlogDate } from '@/lib/blog-utils';
 import type { BlogCard, BlogSeo } from '@/lib/types/blog';
-import { TableOfContents, AuthorCard, SidebarCta } from './_components/blog-sidebar';
+import {
+  TableOfContents,
+  AuthorCard,
+  SidebarCta,
+} from './_components/blog-sidebar';
 import { ReadingProgress, BackToTop } from './_components/reading-progress';
 import { BlogShareButton } from './_components/blog-share-button';
 import { SectionHeading } from '@/components/section-heading';
@@ -78,9 +82,7 @@ export async function generateMetadata({
 
   const seo = post.seo;
   const titleBase =
-    seo?.meta_title ??
-    seo?.og_title ??
-    `${post.title} – Mitra Jasa Legalitas`;
+    seo?.meta_title ?? seo?.og_title ?? `${post.title} – Mitra Jasa Legalitas`;
   const desc =
     seo?.meta_description ??
     seo?.og_description ??
@@ -201,7 +203,7 @@ export default async function BlogDetailPage({
       <BackToTop />
 
       {/* ── Hero ── */}
-      <div className="bg-surface-page pt-24 pb-0">
+      <div className="bg-surface-page pt-16 pb-0">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 mb-6">
@@ -329,17 +331,17 @@ export default async function BlogDetailPage({
       {/* ── Body  ── */}
       <div className="bg-surface-card border-b border-gray-100 dark:border-white/8">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-          <div className="flex flex-col lg:flex-row gap-12">
-            <article className="flex-1 min-w-0">
-              {/* {post.short_description && (
-                <p className="text-lg text-gray-500 dark:text-gray-400 leading-relaxed mb-8 pb-8 border-b border-gray-100 dark:border-white/8 font-medium">
-                  {post.short_description}
-                </p>
-              )} */}
+          <div className="flex flex-col lg:flex-row gap-10">
+            {/* Mobile: TOC */}
+            <div className="lg:hidden shrink-0">
+              <TableOfContents items={toc} />
+            </div>
 
+            {/* Main content */}
+            <article className="flex-1 min-w-0">
               {articleHtml ? (
                 <div
-                  className="service-prose max-w-none"
+                  className="service-prose max-w-none -mt-2"
                   dangerouslySetInnerHTML={{ __html: articleHtml }}
                 />
               ) : (
@@ -350,7 +352,7 @@ export default async function BlogDetailPage({
               )}
 
               {post.tags.length > 0 && (
-                <div className="mt-10 pt-8 border-t border-gray-100 dark:border-white/8 flex flex-wrap gap-2">
+                <div className="mt-10 pt-10 border-t border-gray-100 dark:border-white/8 flex flex-wrap gap-2">
                   {post.tags.map((tag) => (
                     <Link
                       key={tag.id}
@@ -369,7 +371,7 @@ export default async function BlogDetailPage({
 
               {author && (
                 <div className="mt-10 p-6 rounded-2xl bg-gray-50 dark:bg-surface-subtle border border-gray-100 dark:border-white/8">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
                     Tentang Penulis
                   </p>
                   <AuthorCard author={author} />
@@ -382,22 +384,22 @@ export default async function BlogDetailPage({
               )}
             </article>
 
-            <aside className="w-full lg:w-[280px] xl:w-[300px] shrink-0">
-              <div className="sticky top-24 space-y-8">
+            {/* Desktop: right sidebar (TOC + CTA) */}
+            <aside className="hidden lg:block w-full lg:w-[280px] xl:w-[300px] shrink-0">
+              <div className="sticky top-24 space-y-10">
                 <TableOfContents items={toc} />
                 {toc.length > 0 && (
                   <div className="h-px bg-gray-100 dark:bg-white/10" />
                 )}
 
                 <SidebarCta />
-
-                {/* {related.length > 0 && (
-                  <div className="h-px bg-gray-100 dark:bg-white/10" />
-                )} */}
-
-                {/* <RelatedPostsSidebar posts={related} /> */}
               </div>
             </aside>
+
+            {/* Mobile: CTA */}
+            <div className="lg:hidden shrink-0">
+              <SidebarCta />
+            </div>
           </div>
         </div>
       </div>

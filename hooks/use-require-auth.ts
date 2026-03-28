@@ -10,7 +10,7 @@ export function useRequireAuth() {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.push('/login');
+      router.push('/masuk');
     }
   }, [isLoading, isAuthenticated, router]);
 

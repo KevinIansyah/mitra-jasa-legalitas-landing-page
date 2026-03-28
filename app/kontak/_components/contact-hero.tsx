@@ -17,7 +17,7 @@ type Props = {
 
 export function ContactHero({ companyNameAccent, description, chips }: Props) {
   return (
-    <section className="relative overflow-hidden bg-surface-page pt-28 pb-16 lg:pb-20">
+    <section className="relative overflow-hidden bg-surface-page pt-16 pb-16 lg:pb-20">
       <motion.div
         aria-hidden
         className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
