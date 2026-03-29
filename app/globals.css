@@ -87,7 +87,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Auth — blob (selaras hero di latar terang) */
   --auth-blob-1: oklch(0.3811 0.1315 260.22 / 0.35);
   --auth-blob-2: oklch(0.7319 0.1856 52.89 / 0.45);
   --auth-blob-3: oklch(0.65 0.14 300 / 0.22);
@@ -130,7 +129,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  /* Auth — blob di latar gelap: sedikit lebih lembut agar tidak “nyetrum” */
   --auth-blob-1: oklch(0.3811 0.1315 260.22 / 0.32);
   --auth-blob-2: oklch(0.7319 0.1856 52.89 / 0.38);
   --auth-blob-3: oklch(0.65 0.14 300 / 0.2);
@@ -259,7 +257,7 @@
   box-shadow: 0 8px 40px oklch(0.3811 0.1315 260.22 / 0.4);
 }
 
-/* ── Service prose — TipTap output ── */
+/* ── Service prose - TipTap output ── */
 
 /* Headings */
 .service-prose h1 {
@@ -308,7 +306,7 @@
   color: oklch(0.2 0 0);
 }
 
-/* Lists — TipTap uses native list-disc / list-decimal with pl-6 */
+/* Lists - TipTap uses native list-disc / list-decimal with pl-6 */
 .service-prose ul,
 .service-prose ol {
   margin-top: 0.5rem;

@@ -20,13 +20,13 @@ export type TentangStatItem =
     };
 
 export function buildTentangStatItems(
-  s: CompanyInformationStats,
+  companyStats: CompanyInformationStats,
 ): TentangStatItem[] {
   return [
     {
       kind: 'count',
       key: 'clients',
-      to: s.total_clients,
+      to: companyStats.total_clients,
       suffix: '+',
       label: 'Klien Terlayani',
       sub: 'UMKM hingga korporasi',
@@ -34,7 +34,7 @@ export function buildTentangStatItems(
     {
       kind: 'count',
       key: 'documents',
-      to: s.total_documents,
+      to: companyStats.total_documents,
       suffix: '+',
       label: 'Dokumen Diproses',
       sub: 'Legal & perizinan',
@@ -42,7 +42,7 @@ export function buildTentangStatItems(
     {
       kind: 'count',
       key: 'years',
-      to: s.years_experience,
+      to: companyStats.years_experience,
       suffix: ' thn',
       label: 'Pengalaman',
       sub: 'Mendampingi legalitas bisnis',
@@ -50,24 +50,24 @@ export function buildTentangStatItems(
     {
       kind: 'rating',
       key: 'rating',
-      rating: s.rating,
-      reviews: s.total_reviews,
+      rating: companyStats.rating,
+      reviews: companyStats.total_reviews,
       label: 'Rating',
       sub:
-        s.total_reviews > 0
-          ? `Berdasarkan ${s.total_reviews.toLocaleString('id-ID')} ulasan`
+        companyStats.total_reviews > 0
+          ? `Berdasarkan ${companyStats.total_reviews.toLocaleString('id-ID')} ulasan`
           : 'Kepuasan klien',
     },
   ];
 }
 
 export const FALLBACK_TENTANG_STAT_ITEMS: TentangStatItem[] = legacyStats.map(
-  (s, i) => ({
+  (legacyStat, index) => ({
     kind: 'count' as const,
-    key: `legacy-${i}`,
-    to: s.to,
-    suffix: s.suffix,
-    label: s.label,
-    sub: s.sub,
+    key: `legacy-${index}`,
+    to: legacyStat.to,
+    suffix: legacyStat.suffix,
+    label: legacyStat.label,
+    sub: legacyStat.sub,
   }),
 );

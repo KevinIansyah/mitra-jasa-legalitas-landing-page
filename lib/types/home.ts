@@ -23,7 +23,7 @@ export interface HomeServiceCategory extends ServiceCategory {
 }
 
 // ============================================================================
-// HOME — ALL SERVICES (summary)
+// HOME - ALL SERVICES (summary)
 // ============================================================================
 
 export interface HomeServiceSummary {

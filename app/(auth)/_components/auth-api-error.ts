@@ -12,7 +12,6 @@ export function formatAuthApiError(err: unknown, fallback: string): string {
   return fallback;
 }
 
-/** Satu pesan validasi Laravel per field: `errors[field][0]`. */
 export function getFieldError(
   err: unknown,
   field: string,
@@ -23,7 +22,6 @@ export function getFieldError(
   return undefined;
 }
 
-/** Contoh: budi@gmail.com → b***@gmail.com */
 export function maskEmailForDisplay(email: string): string {
   const [local, domain] = email.split('@');
   if (!domain || local === undefined || local === '') return email;

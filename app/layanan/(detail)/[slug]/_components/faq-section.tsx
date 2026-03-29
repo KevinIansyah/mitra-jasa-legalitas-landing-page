@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 import type { ServiceFaq } from '@/lib/types/service';
 import { SectionHeading } from '@/components/section-heading';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 export function FaqSection({ faqs }: { faqs: ServiceFaq[] }) {
   const [openId, setOpenId] = useState<number | null>(0);
@@ -33,9 +32,9 @@ export function FaqSection({ faqs }: { faqs: ServiceFaq[] }) {
 
         <div className="space-y-3">
           {faqs
-            .sort((a, b) => a.sort_order - b.sort_order)
-            .map((faq, i) => {
-              const isOpen = openId === i;
+            .sort((left, right) => left.sort_order - right.sort_order)
+            .map((faq, faqIndex) => {
+              const isOpen = openId === faqIndex;
               return (
                 <motion.div
                   key={faq.question}
@@ -60,7 +59,7 @@ export function FaqSection({ faqs }: { faqs: ServiceFaq[] }) {
                   <div className="overflow-hidden rounded-xl">
                     <button
                       type="button"
-                      onClick={() => setOpenId(isOpen ? null : i)}
+                      onClick={() => setOpenId(isOpen ? null : faqIndex)}
                       className="flex items-center gap-4 w-full p-5 text-left transition-colors active:bg-gray-50/90 dark:active:bg-white/5"
                     >
                       <span className="flex-1 text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug transition-colors group-hover/faq:text-brand-blue">

@@ -1,41 +1,26 @@
-'use client';
+"use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import {
-  buildLayananListQuery,
-  parseLayananListQuery,
-  type LayananListUrlState,
-} from '@/lib/layanan-list-url';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { buildServiceListQuery, parseServiceListQuery, type ServiceListUrlState } from "@/lib/service-list-url";
 
 const Q_DEBOUNCE_MS = 320;
 
-/**
- * Filter daftar layanan (kategori, harga, sort, q) ↔ query string URL.
- * Perubahan dari filter memakai `router.replace`; edit URL / back-forward ikut sinkron.
- */
-export function useLayananListUrl() {
+export function useServiceListUrl() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const state = useMemo(
-    () => parseLayananListQuery(searchParams),
-    [searchParams],
-  );
+  const state = useMemo(() => parseServiceListQuery(searchParams), [searchParams]);
 
   const searchParamsRef = useRef(searchParams);
-  searchParamsRef.current = searchParams;
+  useEffect(() => {
+    searchParamsRef.current = searchParams;
+  }, [searchParams]);
 
   const replaceWithState = useCallback(
-    (next: LayananListUrlState) => {
-      const qs = buildLayananListQuery(next);
+    (next: ServiceListUrlState) => {
+      const qs = buildServiceListQuery(next);
       const url = qs ? `${pathname}?${qs}` : pathname;
       router.replace(url, { scroll: false });
     },
@@ -43,14 +28,9 @@ export function useLayananListUrl() {
   );
 
   const replaceState = useCallback(
-    (
-      patch:
-        | Partial<LayananListUrlState>
-        | ((prev: LayananListUrlState) => LayananListUrlState),
-    ) => {
-      const current = parseLayananListQuery(searchParamsRef.current);
-      const resolved =
-        typeof patch === 'function' ? patch(current) : { ...current, ...patch };
+    (patch: Partial<ServiceListUrlState> | ((prev: ServiceListUrlState) => ServiceListUrlState)) => {
+      const current = parseServiceListQuery(searchParamsRef.current);
+      const resolved = typeof patch === "function" ? patch(current) : { ...current, ...patch };
       replaceWithState(resolved);
     },
     [replaceWithState],
@@ -58,6 +38,8 @@ export function useLayananListUrl() {
 
   const [searchInput, setSearchInput] = useState(state.q);
   useEffect(() => {
+    // Sinkronkan input dengan URL saat `q` berubah dari luar (navigasi/reset).
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- sinkron URL → state lokal untuk field pencarian
     setSearchInput(state.q);
   }, [state.q]);
 
@@ -72,13 +54,13 @@ export function useLayananListUrl() {
     (value: string) => {
       setSearchInput(value);
       if (qDebounceRef.current) clearTimeout(qDebounceRef.current);
-      if (value === '') {
-        const current = parseLayananListQuery(searchParamsRef.current);
-        replaceWithState({ ...current, q: '' });
+      if (value === "") {
+        const current = parseServiceListQuery(searchParamsRef.current);
+        replaceWithState({ ...current, q: "" });
         return;
       }
       qDebounceRef.current = setTimeout(() => {
-        const current = parseLayananListQuery(searchParamsRef.current);
+        const current = parseServiceListQuery(searchParamsRef.current);
         replaceWithState({ ...current, q: value });
       }, Q_DEBOUNCE_MS);
     },
@@ -118,12 +100,12 @@ export function useLayananListUrl() {
 
   const resetFilters = useCallback(() => {
     if (qDebounceRef.current) clearTimeout(qDebounceRef.current);
-    setSearchInput('');
+    setSearchInput("");
     replaceWithState({
       category: [],
       price: [],
-      sort: 'popular',
-      q: '',
+      sort: "popular",
+      q: "",
     });
   }, [replaceWithState]);
 

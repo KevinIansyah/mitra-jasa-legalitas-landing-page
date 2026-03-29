@@ -1,4 +1,4 @@
-import type { NavigationSocialMedia } from '@/lib/types/navigation';
+import type { NavigationSocialMedia } from "@/lib/types/navigation";
 
 export interface CompanyIdentity {
   name: string;
@@ -28,18 +28,9 @@ export interface CompanyAddressInfo {
   maps_place_id: string | null;
 }
 
-export type BusinessHoursDay =
-  | 'mon'
-  | 'tue'
-  | 'wed'
-  | 'thu'
-  | 'fri'
-  | 'sat'
-  | 'sun';
+export type BusinessHoursDay = "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
 
-export type BusinessHours = Partial<
-  Record<BusinessHoursDay, string | null>
->;
+export type BusinessHours = Partial<Record<BusinessHoursDay, string | null>>;
 
 export interface CompanyInformationStats {
   total_clients: number;
@@ -57,6 +48,45 @@ export interface CompanyLegalInfo {
   nib: string | null;
 }
 
+export interface SeoOpenGraphDefaults {
+  "og:type": string;
+  "og:site_name": string;
+  "og:locale": string;
+  "og:image"?: string;
+}
+
+export interface SeoTwitterDefaults {
+  "twitter:card": string;
+  "twitter:image"?: string;
+}
+
+export interface SeoJsonLdIds {
+  organization: string;
+  website: string;
+}
+
+export interface SeoJsonLdBase {
+  "@context": string;
+  "@graph": Record<string, unknown>[];
+  _ids: SeoJsonLdIds;
+}
+
+export interface SeoDefaults {
+  title_template: string;
+  default_description: string | null;
+  default_keywords: string | null;
+  default_og_image: string | null;
+  canonical_base: string;
+  locale: string;
+  language: string;
+  site_name: string;
+  robots: string;
+  hreflang_base: Record<string, string>;
+  open_graph_defaults: SeoOpenGraphDefaults;
+  twitter_defaults: SeoTwitterDefaults;
+  json_ld_base: SeoJsonLdBase;
+}
+
 export interface CompanyInformationData {
   company_identity: CompanyIdentity;
   contact: CompanyContactInfo;
@@ -65,7 +95,7 @@ export interface CompanyInformationData {
   stats: CompanyInformationStats;
   legal: CompanyLegalInfo;
   social_media: NavigationSocialMedia | null;
-  schema_org: Record<string, unknown> | null;
+  seo_defaults: SeoDefaults;
 }
 
 export interface ContactMessagePayload {

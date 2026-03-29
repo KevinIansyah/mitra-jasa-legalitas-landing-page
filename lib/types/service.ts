@@ -8,7 +8,6 @@ export interface ServiceCategory {
   slug: string;
 }
 
-/** Response GET /service-categories */
 export interface ServiceCategoryOption {
   id: number;
   name: string;
@@ -22,7 +21,6 @@ export interface City {
   province?: string;
 }
 
-/** Response GET /cities (tanpa province) */
 export type CityListItem = Pick<City, 'id' | 'name' | 'slug'>;
 
 // ============================================================================
@@ -113,7 +111,6 @@ export interface ServicesListData {
   services: ServiceListItem[];
 }
 
-/** Satu baris GET /services/cities/{citySlug} — `packages` objek tunggal */
 export interface ServiceListCityApiItem {
   id: number;
   name: string;
@@ -194,7 +191,6 @@ export interface ServiceSeo {
   schema_markup: Record<string, unknown> | null;
 }
 
-/** Kota pada detail layanan (halaman kota tersedia). */
 export interface ServiceDetailCityPage {
   id: number;
   name: string;
@@ -213,7 +209,6 @@ export interface ServiceDetail {
   is_featured: boolean;
   is_popular: boolean;
   category: (ServiceCategory & { palette_color?: string | null }) | null;
-  /** Kota yang punya landing /varian kota untuk layanan ini */
   city_pages?: ServiceDetailCityPage[];
   seo: ServiceSeo | null;
   packages: ServicePackage[];
@@ -265,23 +260,18 @@ export interface ServiceCityPage {
 // CONSTANTS
 // ============================================================================
 
-export const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
-export const sortOptions = [
+export const SORT_OPTIONS = [
   { id: 'popular', label: 'Paling Populer' },
-  { id: 'name', label: 'Nama A–Z' },
+  { id: 'name', label: 'Nama A-Z' },
   { id: 'price_asc', label: 'Harga Terendah' },
   { id: 'price_desc', label: 'Harga Tertinggi' },
   { id: 'latest', label: 'Terbaru' },
 ];
 
-export const priceRanges = [
+export const PRICE_RANGES = [
   { id: '1', label: '< Rp 1 juta' },
-  { id: '2', label: 'Rp 1.000.000 – Rp 2.999.999' },
-  { id: '3', label: 'Rp 3.000.000 – Rp 4.999.999' },
-  { id: '4', label: 'Rp 5.000.000 – Rp 9.999.999' },
+  { id: '2', label: 'Rp 1.000.000 - Rp 2.999.999' },
+  { id: '3', label: 'Rp 3.000.000 - Rp 4.999.999' },
+  { id: '4', label: 'Rp 5.000.000 - Rp 9.999.999' },
   { id: '5', label: '≥ Rp 10 juta' },
 ];
-
-export const BRAND_ORANGE = 'oklch(0.7319 0.1856 52.89)';
-export const BRAND_BLUE = 'oklch(0.3811 0.1315 260.22)';

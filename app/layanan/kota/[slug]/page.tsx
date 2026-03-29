@@ -24,28 +24,25 @@ const getCachedCityPayload = cache(async (slug: string) => {
 export async function generateStaticParams() {
   try {
     const cities = await getCities();
-    return cities.map((c) => ({ slug: c.slug }));
+    return cities.map((city) => ({ slug: city.slug }));
   } catch {
     return [];
   }
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const payload = await getCachedCityPayload(slug);
-  if (!payload) return { title: 'Layanan per kota – Mitra Jasa Legalitas' };
+  if (!payload) return { title: 'Layanan per kota - Mitra Jasa Legalitas' };
 
   const { seo } = payload;
   const og = seo.open_graph ?? {};
   const tw = seo.twitter ?? {};
   return {
-    title: seo.meta_title ?? `Layanan — ${slug}`,
+    title: seo.meta_title ?? `Layanan - ${slug}`,
     description: seo.meta_description ?? undefined,
-    alternates: seo.canonical_url
-      ? { canonical: seo.canonical_url }
-      : undefined,
+    alternates: seo.canonical_url ? { canonical: seo.canonical_url } : undefined,
+    robots: seo.robots ?? undefined, // ← ini terlewat
     openGraph: {
       type: 'website',
       siteName: og['og:site_name'] ?? undefined,
@@ -56,10 +53,9 @@ export async function generateMetadata({
       locale: og['og:locale'] ?? 'id_ID',
     },
     twitter: {
-      card: 'summary_large_image',
+      card: (tw['twitter:card'] as 'summary_large_image') ?? 'summary_large_image', // ← pakai dari BE
       title: tw['twitter:title'] ?? seo.meta_title ?? undefined,
-      description:
-        tw['twitter:description'] ?? seo.meta_description ?? undefined,
+      description: tw['twitter:description'] ?? seo.meta_description ?? undefined,
       images: tw['twitter:image'] ? [tw['twitter:image']] : undefined,
     },
   };
@@ -67,7 +63,6 @@ export async function generateMetadata({
 
 export default async function Page({ params }: PageProps) {
   const { slug } = await params;
-
   const cityPayload = await getCachedCityPayload(slug);
 
   if (!cityPayload) {
@@ -80,10 +75,17 @@ export default async function Page({ params }: PageProps) {
     );
   }
 
-  const { city } = cityPayload;
+  const { city, seo } = cityPayload;
 
   return (
-    <div>
+    <>
+      {seo.json_ld && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(seo.json_ld) }}
+        />
+      )}
+      
       <CityHero city={city} />
       <Suspense
         fallback={
@@ -92,6 +94,6 @@ export default async function Page({ params }: PageProps) {
       >
         <CityServiceList citySlug={slug} />
       </Suspense>
-    </div>
+    </>
   );
 }

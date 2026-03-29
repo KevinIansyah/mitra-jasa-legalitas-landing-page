@@ -9,7 +9,6 @@ import { authorInitials } from '@/lib/blog-utils';
 
 const BRAND_BLUE = 'oklch(0.3811 0.1315 260.22)';
 
-/* ── Table of Contents ── */
 export function TableOfContents({ items }: { items: BlogTocItem[] }) {
   const [active, setActive] = useState<string>('');
 
@@ -62,7 +61,6 @@ export function TableOfContents({ items }: { items: BlogTocItem[] }) {
   );
 }
 
-/* ── Author Card ── */
 export function AuthorCard({ author }: { author: BlogAuthor }) {
   const initials = authorInitials(author.name);
   return (
@@ -88,14 +86,13 @@ export function AuthorCard({ author }: { author: BlogAuthor }) {
           {author.name}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">
-          {author.position ?? '—'}
+          {author.position ?? '-'}
         </p>
       </div>
     </div>
   );
 }
 
-/* ── Related Posts ── */
 export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
   if (!posts.length) return null;
   return (
@@ -104,16 +101,16 @@ export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
         Artikel Terkait
       </p>
       <ul className="space-y-4">
-        {posts.slice(0, 3).map((p) => (
-          <li key={p.slug}>
+        {posts.slice(0, 3).map((relatedPost) => (
+          <li key={relatedPost.slug}>
             <Link
-              href={`/blog/${p.slug}`}
+              href={`/blog/${relatedPost.slug}`}
               className="group flex gap-3 items-start"
             >
               <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-100 dark:bg-white/10">
-                {p.featured_image ? (
+                {relatedPost.featured_image ? (
                   <Image
-                    src={p.featured_image}
+                    src={relatedPost.featured_image}
                     alt=""
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -127,11 +124,11 @@ export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 leading-snug line-clamp-2 group-hover:text-brand-blue transition-colors">
-                  {p.title}
+                  {relatedPost.title}
                 </p>
                 <span className="inline-flex items-center gap-1 text-xs text-gray-400 mt-1">
                   <Clock className="w-3 h-3" />
-                  {p.reading_time != null ? `${p.reading_time} mnt` : '—'}
+                  {relatedPost.reading_time != null ? `${relatedPost.reading_time} mnt` : '-'}
                 </span>
               </div>
             </Link>
@@ -142,7 +139,6 @@ export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
   );
 }
 
-/* ── CTA Card ── */
 export function SidebarCta() {
   return (
     <div
@@ -167,7 +163,7 @@ export function SidebarCta() {
         className="inline-flex items-center gap-1.5 text-xs font-semibold text-white underline underline-offset-2 hover:no-underline group"
       >
         Konsultasi Gratis
-        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+        <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
       </Link>
     </div>
   );

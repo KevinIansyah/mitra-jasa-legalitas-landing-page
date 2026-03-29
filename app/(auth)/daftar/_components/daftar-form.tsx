@@ -44,7 +44,7 @@ export function DaftarForm() {
     }
     const phoneDigits = phone.replace(/\D/g, '');
     if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-      setFormError('Masukkan nomor ponsel yang valid (10–15 digit).');
+      setFormError('Masukkan nomor ponsel yang valid (10-15 digit).');
       return;
     }
     setLoading(true);

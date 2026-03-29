@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { CountUp } from './count-up';
 import type { HomeStats, WhatsappCta } from '@/lib/types/home';
+import { EASE } from '@/lib/types/constants';
 
 const documents = [
   { label: 'Akta Pendirian CV', done: true },
@@ -27,7 +28,6 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.12 } },
 };
 
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const itemVariants = {
   hidden: { opacity: 0, y: 28 },
@@ -46,9 +46,6 @@ export function HeroSection({
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-surface-page">
-      {/* ── Background blobs ── */}
-
-      {/* BLUE — top right, dominan tapi ga terlalu besar */}
       <motion.div
         aria-hidden
         className="absolute top-[-60px] right-[-40px] w-[520px] h-[520px] rounded-full pointer-events-none"
@@ -60,7 +57,6 @@ export function HeroSection({
         animate={{ scale: [1, 1.06, 1] }}
         transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
       />
-      {/* ORANGE — top right, overlap sama blue biar ada transisi warna */}
       <motion.div
         aria-hidden
         className="absolute top-[60px] right-[4%] w-[480px] h-[480px] rounded-full pointer-events-none"
@@ -77,8 +73,6 @@ export function HeroSection({
           delay: 1,
         }}
       />
-
-      {/* PURPLE — tengah, jadi jembatan visual antara blue & orange */}
       <motion.div
         aria-hidden
         className="absolute top-[80px] right-[22%] w-[380px] h-[380px] rounded-full pointer-events-none"
@@ -96,7 +90,6 @@ export function HeroSection({
         }}
       />
 
-      {/* ORANGE SECONDARY — bottom left, biar halaman seimbang */}
       <motion.div
         aria-hidden
         className="absolute bottom-[8%] left-[4%] w-[400px] h-[400px] rounded-full pointer-events-none"
@@ -113,8 +106,6 @@ export function HeroSection({
           delay: 3,
         }}
       />
-
-      {/* BLUE SECONDARY — bottom right, subtle depth */}
       <motion.div
         aria-hidden
         className="absolute bottom-0 right-[10%] w-[300px] h-[300px] rounded-full pointer-events-none"
@@ -134,14 +125,13 @@ export function HeroSection({
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-16">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          {/* ── Left Content ── */}
+          {/* ───────────────── Left ───────────────── */}
           <motion.div
             className="space-y-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
-            {/* Badge */}
             <motion.div variants={itemVariants}>
               <div
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium "
@@ -158,7 +148,6 @@ export function HeroSection({
               </div>
             </motion.div>
 
-            {/* Heading */}
             <motion.div variants={itemVariants} className="space-y-1">
               <h1 className="text-[2.4rem] md:text-[3.3rem] font-extrabold leading-[1.1] tracking-tight">
                 Konsultan Legalitas
@@ -176,7 +165,6 @@ export function HeroSection({
               </p>
             </motion.div>
 
-            {/* Description */}
             <motion.p
               variants={itemVariants}
               className="text-base lg:text-lg text-gray-500 dark:text-gray-400 max-w-md leading-relaxed"
@@ -186,18 +174,13 @@ export function HeroSection({
               legal.
             </motion.p>
 
-            {/* Stats Row */}
             <motion.div
               variants={itemVariants}
               className="flex items-center gap-6 lg:gap-10"
             >
               <div>
                 <p className="text-3xl font-extrabold">
-                  <CountUp
-                    to={stats.total_clients}
-                    suffix="+"
-                    duration={2.2}
-                  />
+                  <CountUp to={stats.total_clients} suffix="+" duration={2.2} />
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
                   Klien Terlayani
@@ -227,7 +210,6 @@ export function HeroSection({
               </div>
             </motion.div>
 
-            {/* CTA Buttons */}
             <motion.div
               variants={itemVariants}
               className="flex flex-wrap gap-4"
@@ -237,11 +219,11 @@ export function HeroSection({
                 {...(consultExternal
                   ? { target: '_blank', rel: 'noopener noreferrer' }
                   : {})}
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-white font-semibold text-sm transition-opacity hover:opacity-90 shadow-md"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-white font-semibold text-sm transition-opacity hover:opacity-90 shadow-md group"
                 style={{ backgroundColor: 'oklch(0.3811 0.1315 260.22)' }}
               >
                 {whatsappCta?.label ?? 'Mulai Konsultasi'}
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/layanan"
@@ -252,9 +234,8 @@ export function HeroSection({
             </motion.div>
           </motion.div>
 
-          {/* ── Right Visual ── */}
+          {/* ───────────────── Right ───────────────── */}
           <div className="relative h-[540px] flex items-center justify-center">
-            {/* Stats card – behind, rotated */}
             <motion.div
               className="absolute right-4 top-[70px] w-[192px] bg-white dark:bg-surface-card rounded-2xl border border-gray-100 dark:border-white/10 shadow-xl p-4 z-10"
               style={{ transformOrigin: 'center' }}
@@ -271,20 +252,20 @@ export function HeroSection({
               </p>
               <p className="text-xs text-gray-400 mt-0.5 mb-4">Total dokumen</p>
               <div className="flex items-end gap-1 h-[48px]">
-                {barHeights.map((h, i) => (
+                {barHeights.map((heightPercent, barIndex) => (
                   <motion.div
-                    key={i}
+                    key={barIndex}
                     className="flex-1 rounded-t"
                     style={{
                       backgroundColor:
-                        i === 5
+                        barIndex === 5
                           ? 'oklch(0.3811 0.1315 260.22)'
                           : 'oklch(0.3811 0.1315 260.22 / 0.18)',
                     }}
                     initial={{ height: 0 }}
-                    animate={{ height: `${h}%` }}
+                    animate={{ height: `${heightPercent}%` }}
                     transition={{
-                      delay: 0.9 + i * 0.07,
+                      delay: 0.9 + barIndex * 0.07,
                       duration: 0.5,
                       ease: 'easeOut',
                     }}
@@ -293,7 +274,7 @@ export function HeroSection({
               </div>
               <div className="flex items-center gap-1.5 mt-3">
                 <TrendingUp
-                  className="w-3.5 h-3.5"
+                  className="size-3.5"
                   style={{ color: 'oklch(0.7319 0.1856 52.89)' }}
                 />
                 <span
@@ -305,7 +286,6 @@ export function HeroSection({
               </div>
             </motion.div>
 
-            {/* Main tall card */}
             <motion.div
               className="relative z-20 w-[220px] rounded-2xl bg-white dark:bg-surface-card overflow-hidden border border-gray-100 dark:border-white/10"
               style={{
@@ -316,7 +296,6 @@ export function HeroSection({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: 0.35, duration: 0.8, ease: EASE }}
             >
-              {/* Header */}
               <div
                 className="px-5 pt-6 pb-5"
                 style={{ backgroundColor: 'oklch(0.3811 0.1315 260.22)' }}
@@ -340,20 +319,19 @@ export function HeroSection({
                 </div>
               </div>
 
-              {/* Checklist */}
               <div className="px-5 py-4 space-y-3">
-                {documents.map((item, i) => (
+                {documents.map((documentRow, documentIndex) => (
                   <motion.div
-                    key={item.label}
+                    key={documentRow.label}
                     className="flex items-center gap-3"
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.7 + i * 0.1 }}
+                    transition={{ delay: 0.7 + documentIndex * 0.1 }}
                   >
                     <CheckCircle2
                       className="w-4 h-4 shrink-0"
                       style={{
-                        color: item.done
+                        color: documentRow.done
                           ? 'oklch(0.3811 0.1315 260.22)'
                           : 'oklch(0.82 0 0)',
                       }}
@@ -361,16 +339,15 @@ export function HeroSection({
                     <span
                       className="text-xs"
                       style={{
-                        color: item.done ? '' : 'oklch(0.68 0 0)',
+                        color: documentRow.done ? '' : 'oklch(0.68 0 0)',
                       }}
                     >
-                      {item.label}
+                      {documentRow.label}
                     </span>
                   </motion.div>
                 ))}
               </div>
 
-              {/* Progress */}
               <div className="px-5 pb-6">
                 <div className="flex justify-between text-xs text-gray-400 mb-2">
                   <span>Progress</span>
@@ -388,7 +365,6 @@ export function HeroSection({
               </div>
             </motion.div>
 
-            {/* Floating: rating */}
             <motion.div
               className="absolute bottom-16 left-2 z-30 flex items-center gap-3 bg-white dark:bg-surface-card rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 px-4 py-3"
               initial={{ opacity: 0, x: -24 }}
@@ -400,7 +376,7 @@ export function HeroSection({
                 style={{ backgroundColor: 'oklch(0.7319 0.1856 52.89 / 0.12)' }}
               >
                 <Star
-                  className="w-5 h-5"
+                  className="size-5"
                   style={{ color: 'oklch(0.7319 0.1856 52.89)' }}
                   fill="oklch(0.7319 0.1856 52.89)"
                 />
@@ -413,7 +389,6 @@ export function HeroSection({
               </div>
             </motion.div>
 
-            {/* Floating: verified badge */}
             <motion.div
               className="absolute top-14 left-6 z-30 flex items-center gap-2.5 bg-white dark:bg-surface-card rounded-2xl shadow-lg border border-gray-100 dark:border-white/10 px-3.5 py-2.5"
               initial={{ opacity: 0, y: -20 }}
@@ -425,7 +400,7 @@ export function HeroSection({
                 style={{ backgroundColor: 'oklch(0.3811 0.1315 260.22 / 0.1)' }}
               >
                 <Shield
-                  className="w-4 h-4"
+                  className="size-4"
                   style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
                 />
               </div>
@@ -435,7 +410,6 @@ export function HeroSection({
               </div>
             </motion.div>
 
-            {/* Floating: daily doc count */}
             <motion.div
               className="absolute bottom-24 right-0 z-30 flex items-center gap-2.5 bg-white dark:bg-surface-card rounded-2xl shadow-lg border border-gray-100 dark:border-white/10 px-3.5 py-2.5"
               initial={{ opacity: 0, x: 20 }}
@@ -447,14 +421,18 @@ export function HeroSection({
                 style={{ backgroundColor: 'oklch(0.7319 0.1856 52.89 / 0.12)' }}
               >
                 <FileCheck
-                  className="w-4 h-4"
+                  className="size-4"
                   style={{ color: 'oklch(0.7319 0.1856 52.89)' }}
                 />
               </div>
               <div>
                 <p className="text-xs text-gray-400">Layanan aktif</p>
                 <p className="text-xs font-bold">
-                  <CountUp to={stats.total_services} suffix=" layanan" duration={2} />
+                  <CountUp
+                    to={stats.total_services}
+                    suffix=" layanan"
+                    duration={2}
+                  />
                 </p>
               </div>
             </motion.div>

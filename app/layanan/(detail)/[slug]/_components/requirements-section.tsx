@@ -50,16 +50,16 @@ export function RequirementsSection({
 
         <div className="space-y-3">
           {categories
-            .sort((a, b) => a.sort_order - b.sort_order)
-            .map((cat, ci) => {
-              const isOpen = openCat === ci;
-              const requiredCount = cat.requirements.filter(
-                (r) => r.is_required,
+            .sort((left, right) => left.sort_order - right.sort_order)
+            .map((categoryGroup, categoryIndex) => {
+              const isOpen = openCat === categoryIndex;
+              const requiredCount = categoryGroup.requirements.filter(
+                (requirement) => requirement.is_required,
               ).length;
 
               return (
                 <div
-                  key={cat.name}
+                  key={categoryGroup.name}
                   className="blog-card group/cat rounded-2xl border border-gray-200 dark:border-white/10 bg-surface-card overflow-hidden"
                   style={
                     isOpen
@@ -72,9 +72,8 @@ export function RequirementsSection({
                       : undefined
                   }
                 >
-                  {/* Category header */}
                   <button
-                    onClick={() => setOpenCat(isOpen ? -1 : ci)}
+                    onClick={() => setOpenCat(isOpen ? -1 : categoryIndex)}
                     className="flex items-center justify-between w-full p-5 text-left"
                   >
                     <div className="flex items-center gap-3">
@@ -97,10 +96,10 @@ export function RequirementsSection({
                       </div>
                       <div>
                         <p className="text-sm font-bold text-gray-900 dark:text-gray-100 leading-snug group-hover/cat:text-brand-blue transition-colors">
-                          {cat.name}
+                          {categoryGroup.name}
                         </p>
                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                          {cat.requirements.length} dokumen &bull;{' '}
+                          {categoryGroup.requirements.length} dokumen &bull;{' '}
                           {requiredCount} wajib
                         </p>
                       </div>
@@ -110,7 +109,6 @@ export function RequirementsSection({
                     />
                   </button>
 
-                  {/* Requirements list */}
                   <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
@@ -121,21 +119,20 @@ export function RequirementsSection({
                         style={{ overflow: 'hidden' }}
                       >
                         <div className="px-5 pb-5 border-t border-gray-100 dark:border-white/8 pt-4 space-y-3">
-                          {/* Category description */}
-                          {cat.description && (
+                          {categoryGroup.description && (
                             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
-                              {cat.description}
+                              {categoryGroup.description}
                             </p>
                           )}
 
-                          {cat.requirements
-                            .sort((a, b) => a.sort_order - b.sort_order)
-                            .map((req) => (
+                          {categoryGroup.requirements
+                            .sort((left, right) => left.sort_order - right.sort_order)
+                            .map((requirement) => (
                               <div
-                                key={req.name}
+                                key={requirement.name}
                                 className="bg-surface-card group/req flex items-start gap-3 p-5 rounded-xl  border border-gray-100 dark:border-white/8"
                               >
-                                {req.is_required ? (
+                                {requirement.is_required ? (
                                   <FileCheck
                                     className="w-4 h-4 shrink-0 mt-0.5"
                                     style={{
@@ -148,9 +145,9 @@ export function RequirementsSection({
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-center gap-2 flex-wrap">
                                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-snug transition-colors group-hover/req:text-brand-blue">
-                                      {req.name}
+                                      {requirement.name}
                                     </p>
-                                    {req.is_required ? (
+                                    {requirement.is_required ? (
                                       <span className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap bg-red-50 dark:bg-red-900/20 text-red-500">
                                         Wajib
                                       </span>
@@ -159,39 +156,39 @@ export function RequirementsSection({
                                         Opsional
                                       </span>
                                     )}
-                                    {req.document_format?.trim() ? (
+                                    {requirement.document_format?.trim() ? (
                                       <span
                                         className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap text-white uppercase"
                                         style={{
                                           backgroundColor: getFormatColor(
-                                            req.document_format,
+                                            requirement.document_format,
                                           ),
                                         }}
                                       >
-                                        {req.document_format}
+                                        {requirement.document_format}
                                       </span>
                                     ) : null}
                                   </div>
                                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
-                                    {req.description}
+                                    {requirement.description}
                                   </p>
-                                  {req.notes && (
+                                  {requirement.notes && (
                                     <div
                                       className="flex items-start gap-2.5 rounded-xl p-3 mt-4"
                                       style={{
-                                        backgroundColor: `${getFormatColor(req.document_format).replace(')', ' / 0.06)')}`,
+                                        backgroundColor: `${getFormatColor(requirement.document_format).replace(')', ' / 0.06)')}`,
                                       }}
                                     >
                                       <Info
                                         className="w-3.5 h-3.5 shrink-0 mt-0.5"
                                         style={{
                                           color: getFormatColor(
-                                            req.document_format,
+                                            requirement.document_format,
                                           ) as string,
                                         }}
                                       />
                                       <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                                        {req.notes}
+                                        {requirement.notes}
                                       </p>
                                     </div>
                                   )}

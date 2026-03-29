@@ -1,7 +1,3 @@
-/**
- * Query string halaman /blog — sinkron dengan filter & API (category[], tag[], q).
- */
-
 export type BlogListUrlState = {
   category: string[];
   tag: string[];
@@ -17,29 +13,33 @@ function uniqueStrings(values: string[]): string[] {
   return [...new Set(values.filter(Boolean))];
 }
 
-function toValArray(v: string | string[] | undefined): string[] {
-  if (v === undefined) return [];
-  return Array.isArray(v) ? v : [v];
+function toValArray(value: string | string[] | undefined): string[] {
+  if (value === undefined) return [];
+  return Array.isArray(value) ? value : [value];
 }
 
-/** Untuk `searchParams` Server Component Next.js. */
 export function parseBlogListQueryFromRecord(
-  r: Record<string, string | string[] | undefined>,
+  queryRecord: Record<string, string | string[] | undefined>,
 ): BlogListUrlState {
   const category: string[] = [];
   const tag: string[] = [];
   let q = '';
 
-  for (const [key, val] of Object.entries(r)) {
-    if (key === 'q') {
-      q = typeof val === 'string' ? val : Array.isArray(val) ? val[0] ?? '' : '';
+  for (const [paramKey, paramValue] of Object.entries(queryRecord)) {
+    if (paramKey === 'q') {
+      q =
+        typeof paramValue === 'string'
+          ? paramValue
+          : Array.isArray(paramValue)
+            ? paramValue[0] ?? ''
+            : '';
       continue;
     }
-    if (key === 'category' || key === 'category[]') {
-      category.push(...toValArray(val).filter(Boolean));
+    if (paramKey === 'category' || paramKey === 'category[]') {
+      category.push(...toValArray(paramValue).filter(Boolean));
     }
-    if (key === 'tag' || key === 'tag[]') {
-      tag.push(...toValArray(val).filter(Boolean));
+    if (paramKey === 'tag' || paramKey === 'tag[]') {
+      tag.push(...toValArray(paramValue).filter(Boolean));
     }
   }
 
@@ -50,7 +50,6 @@ export function parseBlogListQueryFromRecord(
   };
 }
 
-/** Untuk `useSearchParams()` / URLSearchParams. */
 export function parseBlogListQuery(sp: SearchParamsLike): BlogListUrlState {
   const category = uniqueStrings([
     ...sp.getAll('category[]'),
@@ -61,7 +60,6 @@ export function parseBlogListQuery(sp: SearchParamsLike): BlogListUrlState {
   return { category, tag, q: q.trim() };
 }
 
-/** Stabil untuk membandingkan state server vs client (hindari double fetch). */
 export function serializeBlogListState(state: BlogListUrlState): string {
   return JSON.stringify({
     category: [...state.category].sort(),
@@ -70,14 +68,13 @@ export function serializeBlogListState(state: BlogListUrlState): string {
   });
 }
 
-/** String query untuk `router.replace` (tanpa `?`). */
 export function buildBlogListQuery(state: BlogListUrlState): string {
   const sp = new URLSearchParams();
-  for (const c of state.category) {
-    if (c.trim()) sp.append('category[]', c.trim());
+  for (const categorySlug of state.category) {
+    if (categorySlug.trim()) sp.append('category[]', categorySlug.trim());
   }
-  for (const t of state.tag) {
-    if (t.trim()) sp.append('tag[]', t.trim());
+  for (const tagSlug of state.tag) {
+    if (tagSlug.trim()) sp.append('tag[]', tagSlug.trim());
   }
   if (state.q.trim()) {
     sp.set('q', state.q.trim());

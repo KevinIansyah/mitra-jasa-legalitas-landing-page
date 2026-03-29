@@ -2,9 +2,6 @@
 
 import { motion } from 'framer-motion';
 
-/**
- * Blob latar seperti di hero home — radial gradient + blur + animasi halus.
- */
 export function AuthBlobs() {
   return (
     <>

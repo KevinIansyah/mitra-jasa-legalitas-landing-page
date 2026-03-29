@@ -1,13 +1,11 @@
 import type { ReactNode } from 'react';
 
-export const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
-
 export const hero = {
   badge: 'Perusahaan',
   titleLead: 'Tentang',
   titleAccent: 'Mitra Jasa Legalitas',
   description:
-    'Konsultan legalitas dan perizinan usaha yang mendampingi ribuan pengusaha Indonesia sejak 2014 — dengan integritas, kecepatan, dan layanan yang ramah.',
+    'Konsultan legalitas dan perizinan usaha yang mendampingi ribuan pengusaha Indonesia sejak 2014 - dengan integritas, kecepatan, dan layanan yang ramah.',
   chips: [
     { label: 'Surabaya, Jawa Timur', showPin: true as const },
     { label: 'Sejak 2014', showPin: false as const },
@@ -46,7 +44,7 @@ export const history = {
       </strong>
       , kami telah membantu lebih dari{' '}
       <strong className="text-gray-800 dark:text-gray-200">2.200+ klien</strong>{' '}
-      dari berbagai skala usaha — mulai dari UMKM hingga perusahaan besar.
+      dari berbagai skala usaha - mulai dari UMKM hingga perusahaan besar.
       Dengan total{' '}
       <strong className="text-gray-800 dark:text-gray-200">
         4.756+ dokumen legal
@@ -214,12 +212,12 @@ export const valuesSection = {
     </>
   ),
   description:
-    'Enam pilar ini memandu cara kami bekerja setiap hari — dari konsultasi pertama hingga serah terima dokumen.',
+    'Enam pilar ini memandu cara kami bekerja setiap hari - dari konsultasi pertama hingga serah terima dokumen.',
 };
 
 export const cta = {
   title: 'Siap wujudkan legalitas bisnis Anda?',
-  subtitle: 'Konsultasi gratis dengan tim kami — tanpa komitmen di awal.',
+  subtitle: 'Konsultasi gratis dengan tim kami - tanpa komitmen di awal.',
   primary: { href: '/layanan', label: 'Lihat Layanan' },
   secondary: { href: '/kontak', label: 'Hubungi Kami' },
 };

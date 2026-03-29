@@ -1,6 +1,3 @@
-/**
- * Layanan — fetch server (`apiServer`) untuk RSC & metadata.
- */
 
 import { apiServer } from '@/lib/api/server';
 import {

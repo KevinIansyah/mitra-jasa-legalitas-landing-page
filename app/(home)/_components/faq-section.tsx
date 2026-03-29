@@ -6,8 +6,7 @@ import { Plus, Minus } from 'lucide-react';
 import { SectionHeading } from '../../../components/section-heading';
 import Link from 'next/link';
 import type { Faq } from '@/lib/types/home';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 export function FaqSection({ faqs }: { faqs: Faq[] }) {
   const [openId, setOpenId] = useState<string | null>(
@@ -21,7 +20,6 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
   return (
     <section className="py-20 lg:py-28 bg-surface-card">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* ── Heading ── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -54,15 +52,14 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
           />
         </motion.div>
 
-        {/* ── FAQ List ── */}
         <div className="space-y-3">
           {faqs.map((faq) => {
-            const fid = String(faq.id);
-            const isOpen = openId === fid;
+            const faqId = String(faq.id);
+            const isOpen = openId === faqId;
 
             return (
               <motion.div
-                key={fid}
+                key={faqId}
                 layout
                 className={`group/faq relative rounded-xl transition-all duration-300 blog-card ${
                   isOpen
@@ -84,7 +81,7 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
                 <div className="overflow-hidden rounded-xl">
                   <button
                     type="button"
-                    onClick={() => setOpenId(isOpen ? null : fid)}
+                    onClick={() => setOpenId(isOpen ? null : faqId)}
                     className="flex items-center gap-4 w-full p-5 text-left transition-colors active:bg-gray-50/90 dark:active:bg-white/5"
                   >
                     <span className="flex-1 text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug transition-colors group-hover/faq:text-brand-blue">

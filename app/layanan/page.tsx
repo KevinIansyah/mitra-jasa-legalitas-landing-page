@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
     };
   } catch {
     return {
-      title: 'Layanan – Mitra Jasa Legalitas',
+      title: 'Layanan - Mitra Jasa Legalitas',
       description: 'Temukan semua layanan legalitas bisnis kami.',
     };
   }
@@ -65,6 +65,7 @@ export default async function LayananPage() {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
+      
       <ServiceHero serviceCount={serviceCount} categoryCount={categoryCount} />
       <Suspense
         fallback={

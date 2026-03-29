@@ -94,7 +94,7 @@ function RecommendedPackageCta({
         `Halo, saya tertarik dengan layanan ${serviceName}`,
       )
     : '';
-  const included = pkg.features.filter((f) => f.is_included);
+  const included = pkg.features.filter((feature) => feature.is_included);
 
   return (
     <div
@@ -105,7 +105,7 @@ function RecommendedPackageCta({
         className="w-10 h-10 rounded-xl flex items-center justify-center"
         style={{ backgroundColor: 'oklch(1 0 0 / 0.15)' }}
       >
-        <Sparkles className="w-5 h-5 text-white" aria-hidden />
+        <Sparkles className="size-5 text-white" aria-hidden />
       </div>
       <p className="text-xs font-bold uppercase tracking-widest text-white/70">
         Paket Rekomendasi
@@ -118,13 +118,13 @@ function RecommendedPackageCta({
       </p>
       {included.length > 0 ? (
         <ul className="space-y-1.5 pt-1">
-          {included.slice(0, 4).map((f) => (
+          {included.slice(0, 4).map((includedFeature) => (
             <li
-              key={f.feature_name}
+              key={includedFeature.feature_name}
               className="flex items-start gap-2 text-xs text-white/85 leading-snug"
             >
               <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-white/80" />
-              <span>{f.feature_name}</span>
+              <span>{includedFeature.feature_name}</span>
             </li>
           ))}
           {included.length > 4 ? (
@@ -142,7 +142,7 @@ function RecommendedPackageCta({
             rel="noopener noreferrer"
             className="flex justify-center items-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-white/90 transition-colors"
           >
-            <MessageCircle className="w-4 h-4 shrink-0" aria-hidden />
+            <MessageCircle className="size-4 shrink-0" aria-hidden />
             Konsultasi via WhatsApp
           </a>
         ) : (
@@ -150,16 +150,16 @@ function RecommendedPackageCta({
             href="/kontak"
             className="flex justify-center items-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-white/90 transition-colors"
           >
-            <MessageCircle className="w-4 h-4 shrink-0" aria-hidden />
+            <MessageCircle className="size-4 shrink-0" aria-hidden />
             Hubungi kami
           </Link>
         )}
         <a
           href="#paket"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-white underline underline-offset-2 hover:no-underline group"
+          className="inline-flex items-center gap-1 text-xs font-semibold text-white underline underline-offset-2 hover:no-underline group"
         >
           Lihat semua paket
-          <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+          <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
         </a>
       </div>
     </div>

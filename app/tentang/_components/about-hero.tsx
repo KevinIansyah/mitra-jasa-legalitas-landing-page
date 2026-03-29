@@ -2,12 +2,12 @@
 
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
-import { EASE, hero } from '../_data/about';
+import { hero } from '../_data/about';
+import { EASE } from '@/lib/types/constants';
 
-export function TentangHero() {
+export function AboutHero() {
   return (
     <section className="relative overflow-hidden bg-surface-page pt-16 pb-16 lg:pb-20">
-      {/* Blobs */}
       <motion.div
         aria-hidden
         className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
@@ -52,7 +52,7 @@ export function TentangHero() {
 
           <p className="text-base text-gray-500 dark:text-gray-400 leading-relaxed mb-8 max-w-xl">
             Konsultan legalitas dan perizinan usaha yang mendampingi ribuan
-            pengusaha Indonesia sejak 2014 — dengan integritas, kecepatan, dan
+            pengusaha Indonesia sejak 2014 - dengan integritas, kecepatan, dan
             layanan yang ramah.
           </p>
 

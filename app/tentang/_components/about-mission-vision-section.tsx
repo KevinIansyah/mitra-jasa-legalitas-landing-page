@@ -2,9 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { Target, Eye } from 'lucide-react';
-import { EASE, missionVision } from '../_data/about';
+import { missionVision } from '../_data/about';
+import { EASE } from '@/lib/types/constants';
 
-export function TentangMissionVisionSection() {
+export function AboutMissionVisionSection() {
   return (
     <section className="py-16 lg:py-20 bg-surface-card">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

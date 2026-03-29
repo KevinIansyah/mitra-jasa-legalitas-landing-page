@@ -4,8 +4,7 @@ import { motion } from 'framer-motion';
 import { MapPin, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import type { City } from '@/lib/types/service';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 type CityHeroProps = {
   city: Pick<City, 'name' | 'slug' | 'province'>;

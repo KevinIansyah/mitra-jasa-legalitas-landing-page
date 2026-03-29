@@ -9,18 +9,12 @@ import {
 
 const URL_RE = /https?:\/\/[^\s<]+/g;
 
-/** 08… / +62… / 62… — nomor dimulai 8 setelah kode negara atau 0 */
 const PHONE_RE = /(?:\+62\s*|62\s*|0)8[1-9]\d{0,2}(?:[-\s]?\d{3,4}){1,3}/g;
 
 function trimTrailingUrlPunctuation(url: string): string {
   return url.replace(/[.,;:!?)'»\]]+$/u, '');
 }
 
-/**
- * Normalisasi sebelum split URL:
- * - Markdown `[label](url)` → hanya `url` (tombol tetap pakai hostname)
- * - `[` menggantung sebelum `https://` (model sering salah format) → buang `[`
- */
 function prepareTextForUrlSplit(text: string): string {
   let s = text;
   s = s.replace(/\[([^\]]*)\]\((https?:\/\/[^)]+)\)/g, '$2');
@@ -178,10 +172,6 @@ function renderBoldAndPhones(text: string): ReactNode {
   });
 }
 
-/**
- * Pesan bot: **bold**, URL → tombol (teks panjang tidak ditampilkan mentah),
- * nomor WA → nomor tetap tampil + tombol WhatsApp.
- */
 export function ChatBotMessageContent({ text }: { text: string }) {
   const urlParts = splitUrls(prepareTextForUrlSplit(text));
 

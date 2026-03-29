@@ -1,10 +1,10 @@
-/**
- * Blog — fetch server (`apiServer`) untuk RSC & metadata.
- */
-
 import { apiServer } from '@/lib/api/server';
 import { buildBlogsPath, type BlogsListParams } from '@/lib/api/endpoints/blog';
-import type { BlogCategory, BlogDetail, BlogsListPageData } from '@/lib/types/blog';
+import type {
+  BlogCategory,
+  BlogDetail,
+  BlogsListPageData,
+} from '@/lib/types/blog';
 
 export async function getBlogsList(
   params: BlogsListParams = {},

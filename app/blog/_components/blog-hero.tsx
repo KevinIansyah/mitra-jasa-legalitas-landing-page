@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, BookOpen, TrendingUp, Users } from 'lucide-react';
 import { CountUp } from '@/app/(home)/_components/count-up';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 type BlogHeroProps = {
   totalArticles?: number;
@@ -110,7 +109,7 @@ export function BlogHero({
               variants={itemVariants}
               className="text-base text-gray-500 dark:text-gray-400 leading-relaxed mb-8 max-w-xl"
             >
-              Artikel praktis dari tim konsultan kami — dari cara mendirikan
+              Artikel praktis dari tim konsultan kami - dari cara mendirikan
               perusahaan, mengurus perizinan, hingga strategi perlindungan
               kekayaan intelektual.
             </motion.p>
@@ -121,11 +120,11 @@ export function BlogHero({
             >
               <Link
                 href="/daftar"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 group"
                 style={{ backgroundColor: 'oklch(0.3811 0.1315 260.22)' }}
               >
                 Konsultasi Gratis
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="#newsletter"
@@ -142,9 +141,9 @@ export function BlogHero({
             animate="visible"
             className="flex flex-row flex-wrap lg:flex-col gap-4 lg:gap-3 shrink-0"
           >
-            {stats.map((s) => (
+            {stats.map((statItem) => (
               <motion.div
-                key={s.label}
+                key={statItem.label}
                 variants={itemVariants}
                 className="flex items-center gap-3 bg-white dark:bg-surface-card rounded-2xl border border-gray-100 dark:border-white/10 px-5 py-3"
               >
@@ -154,20 +153,20 @@ export function BlogHero({
                     backgroundColor: 'oklch(0.3811 0.1315 260.22 / 0.08)',
                   }}
                 >
-                  <s.icon
-                    className="w-4 h-4"
+                  <statItem.icon
+                    className="size-4"
                     style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
                   />
                 </div>
                 <div>
                   <CountUp
-                    to={s.countTo}
-                    suffix={s.suffix}
+                    to={statItem.countTo}
+                    suffix={statItem.suffix}
                     duration={2}
                     className="text-lg font-extrabold text-gray-900 dark:text-white leading-none"
                   />
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                    {s.label}
+                    {statItem.label}
                   </p>
                 </div>
               </motion.div>

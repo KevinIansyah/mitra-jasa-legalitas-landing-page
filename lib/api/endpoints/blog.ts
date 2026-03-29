@@ -1,8 +1,3 @@
-/**
- * Blog — path builder & fetch klien (`apiClient`), dipakai komponen `'use client'`.
- * Untuk RSC / Server Actions gunakan `blog.server.ts`.
- * API: ?category[]=slug&tag[]=slug&page=
- */
 
 import { apiClient } from '@/lib/api/client';
 import type { BlogCategory, BlogsListPageData } from '@/lib/types/blog';
@@ -19,13 +14,13 @@ export function buildBlogsPath(params: BlogsListParams = {}): string {
   if (page > 1) {
     sp.set('page', String(page));
   }
-  for (const c of params.category ?? []) {
-    const s = c.trim();
-    if (s) sp.append('category[]', s);
+  for (const categorySlug of params.category ?? []) {
+    const trimmed = categorySlug.trim();
+    if (trimmed) sp.append('category[]', trimmed);
   }
-  for (const t of params.tag ?? []) {
-    const s = t.trim();
-    if (s) sp.append('tag[]', s);
+  for (const tagSlug of params.tag ?? []) {
+    const trimmed = tagSlug.trim();
+    if (trimmed) sp.append('tag[]', trimmed);
   }
   const q = sp.toString();
   return `/blogs${q ? `?${q}` : ''}`;

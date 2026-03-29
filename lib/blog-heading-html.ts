@@ -1,18 +1,15 @@
 import type { BlogTocItem } from '@/lib/types/blog';
 
-function stripHtmlTags(s: string): string {
-  return s.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+function stripHtmlTags(htmlFragment: string): string {
+  return htmlFragment.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
 }
 
-/**
- * Menambahkan id pada h2/h3 untuk anchor & TOC; output mengikuti urutan dokumen.
- */
 export function addHeadingIdsToHtml(html: string): { html: string; toc: BlogTocItem[] } {
   const toc: BlogTocItem[] = [];
   const used = new Set<string>();
 
   const makeId = (text: string): string => {
-    let base = text
+    const base = text
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
@@ -37,8 +34,8 @@ export function addHeadingIdsToHtml(html: string): { html: string; toc: BlogTocI
       const existing = attrsStr.match(/\sid\s*=\s*["']([^"']+)["']/i)?.[1];
       const id = existing ?? makeId(text);
       if (existing) used.add(existing);
-      const lv = (level === '2' ? 2 : 3) as 2 | 3;
-      toc.push({ id, title: text, level: lv });
+      const headingLevel = (level === '2' ? 2 : 3) as 2 | 3;
+      toc.push({ id, title: text, level: headingLevel });
       if (existing) return full;
       return `<h${level}${attrsStr} id="${id}">${inner}</h${level}>`;
     },

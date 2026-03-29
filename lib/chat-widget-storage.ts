@@ -17,14 +17,14 @@ type Persisted = {
   messages: ChatThreadMessage[];
 };
 
-function isMessage(x: unknown): x is ChatThreadMessage {
-  if (typeof x !== "object" || x === null) return false;
-  const m = x as Record<string, unknown>;
+function isMessage(candidate: unknown): candidate is ChatThreadMessage {
+  if (typeof candidate !== "object" || candidate === null) return false;
+  const record = candidate as Record<string, unknown>;
   return (
-    typeof m.id === "string" &&
-    (m.role === "bot" || m.role === "user") &&
-    typeof m.text === "string" &&
-    typeof m.time === "string"
+    typeof record.id === "string" &&
+    (record.role === "bot" || record.role === "user") &&
+    typeof record.text === "string" &&
+    typeof record.time === "string"
   );
 }
 

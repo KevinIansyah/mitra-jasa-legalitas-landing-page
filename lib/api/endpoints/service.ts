@@ -1,7 +1,3 @@
-/**
- * Layanan — path builder & fetch klien (`apiClient`), dipakai komponen `'use client'`.
- * Untuk RSC / Server Actions gunakan `service.server.ts`.
- */
 
 import { apiClient } from '@/lib/api/client';
 import type {
@@ -10,8 +6,6 @@ import type {
   ServicesByCityData,
   ServicesListData,
 } from '@/lib/types/service';
-
-// ── Query GET /services (list layanan) ─────────────────────────────────────
 
 export type ServicesListParams = {
   category?: string[];
@@ -33,8 +27,8 @@ export function buildServicesListPath(params: ServicesListParams): string {
   for (const slug of params.category ?? []) {
     sp.append('category[]', slug);
   }
-  for (const p of params.price ?? []) {
-    sp.append('price[]', p);
+  for (const priceRangeId of params.price ?? []) {
+    sp.append('price[]', priceRangeId);
   }
 
   const sortKey = params.sort;
@@ -46,8 +40,7 @@ export function buildServicesListPath(params: ServicesListParams): string {
   const q = sp.toString();
   return `/services${q ? `?${q}` : ''}`;
 }
-
-/** GET /services/cities/{citySlug} — query sama seperti list global */
+  
 export function buildServicesByCityPath(
   citySlug: string,
   params: ServicesListParams,
@@ -57,8 +50,8 @@ export function buildServicesByCityPath(
   for (const slug of params.category ?? []) {
     sp.append('category[]', slug);
   }
-  for (const p of params.price ?? []) {
-    sp.append('price[]', p);
+  for (const priceRangeId of params.price ?? []) {
+    sp.append('price[]', priceRangeId);
   }
 
   const sortKey = params.sort;
@@ -70,8 +63,6 @@ export function buildServicesByCityPath(
   const q = sp.toString();
   return `/services/cities/${encodeURIComponent(citySlug)}${q ? `?${q}` : ''}`;
 }
-
-// ── Client API ─────────────────────────────────────────────────────────────
 
 export async function fetchServicesList(
   params: ServicesListParams = {},

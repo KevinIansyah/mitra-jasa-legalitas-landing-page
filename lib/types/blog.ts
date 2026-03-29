@@ -1,5 +1,5 @@
-import type { PaginationMeta } from '@/lib/types/api';
-import type { ServicesListSeo } from '@/lib/types/service';
+import type { PaginationMeta } from "@/lib/types/api";
+import type { ServicesListSeo } from "@/lib/types/service";
 
 // ============================================================================
 // SHARED
@@ -23,6 +23,17 @@ export interface BlogAuthor {
   avatar: string | null;
   position: string | null;
   bio: string | null;
+}
+
+export interface BlogPost {
+  slug: string;
+  category: string;
+  categoryColor: string;
+  title: string;
+  excerpt: string;
+  readTime: string;
+  badge?: string;
+  imageUrl: string | null;
 }
 
 // ============================================================================
@@ -67,7 +78,6 @@ export interface BlogTocItem {
 export interface BlogDetail extends BlogCard {
   content: string | null;
   seo: BlogSeo | null;
-  /** Artikel terkait dari API (boleh kosong). */
   related?: BlogCard[];
 }
 

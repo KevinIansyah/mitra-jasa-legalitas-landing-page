@@ -20,8 +20,7 @@ import { ApiError } from '@/lib/types/api';
 import type { CompanyInformationData } from '@/lib/types/company-information';
 import { zoomOutGoogleMapsEmbedUrl } from '@/lib/google-maps-embed';
 import { whatsappWaMeUrl } from '@/lib/whatsapp-cta';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 const subjectOptions = [
   'Pendirian PT / CV',
@@ -255,70 +254,6 @@ export function ContactSection({ data }: Props) {
                 </div>
               </a>
             </div>
-
-            {/* {social_media && Object.values(social_media).some(Boolean) && (
-              <div className="flex flex-wrap gap-2 pt-1">
-                <p className="text-xs text-gray-400 w-full mb-1">
-                  Media sosial
-                </p>
-                {(
-                  [
-                    ['whatsapp', 'WhatsApp'],
-                    ['instagram', 'Instagram'],
-                    ['facebook', 'Facebook'],
-                    ['youtube', 'YouTube'],
-                    ['linkedin', 'LinkedIn'],
-                    ['tiktok', 'TikTok'],
-                    ['twitter', 'X'],
-                    ['threads', 'Threads'],
-                  ] as const
-                ).map(([key, label]) => {
-                  const url = social_media[key];
-                  if (!url?.trim()) return null;
-                  return (
-                    <a
-                      key={key}
-                      href={url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs font-medium px-2.5 py-1 rounded-full bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-colors"
-                    >
-                      {label}
-                    </a>
-                  );
-                })}
-              </div>
-            )}
-
-            {(legal.npwp || legal.nib || legal.registration_number) && (
-              <div className="rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4 space-y-2">
-                <p className="text-xs font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
-                  <Building2 className="w-3.5 h-3.5" />
-                  Data legal
-                </p>
-                <ul className="text-[11px] text-gray-500 dark:text-gray-400 space-y-1.5">
-                  <li>
-                    Bentuk: {legal.entity_type}
-                    {legal.registration_number && (
-                      <span className="ml-1">
-                        · No. registrasi: {legal.registration_number}
-                      </span>
-                    )}
-                  </li>
-                  {legal.npwp && (
-                    <li className="flex gap-1.5 items-start">
-                      <FileText className="w-3 h-3 shrink-0" />
-                      NPWP: {legal.npwp}
-                    </li>
-                  )}
-                  {legal.nib && (
-                    <li>
-                      NIB: {legal.nib}
-                    </li>
-                  )}
-                </ul>
-              </div>
-            )} */}
           </motion.div>
 
           <motion.div
@@ -461,9 +396,9 @@ export function ContactSection({ data }: Props) {
                       <SelectContent>
                         <SelectLabel>Topik</SelectLabel>
                         <SelectItem value="none">Opsional</SelectItem>
-                        {subjectOptions.map((o) => (
-                          <SelectItem key={o} value={o}>
-                            {o}
+                        {subjectOptions.map((subjectLabel) => (
+                          <SelectItem key={subjectLabel} value={subjectLabel}>
+                            {subjectLabel}
                           </SelectItem>
                         ))}
                       </SelectContent>

@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Clock, FileText, Info, ChevronDown } from 'lucide-react';
 import type { ServiceProcessStep as ProcessStep } from '@/lib/types/service';
 import { SectionHeading } from '@/components/section-heading';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 const STEP_COLORS = [
   'oklch(0.3811 0.1315 260.22)',
@@ -40,10 +39,10 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
         <div className="relative">
           <div className="space-y-4">
             {steps
-              .sort((a, b) => a.sort_order - b.sort_order)
-              .map((step, i) => {
-                const color = STEP_COLORS[i % STEP_COLORS.length];
-                const isExpanded = expandedStep === i;
+              .sort((left, right) => left.sort_order - right.sort_order)
+              .map((step, stepIndex) => {
+                const color = STEP_COLORS[stepIndex % STEP_COLORS.length];
+                const isExpanded = expandedStep === stepIndex;
                 const hasExtra = step.required_documents || step.notes;
 
                 return (
@@ -52,7 +51,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                     initial={{ opacity: 0, x: -20 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: '-40px' }}
-                    transition={{ duration: 0.45, delay: i * 0.07, ease: EASE }}
+                    transition={{ duration: 0.45, delay: stepIndex * 0.07, ease: EASE }}
                     className="relative sm:pl-16"
                   >
                     {/* Step number circle */}
@@ -66,12 +65,12 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                         className="text-sm font-extrabold"
                         style={{ color }}
                       >
-                        {String(i + 1).padStart(2, '0')}
+                        {String(stepIndex + 1).padStart(2, '0')}
                       </span>
                     </div>
 
                     {/*  Connector step */}
-                    {i < steps.length - 1 && (
+                    {stepIndex < steps.length - 1 && (
                       <div
                         aria-hidden
                         className="hidden sm:block absolute z-0 border-l-2 border-dashed border-gray-300 dark:border-white/15 h-[calc(100%-44px)]"
@@ -113,7 +112,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                             className="text-xs font-extrabold"
                             style={{ color }}
                           >
-                            {String(i + 1).padStart(2, '0')}
+                            {String(stepIndex + 1).padStart(2, '0')}
                           </span>
                         </div>
 
@@ -143,7 +142,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                           {hasExtra && (
                             <button
                               onClick={() =>
-                                setExpandedStep(isExpanded ? null : i)
+                                setExpandedStep(isExpanded ? null : stepIndex)
                               }
                               className="mt-3 flex items-center gap-1.5 text-xs font-semibold transition-colors"
                               style={{ color }}
@@ -186,16 +185,16 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                                     Dokumen yang Dibutuhkan
                                   </p>
                                   <ul className="space-y-1">
-                                    {step.required_documents.map((doc) => (
+                                    {step.required_documents.map((documentName) => (
                                       <li
-                                        key={doc}
+                                        key={documentName}
                                         className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400"
                                       >
                                         <span
                                           className="w-1.5 h-1.5 rounded-full shrink-0"
                                           style={{ backgroundColor: color }}
                                         />
-                                        {doc}
+                                        {documentName}
                                       </li>
                                     ))}
                                   </ul>

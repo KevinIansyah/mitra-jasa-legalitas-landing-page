@@ -33,7 +33,7 @@ export function LegalBasesSection({ bases }: { bases: LegalBase[] }) {
 
         <div className="space-y-3">
           {bases
-            .sort((a, b) => a.sort_order - b.sort_order)
+            .sort((left, right) => left.sort_order - right.sort_order)
             .map((base) => {
               const color =
                 TYPE_COLORS[base.document_type] ?? 'oklch(0.45 0.1 270)';

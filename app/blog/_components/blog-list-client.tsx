@@ -27,8 +27,7 @@ import {
   serializeBlogListState,
   type BlogListUrlState,
 } from '@/lib/blog-list-url';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 const CATEGORY_BADGE_COLORS = [
   BRAND_BLUE,
@@ -74,7 +73,7 @@ function BlogPostCard({ post, index }: { post: BlogCard; index: number }) {
   const cat = post.category;
   const color = badgeColorForCategory(cat?.id);
   const readLabel =
-    post.reading_time != null ? `${post.reading_time} mnt` : '—';
+    post.reading_time != null ? `${post.reading_time} mnt` : '-';
 
   return (
     <motion.div
@@ -122,7 +121,7 @@ function BlogPostCard({ post, index }: { post: BlogCard; index: number }) {
               {post.title}
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-3">
-              {post.short_description ?? '—'}
+              {post.short_description ?? '-'}
             </p>
           </div>
 
@@ -291,9 +290,9 @@ export function BlogListClient({
                   <SelectContent>
                     <SelectLabel>Filter kategori</SelectLabel>
                     <SelectItem value="all">Semua kategori</SelectItem>
-                    {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.slug}>
-                        {c.name}
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.slug}>
+                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -381,9 +380,9 @@ export function BlogListClient({
 
         {loading && blogs.length === 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, skeletonIndex) => (
               <div
-                key={i}
+                key={skeletonIndex}
                 className="rounded-2xl border border-gray-200 dark:border-white/8 overflow-hidden animate-pulse"
               >
                 <div className="h-[200px] bg-gray-200 dark:bg-white/10" />
@@ -420,8 +419,8 @@ export function BlogListClient({
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
           >
             <AnimatePresence mode="popLayout">
-              {filtered.map((post, i) => (
-                <BlogPostCard key={post.id} post={post} index={i} />
+              {filtered.map((post, cardIndex) => (
+                <BlogPostCard key={post.id} post={post} index={cardIndex} />
               ))}
             </AnimatePresence>
           </motion.div>
@@ -438,7 +437,7 @@ export function BlogListClient({
               className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-gray-200 dark:border-white/15 bg-white dark:bg-surface-card text-sm font-semibold text-gray-700 dark:text-gray-200 hover:border-brand-blue hover:text-brand-blue transition-colors group disabled:opacity-50"
             >
               {loading ? 'Memuat…' : 'Muat lebih banyak'}
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </motion.button>
           </div>
         )}

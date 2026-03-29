@@ -5,7 +5,6 @@
 import { parseApiErrorResponse } from "./parse-api-error";
 import { ApiSuccessResponse } from "../types/api";
 
-/** Base URL API untuk fetch (tanpa trailing slash). Sama dengan yang dipakai chat widget. */
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.trim() ?? "";
 
 export function getPublicApiBaseUrl(): string {
@@ -22,12 +21,11 @@ export function hasPublicApiBaseUrl(): boolean {
 
 function cookieSecureSuffix(): string {
   if (typeof window === 'undefined') return '';
-  // `Secure` membuat cookie tidak ikut ke server HTTP (mis. localhost dev) → layout RSC tidak baca token.
   return window.location.protocol === 'https:' ? '; Secure' : '';
 }
 
 export const cookieHelpers = {
-  /** Tanpa remember: 7 hari (default). Ingat saya: 30 hari. */
+  /** Without remember: 7 days (default). Remember me: 30 days. */
   setToken(token: string, rememberMe = false): void {
     if (typeof document === 'undefined') return;
     const maxAge = rememberMe
@@ -77,7 +75,7 @@ function extractData<T>(responseData: unknown): T {
     if (inner != null) {
       return inner as T;
     }
-    // Laravel sering kirim `data: null` dengan `message` di envelope (mis. resend OTP).
+
     if (typeof apiResponse.message === 'string') {
       return { message: apiResponse.message } as T;
     }
@@ -154,7 +152,6 @@ async function postFormData<T>(url: string, formData: FormData): Promise<T> {
   return handleResponse<T>(res);
 }
 
-// Untuk update data tanpa file — gunakan JSON body dengan method PUT
 async function put<T>(url: string, body?: unknown): Promise<T> {
   const res = await fetch(`${API_URL}${url}`, {
     method: 'PUT',
@@ -166,8 +163,6 @@ async function put<T>(url: string, body?: unknown): Promise<T> {
   return handleResponse<T>(res);
 }
 
-// Untuk update data dengan file — Laravel tidak bisa terima PUT multipart,
-// jadi tetap pakai POST dengan _method spoofing
 async function putFormData<T>(url: string, formData: FormData): Promise<T> {
   formData.append('_method', 'PUT');
 
@@ -192,7 +187,6 @@ async function patch<T>(url: string, body?: unknown): Promise<T> {
   return handleResponse<T>(res);
 }
 
-// Untuk update data dengan file via PATCH
 async function patchFormData<T>(url: string, formData: FormData): Promise<T> {
   formData.append('_method', 'PATCH');
 

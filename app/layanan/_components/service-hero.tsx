@@ -3,8 +3,7 @@
 import { motion } from 'framer-motion';
 import { Scale, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 type ServiceHeroProps = {
   serviceCount?: number;
@@ -19,7 +18,6 @@ export function ServiceHero({
 
   return (
     <section className="relative overflow-hidden bg-surface-page pt-16 pb-16 lg:pb-20">
-      {/* Blobs */}
       <motion.div
         aria-hidden
         className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
@@ -67,13 +65,13 @@ export function ServiceHero({
               <>
                 {serviceCount} layanan tersedia di {categoryCount} kategori. Dari
                 pendirian badan usaha, perizinan, kekayaan intelektual, hingga
-                konsultasi hukum — semuanya bisa diurus bersama kami.
+                konsultasi hukum - semuanya bisa diurus bersama kami.
               </>
             ) : (
               <>
                 Berbagai layanan legalitas bisnis dalam berbagai kategori. Dari
                 pendirian badan usaha, perizinan, kekayaan intelektual, hingga
-                konsultasi hukum — semuanya bisa diurus bersama kami.
+                konsultasi hukum - semuanya bisa diurus bersama kami.
               </>
             )}
           </p>
@@ -81,17 +79,17 @@ export function ServiceHero({
           <div className="flex flex-wrap gap-3">
             <Link
               href="/daftar"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white hover:opacity-90 transition-opacity group"
               style={{ backgroundColor: 'oklch(0.3811 0.1315 260.22)' }}
             >
               Konsultasi Gratis
-              <ArrowRight className="w-4 h-4" />
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="#layanan"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/15 bg-white dark:bg-white/8 hover:border-gray-300 dark:hover:border-white/25 transition-colors"
             >
-              <Scale className="w-4 h-4" />
+              <Scale className="size-4" />
               Lihat Semua Layanan
             </Link>
           </div>

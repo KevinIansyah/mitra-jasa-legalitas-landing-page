@@ -1,20 +1,15 @@
-/**
- * Membangun URL wa.me dari nomor WhatsApp (sumber: GET `/company-information` → `contact.whatsapp`).
- */
-
-/** Digit untuk wa.me: strip non-digit, `08…` → `628…`. */
 export function normalizeIndonesiaWhatsappDigits(input: string): string {
-  const d = input.replace(/\D/g, '');
-  if (!d) return '';
-  if (d.startsWith('0')) return `62${d.slice(1)}`;
-  if (d.startsWith('62')) return d;
-  return d;
+  const digitsOnly = input.replace(/\D/g, '');
+  if (!digitsOnly) return '';
+  if (digitsOnly.startsWith('0')) return `62${digitsOnly.slice(1)}`;
+  if (digitsOnly.startsWith('62')) return digitsOnly;
+  return digitsOnly;
 }
 
 export function whatsappWaMeUrl(digitsOrRaw: string): string {
-  const d = normalizeIndonesiaWhatsappDigits(digitsOrRaw);
-  if (!d) return '';
-  return `https://wa.me/${d}`;
+  const normalizedDigits = normalizeIndonesiaWhatsappDigits(digitsOrRaw);
+  if (!normalizedDigits) return '';
+  return `https://wa.me/${normalizedDigits}`;
 }
 
 export function whatsappWaMeUrlWithText(

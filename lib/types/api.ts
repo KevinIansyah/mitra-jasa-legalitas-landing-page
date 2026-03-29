@@ -55,10 +55,6 @@ export function isApiErrorResponse(data: unknown): data is ApiErrorResponse {
   );
 }
 
-/**
- * Status HTTP dari error API. Di production, `instanceof ApiError` sering gagal
- * karena class terduplikasi di bundle — pakai ini di server untuk 404/5xx.
- */
 export function getApiErrorStatus(error: unknown): number | undefined {
   if (error instanceof ApiError) {
     return error.status;

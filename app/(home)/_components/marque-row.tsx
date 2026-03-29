@@ -42,7 +42,7 @@ export function MarqueeRow({
           willChange: 'transform',
         }}
       >
-        {doubled.map((item, i) => {
+        {doubled.map((item, repeatIndex) => {
           const inner = (
             <>
               {/* <span style={{ fontSize: 15 }}>{item.icon}</span> */}
@@ -51,7 +51,7 @@ export function MarqueeRow({
           );
           return item.href ? (
             <Link
-              key={`${item.href}-${i}`}
+              key={`${item.href}-${repeatIndex}`}
               href={item.href}
               prefetch={false}
               className={`${chipClassName} cursor-pointer text-inherit no-underline`}
@@ -61,7 +61,7 @@ export function MarqueeRow({
             </Link>
           ) : (
             <div
-              key={`${item.label}-${i}`}
+              key={`${item.label}-${repeatIndex}`}
               className={`${chipClassName} cursor-default`}
               style={chipStyle}
             >

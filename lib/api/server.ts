@@ -14,7 +14,7 @@ function getApiBaseUrl(): string {
     '';
   if (!raw) {
     throw new Error(
-      'Missing API_URL or NEXT_PUBLIC_API_URL — set salah satu di environment production.',
+      'Missing API_URL or NEXT_PUBLIC_API_URL - set salah satu di environment production.',
     );
   }
   return raw.replace(/\/$/, '');
@@ -65,7 +65,7 @@ async function buildHeaders(): Promise<HeadersInit> {
       return { ...headers, Authorization: `Bearer ${token}` };
     }
   } catch {
-    // cookies() tidak tersedia di beberapa konteks — GET publik tetap jalan tanpa auth
+    // cookies() tidak tersedia di beberapa konteks - GET publik tetap jalan tanpa auth
   }
 
   return headers;

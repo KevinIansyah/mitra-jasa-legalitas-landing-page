@@ -5,13 +5,6 @@ import { User } from '@/lib/types/user';
 import { AuthBlobs } from './_components/auth-blobs';
 import { AuthSessionGuard } from './_components/auth-session-guard';
 
-/**
- * Layout route group `(auth)` — URL tidak berubah (mis. tetap `/masuk`).
- * Tampilan gelap terpusat seperti halaman login modern + blob seperti hero home.
- *
- * Pengguna yang sudah login (token valid + `/auth/me` OK) tidak boleh mengakses
- * halaman auth — dialihkan ke beranda.
- */
 export default async function AuthLayout({
   children,
 }: {
@@ -25,7 +18,7 @@ export default async function AuthLayout({
       await apiServer.get<User>('/auth/me');
       redirect('/');
     } catch {
-      // Token tidak valid — biarkan lanjut (form auth / refresh token di client).
+      // Invalid token - continue (auth form / refresh token in client).
     }
   }
 

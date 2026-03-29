@@ -6,15 +6,13 @@ import type { ServicePackage } from '@/lib/types/service';
 import { formatServicePrice } from '@/lib/utils';
 import { whatsappWaMeUrl, whatsappWaMeUrlWithText } from '@/lib/whatsapp-cta';
 import { SectionHeading } from '@/components/section-heading';
-
-const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
+import { EASE } from '@/lib/types/constants';
 
 export function PackagesSection({
   packages,
   whatsapp,
 }: {
   packages: ServicePackage[];
-  /** Dari GET `/company-information` → `contact.whatsapp` */
   whatsapp: string;
 }) {
   const wa = whatsapp.trim();
@@ -43,14 +41,14 @@ export function PackagesSection({
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {packages
-            .sort((a, b) => a.sort_order - b.sort_order)
-            .map((pkg, i) => (
+            .sort((left, right) => left.sort_order - right.sort_order)
+            .map((pkg, packageIndex) => (
               <motion.div
                 key={`${pkg.sort_order}-${pkg.name}`}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
+                transition={{ duration: 0.5, delay: packageIndex * 0.08, ease: EASE }}
                 className={`group/pkg relative flex flex-col rounded-2xl border overflow-hidden transition-all duration-300 blog-card ${
                   pkg.is_highlighted
                     ? 'shadow-xl border-transparent'
@@ -124,12 +122,12 @@ export function PackagesSection({
                   {/* Feature list */}
                   <ul className="space-y-2.5 flex-1">
                     {pkg.features
-                      .sort((a, b) => a.sort_order - b.sort_order)
-                      .map((feat) => (
+                      .sort((left, right) => left.sort_order - right.sort_order)
+                      .map((packageFeature) => (
                         <li
-                          key={feat.feature_name}
+                          key={packageFeature.feature_name}
                           className={`flex items-start gap-2.5 text-sm ${
-                            feat.is_included
+                            packageFeature.is_included
                               ? 'text-gray-700 dark:text-gray-300'
                               : 'text-gray-300 dark:text-gray-600 line-through'
                           }`}
@@ -137,14 +135,14 @@ export function PackagesSection({
                           <span
                             className="shrink-0 w-4.5 h-4.5 mt-0.5 rounded-full flex items-center justify-center"
                             style={{
-                              backgroundColor: feat.is_included
+                              backgroundColor: packageFeature.is_included
                                 ? pkg.is_highlighted
                                   ? 'oklch(0.3811 0.1315 260.22 / 0.12)'
                                   : 'oklch(0.55 0.13 160 / 0.12)'
                                 : 'oklch(0 0 0 / 0.05)',
                             }}
                           >
-                            {feat.is_included ? (
+                            {packageFeature.is_included ? (
                               <Check
                                 className="w-2.5 h-2.5"
                                 style={{
@@ -157,7 +155,7 @@ export function PackagesSection({
                               <X className="w-2.5 h-2.5 text-gray-300 dark:text-gray-600" />
                             )}
                           </span>
-                          {feat.feature_name}
+                          {packageFeature.feature_name}
                         </li>
                       ))}
                   </ul>
@@ -168,7 +166,7 @@ export function PackagesSection({
                       href={waPkgHref(pkg.name)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`mt-auto flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all ${
+                      className={`mt-auto flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all group ${
                         pkg.is_highlighted
                           ? 'text-white hover:opacity-90'
                           : 'border border-gray-200 dark:border-white/15 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-white/25 bg-transparent'
@@ -179,14 +177,14 @@ export function PackagesSection({
                           : {}
                       }
                     >
-                      <MessageCircle className="w-4 h-4" />
+                      <MessageCircle className="size-4" />
                       Pesan Sekarang
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                     </a>
                   ) : (
                     <a
                       href="/kontak"
-                      className={`mt-auto flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all ${
+                      className={`mt-auto flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold transition-all group ${
                         pkg.is_highlighted
                           ? 'text-white hover:opacity-90'
                           : 'border border-gray-200 dark:border-white/15 text-gray-700 dark:text-gray-300 hover:border-gray-300 dark:hover:border-white/25 bg-transparent'
@@ -197,9 +195,9 @@ export function PackagesSection({
                           : {}
                       }
                     >
-                      <MessageCircle className="w-4 h-4" />
+                      <MessageCircle className="size-4" />
                       Pesan Sekarang
-                      <ArrowRight className="w-3.5 h-3.5" />
+                      <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                     </a>
                   )}
                 </div>
@@ -207,17 +205,18 @@ export function PackagesSection({
             ))}
         </div>
 
-        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-6">
+        <p className="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 mt-6">
           Butuh paket khusus?{' '}
           <a
             href={waCustomHref || '/kontak'}
             {...(waCustomHref
               ? { target: '_blank', rel: 'noopener noreferrer' }
               : {})}
-            className="font-semibold hover:underline"
+            className="inline-flex items-center gap-1 hover:underline group"
             style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
           >
-            Hubungi kami untuk penawaran kustom →
+            Hubungi kami untuk penawaran kustom{' '}
+            <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" aria-hidden />
           </a>
         </p>
       </div>

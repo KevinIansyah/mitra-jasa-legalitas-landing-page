@@ -5,7 +5,6 @@ import { whatsappWaMeUrlWithText } from '@/lib/whatsapp-cta';
 
 type BottomCtaProps = {
   name: string;
-  /** Dari `contact.whatsapp` (GET `/company-information`). Kosong → tautan ke /kontak. */
   whatsapp: string;
 };
 
@@ -62,7 +61,7 @@ export function BottomCta({ name, whatsapp }: BottomCtaProps) {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold text-white border-2 border-white/30 hover:bg-white/10 transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="size-4" />
                   Chat WhatsApp Sekarang
                 </a>
               ) : (
@@ -70,17 +69,17 @@ export function BottomCta({ name, whatsapp }: BottomCtaProps) {
                   href="/kontak"
                   className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold text-white border-2 border-white/30 hover:bg-white/10 transition-colors"
                 >
-                  <MessageCircle className="w-4 h-4" />
+                  <MessageCircle className="size-4" />
                   Hubungi Kami
                 </Link>
               )}
               <Link
                 href="/kontak"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold bg-white hover:bg-gray-50 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold bg-white hover:bg-gray-50 transition-colors group"
                 style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
               >
                 Kirim Pesan
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
           </div>
