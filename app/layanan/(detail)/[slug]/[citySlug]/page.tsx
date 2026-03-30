@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
 import { getCompanyInformation } from "@/lib/api/endpoints/company-information.server";
-import { getServiceCityPage, getServiceDetail, getServicesList } from "@/lib/api/endpoints/service.server";
+import { getServiceCityPage } from "@/lib/api/endpoints/service.server";
+import { fetchServiceCityPaths } from "@/lib/sitemap-data";
 import { ApiUnavailableFallback } from "@/components/api-unavailable-fallback";
 import { getApiErrorStatus } from "@/lib/types/api";
 import { ReadingProgress, BackToTop } from "@/app/blog/[slug]/_components/reading-progress";
@@ -30,16 +31,7 @@ const getCachedServiceCityPage = cache(async (slug: string, citySlug: string) =>
 
 export async function generateStaticParams() {
   try {
-    const { services } = await getServicesList({ sort: "popular" });
-    const out: { slug: string; citySlug: string }[] = [];
-    for (const s of services) {
-      const detail = await getServiceDetail(s.slug).catch(() => null);
-      if (!detail?.city_pages?.length) continue;
-      for (const c of detail.city_pages) {
-        out.push({ slug: s.slug, citySlug: c.slug });
-      }
-    }
-    return out;
+    return await fetchServiceCityPaths();
   } catch {
     return [];
   }
@@ -48,11 +40,13 @@ export async function generateStaticParams() {
 function ServiceCityJsonLd({ seo }: { seo: ServiceCityPageSeo | null }) {
   if (!seo?.schema_markup) return null;
 
-  const graph = [seo.schema_markup.webpage, seo.schema_markup.faq, seo.schema_markup.breadcrumb].filter(Boolean).map((schema) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { "@context": _, ...rest } = schema as Record<string, unknown>;
-    return rest;
-  });
+  const graph = [seo.schema_markup.webpage, seo.schema_markup.faq, seo.schema_markup.breadcrumb]
+    .filter((schema): schema is Record<string, unknown> => !!schema && typeof schema === "object" && Object.keys(schema).length > 0)
+    .map((schema) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { "@context": _, ...rest } = schema;
+      return rest;
+    });
 
   if (!graph.length) return null;
 

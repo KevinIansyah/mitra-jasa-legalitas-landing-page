@@ -41,11 +41,15 @@ export async function generateStaticParams() {
 function ServiceJsonLd({ seo }: { seo: ServiceSeo | null }) {
   if (!seo?.schema_markup) return null;
 
-  const graph = [seo.schema_markup.service, seo.schema_markup.howto, seo.schema_markup.faq, seo.schema_markup.breadcrumb].filter(Boolean).map((schema) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { "@context": _, ...rest } = schema as Record<string, unknown>;
-    return rest;
-  });
+  const graph = [seo.schema_markup.service, seo.schema_markup.howto, seo.schema_markup.faq, seo.schema_markup.breadcrumb]
+    .filter(
+      (schema): schema is Record<string, unknown> => !!schema && typeof schema === "object" && Object.keys(schema).length > 0,
+    )
+    .map((schema) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { "@context": _, ...rest } = schema;
+      return rest;
+    });
 
   if (!graph.length) return null;
 
