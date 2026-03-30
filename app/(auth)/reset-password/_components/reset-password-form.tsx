@@ -9,7 +9,7 @@ import { useAuth, otpSession } from '@/hooks/use-auth';
 import { ApiError } from '@/lib/types/api';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BRAND_BLUE } from '@/lib/types/service';
+import { BRAND_BLUE } from '@/lib/types/constants';
 import { cn } from '@/lib/utils';
 import { authInputClass } from '@/app/(auth)/_components/auth-input-class';
 import {

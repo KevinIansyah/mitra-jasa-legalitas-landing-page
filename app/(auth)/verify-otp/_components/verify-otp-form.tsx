@@ -8,7 +8,7 @@ import { Loader2, AlertCircle, ArrowLeft, CheckCircle } from 'lucide-react';
 import { useAuth, otpSession } from '@/hooks/use-auth';
 import { ApiError } from '@/lib/types/api';
 import { Label } from '@/components/ui/label';
-import { BRAND_BLUE } from '@/lib/types/service';
+import { BRAND_BLUE } from '@/lib/types/constants';
 import { OtpInputSix } from '@/app/(auth)/_components/otp-input-six';
 import {
   getFieldError,
