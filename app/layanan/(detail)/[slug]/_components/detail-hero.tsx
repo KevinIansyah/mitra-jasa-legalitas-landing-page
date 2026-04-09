@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { ChevronRight, Sparkles, Star, Tag } from 'lucide-react';
+import { ChevronRight, Sparkles, Star, Tag, Toolbox } from 'lucide-react';
 import type { ServiceDetail } from '@/lib/types/service';
 
 export type ServiceDetailHeroProps = {
@@ -70,9 +70,9 @@ export function DetailHero({ service, categoryColor }: ServiceDetailHeroProps) {
         </div>
       </div>
 
-      {service.featured_image ? (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-          <div className="relative w-full h-[260px] sm:h-[340px] lg:h-[420px] rounded-t-3xl overflow-hidden">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="relative w-full h-[260px] sm:h-[340px] lg:h-[420px] rounded-t-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
+          {service.featured_image ? (
             <Image
               src={service.featured_image}
               alt={service.name}
@@ -82,10 +82,16 @@ export function DetailHero({ service, categoryColor }: ServiceDetailHeroProps) {
               className="object-cover"
               sizes="(max-width: 1200px) 100vw, 1152px"
             />
-            <div className="absolute inset-0 bg-black/20" />
-          </div>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                <Toolbox className="size-8" />
+              </div>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-black/15 pointer-events-none" />
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

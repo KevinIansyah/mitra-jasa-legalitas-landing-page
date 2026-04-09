@@ -73,7 +73,7 @@ export function MasukForm() {
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {formError ? (
           <p
-            className="text-sm text-destructive bg-destructive/10 border border-destructive/25 dark:bg-red-950/40 dark:border-red-900/50 dark:text-red-400 rounded-xl px-3 py-2.5 flex items-center gap-2"
+            className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2"
             role="alert"
           >
             <AlertCircle className="w-4 h-4" aria-hidden />
@@ -216,7 +216,7 @@ export function MasukForm() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin shrink-0" aria-hidden />
-              Memproses…
+              Memproses...
             </>
           ) : (
             'Masuk'

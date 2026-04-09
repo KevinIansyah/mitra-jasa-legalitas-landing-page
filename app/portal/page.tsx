@@ -1,13 +1,17 @@
-import Link from "next/link";
+import { getPortalSummary } from "@/lib/api/endpoints/portal-summary.server";
+import { PortalSectionHeader } from "./_components/portal-section-header";
+import { PortalSummaryView } from "./_components/portal-summary-view";
 
-export default function PortalPage() {
+export default async function PortalRingkasanPage() {
+  const summary = await getPortalSummary();
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-      <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white mb-2">Portal</h1>
-      <p className="text-gray-500 dark:text-gray-400 mb-8">Anda sudah masuk. Halaman ini dapat dikembangkan untuk dashboard klien.</p>
-      <Link href="/" className="text-sm font-semibold text-brand-blue hover:underline">
-        ← Kembali ke beranda
-      </Link>
-    </div>
+    <section className="max-w-6xl space-y-8">
+      <PortalSectionHeader
+        title="Ringkasan"
+        description="Gambaran singkat aktivitas dan status terbaru di portal Anda."
+      />
+      <PortalSummaryView summary={summary} />
+    </section>
   );
 }

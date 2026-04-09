@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Clock, Tag } from "lucide-react";
+import { ArrowRight, Clock, Newspaper, Tag } from "lucide-react";
 import { SectionHeading } from "../../../components/section-heading";
 import { motion } from "framer-motion";
 import type { BlogCard, BlogPost } from "@/lib/types/blog";
@@ -10,10 +10,7 @@ import { EASE } from "@/lib/types/constants";
 
 const CATEGORY_COLORS = ["oklch(0.3811 0.1315 260.22)", "oklch(0.5 0.13 270)", "oklch(0.7319 0.1856 52.89)", "oklch(0.55 0.13 160)", "oklch(0.62 0.16 30)"];
 
-function mapBlogCardToPost(
-  card: BlogCard,
-  colorIndex: number,
-): BlogPost {
+function mapBlogCardToPost(card: BlogCard, colorIndex: number): BlogPost {
   return {
     slug: card.slug,
     category: card.category?.name ?? "Blog",
@@ -43,15 +40,6 @@ function ReadTime({ time }: { time: string }) {
   );
 }
 
-function BlogCoverImage({ src, sizes = "(max-width: 768px) 100vw, 33vw" }: { src: string | null; sizes?: string }) {
-  const url = src && src.length > 0 ? src : "/human.jpeg";
-  return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      <Image src={url} alt="" fill className="object-cover transition-transform duration-700 ease-out group-hover:scale-110" sizes={sizes} />
-    </div>
-  );
-}
-
 function FeaturedCard({ post }: { post: BlogPost }) {
   return (
     <Link href={`/blog/${post.slug}`}>
@@ -62,7 +50,24 @@ function FeaturedCard({ post }: { post: BlogPost }) {
         transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
         className="blog-card-image group relative flex min-h-[420px] flex-col justify-end overflow-hidden rounded-2xl lg:min-h-full"
       >
-        <BlogCoverImage src={post.imageUrl} sizes="(max-width: 1024px) 100vw, 34vw" />
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-800 dark:bg-gray-900">
+          {post.imageUrl && post.imageUrl.length > 0 ? (
+            <Image
+              src={post.imageUrl}
+              alt={post.title}
+              fill
+              className="object-cover object-right transition-transform duration-700 ease-out group-hover:scale-110"
+              sizes="(max-width: 1024px) 100vw, 34vw"
+              unoptimized
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+                <Newspaper className="size-10 text-white/50" />
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="absolute inset-0 z-10 bg-black/25" />
         <div className="absolute inset-x-0 bottom-0 z-10 h-3/4 bg-linear-to-t from-black/80 to-transparent" />
@@ -97,14 +102,23 @@ function TextCard({ post }: { post: BlogPost }) {
         transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
         className="blog-card group relative flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden flex-1"
       >
-        <div className="relative h-[120px] w-full overflow-hidden shrink-0">
-          <Image
-            src={post.imageUrl && post.imageUrl.length > 0 ? post.imageUrl : "/human.jpeg"}
-            alt=""
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-            sizes="400px"
-          />
+        <div className="relative h-[120px] w-full overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
+          {post.imageUrl && post.imageUrl.length > 0 ? (
+            <Image
+              src={post.imageUrl}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              sizes="400px"
+              unoptimized
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                <Newspaper className="size-6" />
+              </div>
+            </div>
+          )}
           <div className="absolute inset-0 bg-black/20" />
           {post.badge && (
             <span className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-semibold text-white" style={{ backgroundColor: "oklch(0.7319 0.1856 52.89)" }}>
@@ -138,11 +152,28 @@ function TallImageCard({ post }: { post: BlogPost }) {
         transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
         className="blog-card-image group relative flex min-h-[300px] flex-col justify-end overflow-hidden rounded-2xl lg:min-h-full"
       >
-        <BlogCoverImage src={post.imageUrl} sizes="(max-width: 1024px) 100vw, 34vw" />
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-800 dark:bg-gray-900">
+          {post.imageUrl && post.imageUrl.length > 0 ? (
+            <Image
+              src={post.imageUrl}
+              alt={post.title}
+              fill
+              className="object-cover object-right transition-transform duration-700 ease-out group-hover:scale-110"
+              sizes="(max-width: 1024px) 100vw, 34vw"
+              unoptimized
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+                <Newspaper className="size-10 text-white/50" />
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="absolute inset-0 z-10 bg-black/20" />
         <div className="absolute inset-x-0 bottom-0 h-3/4 bg-linear-to-t from-black/75 to-transparent z-10" />
-        
+
         <div className="absolute top-4 left-4 z-20">
           <CategoryBadge label={post.category} color="rgba(255,255,255,0.25)" />
         </div>
@@ -173,14 +204,23 @@ function GridCard({ post }: { post: BlogPost }) {
         transition={{ duration: 0.5, delay: 0.08, ease: EASE }}
         className="blog-card group flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden"
       >
-        <div className="relative h-[180px] w-full overflow-hidden shrink-0">
-          <Image
-            src={post.imageUrl && post.imageUrl.length > 0 ? post.imageUrl : "/human.jpeg"}
-            alt=""
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-            sizes="(max-width: 768px) 100vw, 600px"
-          />
+        <div className="relative h-[180px] w-full overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
+          {post.imageUrl && post.imageUrl.length > 0 ? (
+            <Image
+              src={post.imageUrl}
+              alt={post.title}
+              fill
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+              sizes="(max-width: 768px) 100vw, 600px"
+              unoptimized
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                <Newspaper className="size-8" />
+              </div>
+            </div>
+          )}
 
           <div className="absolute inset-0 bg-black/10" />
 
@@ -205,15 +245,9 @@ function GridCard({ post }: { post: BlogPost }) {
 }
 
 export function BlogSection({ posts }: { posts: BlogCard[] }) {
-  const postsNewestFirst = [...posts].sort(
-    (left, right) =>
-      new Date(right.published_at).getTime() -
-      new Date(left.published_at).getTime(),
-  );
+  const postsNewestFirst = [...posts].sort((left, right) => new Date(right.published_at).getTime() - new Date(left.published_at).getTime());
   const topFourPosts = postsNewestFirst.slice(0, 4);
-  const displayPosts = topFourPosts.map((card, colorIndex) =>
-    mapBlogCardToPost(card, colorIndex),
-  );
+  const displayPosts = topFourPosts.map((card, colorIndex) => mapBlogCardToPost(card, colorIndex));
 
   if (displayPosts.length === 0) {
     return null;

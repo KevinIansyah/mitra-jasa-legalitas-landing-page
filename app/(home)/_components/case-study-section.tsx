@@ -123,17 +123,17 @@ function FeaturedCard({ caseStudy, cardIndex }: { caseStudy: CaseStudyCardModel;
         </div>
 
         <div>
-          <p className="text-xs text-white/50 uppercase tracking-widest mb-1">Klien</p>
+          <p className="text-xs text-white/50 uppercase font-medium tracking-widest mb-1">Klien</p>
           <p className="text-lg font-bold text-white leading-snug">{caseStudy.company}</p>
         </div>
 
         <div className="space-y-1">
-          <p className="text-xs text-white/40 uppercase tracking-widest">Tantangan</p>
+          <p className="text-xs text-white/40 uppercase font-medium tracking-widest">Tantangan</p>
           <p className="text-sm text-white/75 leading-relaxed">{caseStudy.challenge}</p>
         </div>
 
         <div className="space-y-1">
-          <p className="text-xs text-white/40 uppercase tracking-widest">Solusi</p>
+          <p className="text-xs text-white/40 uppercase font-medium tracking-widest">Solusi</p>
           <p className="text-sm text-white/75 leading-relaxed">{caseStudy.result}</p>
         </div>
       </div>
@@ -141,7 +141,7 @@ function FeaturedCard({ caseStudy, cardIndex }: { caseStudy: CaseStudyCardModel;
       <div className="relative z-10 mt-8 pt-6 border-t border-white/15 grid grid-cols-3 gap-3">
         {caseStudy.stats.map((metric) => (
           <div key={metric.label}>
-            <p className="text-base font-extrabold text-white">{metric.value}</p>
+            <p className="text-base font-bold text-white">{metric.value}</p>
             <p className="text-[10px] text-white/50 mt-0.5 leading-snug">{metric.label}</p>
           </div>
         ))}
@@ -173,11 +173,11 @@ function RegularCard({ caseStudy, cardIndex }: { caseStudy: CaseStudyCardModel; 
 
         <div className="space-y-3">
           <div>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Tantangan</p>
+            <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-widest mb-1">Tantangan</p>
             <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{caseStudy.challenge}</p>
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Solusi</p>
+            <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-widest mb-1">Solusi</p>
             <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{caseStudy.result}</p>
           </div>
         </div>
@@ -186,7 +186,7 @@ function RegularCard({ caseStudy, cardIndex }: { caseStudy: CaseStudyCardModel; 
       <div className="mt-5 pt-5 border-t border-gray-100 grid grid-cols-3 gap-2">
         {caseStudy.stats.map((metric) => (
           <div key={metric.label}>
-            <p className="text-sm font-extrabold text-gray-900">{metric.value}</p>
+            <p className="text-sm font-bold text-gray-900">{metric.value}</p>
             <p className="text-[10px] text-gray-400 mt-0.5 leading-snug">{metric.label}</p>
           </div>
         ))}
@@ -221,18 +221,18 @@ function WideCard({ caseStudy, cardIndex }: { caseStudy: CaseStudyCardModel; car
       <div className="flex flex-col justify-between gap-4 flex-1 min-w-0">
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Tantangan</p>
+            <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-widest mb-1">Tantangan</p>
             <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">{caseStudy.challenge}</p>
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Solusi</p>
+            <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-widest mb-1">Solusi</p>
             <p className="text-xs text-gray-500 leading-relaxed line-clamp-3">{caseStudy.result}</p>
           </div>
         </div>
         <div className="pt-4 border-t border-gray-100 grid grid-cols-3 gap-3">
           {caseStudy.stats.map((metric) => (
             <div key={metric.label}>
-              <p className="text-sm font-extrabold text-gray-900">{metric.value}</p>
+              <p className="text-sm font-bold text-gray-900">{metric.value}</p>
               <p className="text-[10px] text-gray-400 mt-0.5 leading-snug">{metric.label}</p>
             </div>
           ))}

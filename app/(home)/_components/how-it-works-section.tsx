@@ -121,7 +121,7 @@ export function HowItWorksSection() {
                         />
 
                         <span
-                          className="absolute -top-2 -right-2 w-5 h-5 rounded-full text-white text-[10px] font-extrabold flex items-center justify-center leading-none"
+                          className="absolute -top-2 -right-2 w-5 h-5 rounded-full text-white text-[10px] font-bold flex items-center justify-center leading-none"
                           style={{ backgroundColor: step.color }}
                         >
                           {stepIndex + 1}
@@ -158,7 +158,7 @@ export function HowItWorksSection() {
                   transition={{ duration: 0.5, delay: stepIndex * 0.08, ease: EASE }}
                   className="blog-card group flex flex-col gap-4 rounded-2xl border border-gray-200 dark:border-white/10 bg-surface-card p-5"
                 >
-                  <h3 className="text-base font-extrabold text-gray-900 dark:text-gray-100 transition-colors group-hover:text-inherit">
+                  <h3 className="text-base font-bold text-gray-900 dark:text-gray-100 transition-colors group-hover:text-inherit">
                     {step.title}
                   </h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">

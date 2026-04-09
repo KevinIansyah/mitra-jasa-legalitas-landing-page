@@ -402,6 +402,7 @@ export function HeroSection({
                 <Shield
                   className="size-4"
                   style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
+                  fill="oklch(0.3811 0.1315 260.22)"
                 />
               </div>
               <div>
@@ -423,6 +424,7 @@ export function HeroSection({
                 <FileCheck
                   className="size-4"
                   style={{ color: 'oklch(0.7319 0.1856 52.89)' }}
+                  fill="oklch(0.7319 0.1856 52.89)"
                 />
               </div>
               <div>

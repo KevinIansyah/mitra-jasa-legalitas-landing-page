@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronRight, Clock, Sparkles, Tag } from "lucide-react";
+import { ChevronRight, Clock, Newspaper, Sparkles, Tag } from "lucide-react";
 import type { BlogAuthor, BlogDetail } from "@/lib/types/blog";
 import { authorInitials, formatBlogDate } from "@/lib/blog-utils";
 import { BRAND_BLUE } from "@/lib/types/constants";
@@ -81,13 +81,17 @@ export function DetailHero({ post, categoryLabel, shareUrl, author }: BlogDetail
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="relative w-full h-[260px] sm:h-[340px] lg:h-[420px] rounded-t-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
+        <div className="relative w-full aspect-video lg:aspect-16/6 rounded-t-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
           {post.featured_image ? (
-            <Image src={post.featured_image} alt="" fill priority className="object-cover" sizes="(max-width: 1200px) 100vw, 1152px" />
+            <Image src={post.featured_image} alt="" fill priority className="object-cover" sizes="(max-width: 1200px) 100vw, 1152px" unoptimized />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-6xl">📄</div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                <Newspaper className="size-8" />
+              </div>
+            </div>
           )}
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-black/15 pointer-events-none" />
         </div>
       </div>
     </div>

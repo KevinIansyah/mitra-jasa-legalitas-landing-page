@@ -50,7 +50,7 @@ export function AboutHistorySection() {
                   <div key={step.year} className="flex gap-4">
                     <div className="flex flex-col items-center shrink-0">
                       <span
-                        className="w-12 h-12 rounded-2xl flex items-center justify-center text-xs font-extrabold text-white"
+                        className="w-12 h-12 rounded-2xl flex items-center justify-center text-xs font-bold text-white"
                         style={{
                           backgroundColor: 'oklch(0.7319 0.1856 52.89)',
                         }}

@@ -99,41 +99,6 @@ export function Footer({ navigation }: FooterProps) {
         }}
       />
 
-      {/* ── CTA Banner ── */}
-      {/* <div className="relative z-10 border-b border-white/8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
-            <div className="space-y-1.5">
-              <p className="text-xs font-semibold uppercase tracking-widest text-white/40">
-                Siap memulai?
-              </p>
-              <h3 className="text-2xl lg:text-3xl font-extrabold text-white leading-tight">
-                Urus legalitas bisnis Anda{' '}
-                <span style={{ color: 'oklch(0.7319 0.1856 52.89)' }}>
-                  sekarang.
-                </span>
-              </h3>
-            </div>
-            <div className="flex flex-wrap gap-3 shrink-0">
-              <Link
-                href="/daftar"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                style={{ backgroundColor: 'oklch(0.7319 0.1856 52.89)' }}
-              >
-                Mulai Konsultasi Gratis
-              </Link>
-              <Link
-                href="/layanan"
-                className="inline-flex items-center gap-1.5 px-6 py-3 rounded-full text-sm font-semibold text-white/70 border border-white/15 hover:border-white/30 hover:text-white transition-colors"
-              >
-                Lihat Semua Layanan
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div> */}
-
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20 ">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-10">
           <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-6">

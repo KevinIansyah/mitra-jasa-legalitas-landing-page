@@ -1,39 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { postContactMessage } from '@/lib/api/endpoints/contact-message';
-import { ApiError } from '@/lib/types/api';
-import type { CompanyInformationData } from '@/lib/types/company-information';
-import { zoomOutGoogleMapsEmbedUrl } from '@/lib/google-maps-embed';
-import { whatsappWaMeUrl } from '@/lib/whatsapp-cta';
-import { EASE } from '@/lib/types/constants';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { postContactMessage } from "@/lib/api/endpoints/contact-message";
+import { ApiError } from "@/lib/types/api";
+import type { CompanyInformationData } from "@/lib/types/company-information";
+import { zoomOutGoogleMapsEmbedUrl } from "@/lib/google-maps-embed";
+import { whatsappWaMeUrl } from "@/lib/whatsapp-cta";
+import { EASE } from "@/lib/types/constants";
 
-const subjectOptions = [
-  'Pendirian PT / CV',
-  'Pendaftaran Merek',
-  'NIB & Perizinan',
-  'Akta Perubahan',
-  'Konsultasi Hukum',
-  'Lainnya',
-];
+const subjectOptions = ["Pendirian PT / CV", "Pendaftaran Merek", "NIB & Perizinan", "Akta Perubahan", "Konsultasi Hukum", "Lainnya"];
 
 function formatPhoneDisplay(digits: string): string {
-  const d = digits.replace(/\D/g, '');
-  if (d.startsWith('62') && d.length > 2) {
+  const d = digits.replace(/\D/g, "");
+  if (d.startsWith("62") && d.length > 2) {
     return `+62 ${d.slice(2)}`;
   }
   return digits;
@@ -44,16 +29,13 @@ function mapsSearchUrl(address: string): string {
 }
 
 function telHrefFromPhone(phone: string): string {
-  const d = phone.replace(/\D/g, '');
-  if (d.startsWith('0')) return `tel:+62${d.slice(1)}`;
-  if (d.startsWith('62')) return `tel:+${d}`;
+  const d = phone.replace(/\D/g, "");
+  if (d.startsWith("0")) return `tel:+62${d.slice(1)}`;
+  if (d.startsWith("62")) return `tel:+${d}`;
   return `tel:+${d}`;
 }
 
-function firstFieldError(
-  errors: Record<string, string[] | boolean> | undefined,
-  key: string,
-): string | undefined {
+function firstFieldError(errors: Record<string, string[] | boolean> | undefined, key: string): string | undefined {
   const v = errors?.[key];
   if (Array.isArray(v) && v[0]) return v[0];
   return undefined;
@@ -68,11 +50,11 @@ interface FormState {
 }
 
 const emptyForm: FormState = {
-  name: '',
-  whatsapp_number: '',
-  email: '',
-  topic: '',
-  message: '',
+  name: "",
+  whatsapp_number: "",
+  email: "",
+  topic: "",
+  message: "",
 };
 
 type Props = {
@@ -88,12 +70,9 @@ export function ContactSection({ data }: Props) {
   const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubjectChange = (value: string) =>
-    setForm((p) => ({ ...p, topic: value === 'none' ? '' : value }));
+  const handleSubjectChange = (value: string) => setForm((p) => ({ ...p, topic: value === "none" ? "" : value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,41 +93,27 @@ export function ContactSection({ data }: Props) {
         setFormError(err.message);
         if (err.errors) {
           const next: Record<string, string> = {};
-          for (const key of [
-            'name',
-            'whatsapp_number',
-            'email',
-            'topic',
-            'message',
-          ] as const) {
+          for (const key of ["name", "whatsapp_number", "email", "topic", "message"] as const) {
             const msg = firstFieldError(err.errors, key);
             if (msg) next[key] = msg;
           }
           setFieldErrors(next);
         }
       } else {
-        setFormError('Gagal mengirim pesan. Silakan coba lagi.');
+        setFormError("Gagal mengirim pesan. Silakan coba lagi.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const embedSrc = address.maps_embed_url
-    ? zoomOutGoogleMapsEmbedUrl(address.maps_embed_url, 4.5)
-    : null;
+  const embedSrc = address.maps_embed_url ? zoomOutGoogleMapsEmbedUrl(address.maps_embed_url, 4.5) : null;
 
   return (
     <section className="py-16 lg:py-20 bg-surface-card">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-5">
-          <motion.div
-            initial={{ opacity: 0, x: -24 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: EASE }}
-            className="flex flex-col gap-5"
-          >
+          <motion.div initial={{ opacity: 0, x: -24 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE }} className="flex flex-col gap-5">
             <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-white/10 flex-1 min-h-[280px] bg-gray-100 dark:bg-white/5">
               {embedSrc ? (
                 <iframe
@@ -163,55 +128,33 @@ export function ContactSection({ data }: Props) {
                   className="w-full h-full min-h-[280px]"
                 />
               ) : (
-                <div className="flex items-center justify-center h-[280px] text-sm text-gray-500">
-                  Peta belum tersedia.
-                </div>
+                <div className="flex items-center justify-center h-[280px] text-sm text-gray-500">Peta belum tersedia.</div>
               )}
             </div>
 
             <div className="grid sm:grid-cols-3 gap-5 lg:gap-3">
-              <a
-                href={`mailto:${contact.email}`}
-                className="blog-card group flex flex-col gap-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-surface-card p-4"
-              >
+              <a href={`mailto:${contact.email}`} className="blog-card group flex flex-col gap-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-surface-card p-4">
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{
-                    backgroundColor: 'oklch(0.3811 0.1315 260.22 / 0.08)',
+                    backgroundColor: "oklch(0.3811 0.1315 260.22 / 0.08)",
                   }}
                 >
-                  <Mail
-                    className="w-4 h-4"
-                    style={{ color: 'oklch(0.3811 0.1315 260.22)' }}
-                  />
+                  <Mail className="w-4 h-4" style={{ color: "oklch(0.3811 0.1315 260.22)" }} />
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs font-semibold text-gray-400">Email</p>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 group-hover:text-brand-blue transition-colors wrap-break-word leading-snug">
-                    {contact.email}
-                  </p>
-                  {contact.email_support && (
-                    <p className="text-[10px] text-gray-400">
-                      Dukungan: {contact.email_support}
-                    </p>
-                  )}
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 group-hover:text-brand-blue transition-colors wrap-break-word leading-snug">{contact.email}</p>
+                  {contact.email_support && <p className="text-[10px] text-gray-400">Dukungan: {contact.email_support}</p>}
                 </div>
               </a>
 
               <div className="blog-card flex flex-col gap-2.5 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-surface-card p-4">
-                <div
-                  className="w-8 h-8 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: 'oklch(0.55 0.15 160 / 0.1)' }}
-                >
-                  <Phone
-                    className="w-4 h-4"
-                    style={{ color: 'oklch(0.55 0.15 160)' }}
-                  />
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: "oklch(0.55 0.15 160 / 0.1)" }}>
+                  <Phone className="w-4 h-4" style={{ color: "oklch(0.55 0.15 160)" }} />
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold text-gray-400">
-                    WhatsApp
-                  </p>
+                  <p className="text-xs font-semibold text-gray-400">WhatsApp</p>
                   <a
                     href={whatsappWaMeUrl(contact.whatsapp)}
                     target="_blank"
@@ -220,10 +163,7 @@ export function ContactSection({ data }: Props) {
                   >
                     {formatPhoneDisplay(contact.whatsapp)}
                   </a>
-                  <a
-                    href={telHrefFromPhone(contact.phone)}
-                    className="text-xs font-semibold text-gray-400 mt-1 block hover:text-brand-blue"
-                  >
+                  <a href={telHrefFromPhone(contact.phone)} className="text-xs font-semibold text-gray-400 mt-1 block hover:text-brand-blue">
                     Telp: {contact.phone}
                   </a>
                 </div>
@@ -238,19 +178,14 @@ export function ContactSection({ data }: Props) {
                 <div
                   className="w-8 h-8 rounded-lg flex items-center justify-center"
                   style={{
-                    backgroundColor: 'oklch(0.7319 0.1856 52.89 / 0.1)',
+                    backgroundColor: "oklch(0.7319 0.1856 52.89 / 0.1)",
                   }}
                 >
-                  <MapPin
-                    className="w-4 h-4"
-                    style={{ color: 'oklch(0.7319 0.1856 52.89)' }}
-                  />
+                  <MapPin className="w-4 h-4" style={{ color: "oklch(0.7319 0.1856 52.89)" }} />
                 </div>
                 <div className="space-y-1">
                   <p className="text-xs font-semibold text-gray-400">Alamat</p>
-                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 group-hover:text-brand-blue transition-colors leading-snug line-clamp-4">
-                    {address.street || address.full}
-                  </p>
+                  <p className="text-xs font-semibold text-gray-800 dark:text-gray-100 group-hover:text-brand-blue transition-colors leading-snug line-clamp-4">{address.street || address.full}</p>
                 </div>
               </a>
             </div>
@@ -270,46 +205,24 @@ export function ContactSection({ data }: Props) {
                 transition={{ duration: 0.4, ease: EASE }}
                 className="flex flex-col items-center justify-center gap-5 h-full py-16 text-center"
               >
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center"
-                  style={{ backgroundColor: 'oklch(0.55 0.15 160 / 0.1)' }}
-                >
-                  <CheckCircle2
-                    className="w-8 h-8"
-                    style={{ color: 'oklch(0.55 0.15 160)' }}
-                  />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: "oklch(0.55 0.15 160 / 0.1)" }}>
+                  <CheckCircle2 className="size-8" style={{ color: "oklch(0.55 0.15 160)" }} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">
-                    Pesan terkirim!
-                  </h3>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Pesan terkirim!</h3>
                   <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
-                    Terima kasih. Tim kami akan menghubungi Anda melalui
-                    WhatsApp atau email sesuai data yang Anda kirim.
+                    Terima kasih. Tim kami akan menghubungi Anda melalui WhatsApp atau email sesuai data yang Anda kirim.{" "}
+                    <button type="button" onClick={() => setSubmitted(false)} className="underline underline-offset-2">
+                      Kirim pesan lain?
+                    </button>
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSubmitted(false);
-                    setForm(emptyForm);
-                  }}
-                  className="text-sm font-semibold text-brand-blue hover:underline underline-offset-2"
-                >
-                  Kirim pesan lain
-                </button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">
-                  Kirim pesan ke tim kami
-                </p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Kirim pesan ke tim kami</p>
 
-                {formError && (
-                  <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/30 rounded-lg px-3 py-2">
-                    {formError}
-                  </p>
-                )}
+                {formError && <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-lg px-3 py-2">{formError}</p>}
 
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
@@ -325,15 +238,10 @@ export function ContactSection({ data }: Props) {
                       required
                       className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                     />
-                    {fieldErrors.name && (
-                      <p className="text-xs text-red-600">{fieldErrors.name}</p>
-                    )}
+                    {fieldErrors.name && <p className="text-xs text-destructive">{fieldErrors.name}</p>}
                   </div>
                   <div className="space-y-1.5">
-                    <Label
-                      htmlFor="whatsapp_number"
-                      className="text-xs text-gray-500"
-                    >
+                    <Label htmlFor="whatsapp_number" className="text-xs text-gray-500">
                       Nomor WhatsApp
                     </Label>
                     <Input
@@ -346,20 +254,13 @@ export function ContactSection({ data }: Props) {
                       required
                       className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                     />
-                    {fieldErrors.whatsapp_number && (
-                      <p className="text-xs text-red-600">
-                        {fieldErrors.whatsapp_number}
-                      </p>
-                    )}
+                    {fieldErrors.whatsapp_number && <p className="text-xs text-destructive">{fieldErrors.whatsapp_number}</p>}
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
                   <Label htmlFor="email" className="text-xs text-gray-500">
-                    Email{' '}
-                    <span className="text-gray-400 font-semibold">
-                      (opsional)
-                    </span>
+                    Email <span className="text-gray-400 font-semibold">(opsional)</span>
                   </Label>
                   <Input
                     id="email"
@@ -370,23 +271,15 @@ export function ContactSection({ data }: Props) {
                     onChange={handleChange}
                     className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                   />
-                  {fieldErrors.email && (
-                    <p className="text-xs text-red-600">{fieldErrors.email}</p>
-                  )}
+                  {fieldErrors.email && <p className="text-xs text-destructive">{fieldErrors.email}</p>}
                 </div>
 
                 <div className="space-y-1.5">
                   <Label htmlFor="topic" className="text-xs text-gray-500">
-                    Topik{' '}
-                    <span className="text-gray-400 font-semibold">
-                      (opsional)
-                    </span>
+                    Topik <span className="text-gray-400 font-semibold">(opsional)</span>
                   </Label>
                   <SelectGroup>
-                    <Select
-                      value={form.topic || 'none'}
-                      onValueChange={handleSubjectChange}
-                    >
+                    <Select value={form.topic || "none"} onValueChange={handleSubjectChange}>
                       <SelectTrigger
                         id="topic"
                         className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm w-full shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
@@ -404,9 +297,7 @@ export function ContactSection({ data }: Props) {
                       </SelectContent>
                     </Select>
                   </SelectGroup>
-                  {fieldErrors.topic && (
-                    <p className="text-xs text-red-600">{fieldErrors.topic}</p>
-                  )}
+                  {fieldErrors.topic && <p className="text-xs text-destructive">{fieldErrors.topic}</p>}
                 </div>
 
                 <div className="space-y-1.5">
@@ -424,42 +315,21 @@ export function ContactSection({ data }: Props) {
                     maxLength={2000}
                     className="rounded-xl border border-input bg-white dark:bg-white/5 text-sm resize-none shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20"
                   />
-                  <p className="text-[10px] font-semibold text-gray-400 text-right">
-                    {form.message.length}/2000
-                  </p>
-                  {fieldErrors.message && (
-                    <p className="text-xs text-red-600">
-                      {fieldErrors.message}
-                    </p>
-                  )}
+                  <p className="text-[10px] font-semibold text-gray-400 text-right">{form.message.length}/2000</p>
+                  {fieldErrors.message && <p className="text-xs text-destructive">{fieldErrors.message}</p>}
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 mt-2"
-                  style={{ backgroundColor: 'oklch(0.3811 0.1315 260.22)' }}
+                  style={{ backgroundColor: "oklch(0.3811 0.1315 260.22)" }}
                 >
                   {loading ? (
                     <>
-                      <svg
-                        className="w-4 h-4 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        />
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
                       </svg>
                       Mengirim...
                     </>

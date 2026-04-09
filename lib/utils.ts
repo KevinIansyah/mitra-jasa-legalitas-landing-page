@@ -111,3 +111,26 @@ export function formatIdrFromApi(value: string | null | undefined): string {
 export function formatServicePrice(price: string): string {
   return formatIdrFromApi(price) || '-';
 }
+
+export function resolvePublicFileUrl(path: string | null | undefined): string | null {
+  if (!path?.trim()) return null;
+  const t = path.trim();
+  if (t.startsWith('http://') || t.startsWith('https://')) return t;
+  const raw =
+    (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_API_URL?.trim()) ||
+    (typeof process !== 'undefined' && process.env.API_URL?.trim()) ||
+    '';
+  if (!raw) return t.startsWith('/') ? t : `/${t}`;
+  const base = raw.replace(/\/$/, '');
+  return t.startsWith('/') ? `${base}${t}` : `${base}/${t}`;
+}
+
+export function firstApiValidationMessage(
+  errors: Record<string, string[] | boolean> | undefined,
+): string | undefined {
+  if (!errors) return undefined;
+  for (const v of Object.values(errors)) {
+    if (Array.isArray(v) && v[0]) return v[0];
+  }
+  return undefined;
+}

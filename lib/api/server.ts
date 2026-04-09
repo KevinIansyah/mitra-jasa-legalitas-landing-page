@@ -76,7 +76,16 @@ async function handleResponse<T>(res: Response): Promise<T> {
     throw await parseApiErrorResponse(res);
   }
 
-  const data = await res.json();
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
+  const text = await res.text();
+  if (!text.trim()) {
+    return undefined as T;
+  }
+
+  const data = JSON.parse(text) as unknown;
   return extractData<T>(data);
 }
 

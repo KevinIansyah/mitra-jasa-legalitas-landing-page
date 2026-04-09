@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, ArrowRight, MessageCircle } from 'lucide-react';
+import { Clock, ArrowRight, MessageCircle, Newspaper } from 'lucide-react';
 import type { BlogAuthor, BlogCard, BlogTocItem } from '@/lib/types/blog';
 import { authorInitials } from '@/lib/blog-utils';
 
@@ -117,9 +117,11 @@ export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
                     sizes="56px"
                   />
                 ) : (
-                  <span className="absolute inset-0 flex items-center justify-center text-lg">
-                    📄
-                  </span>
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-white/10">
+                    <div className="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                      <Newspaper className="size-4" />
+                    </div>
+                  </div>
                 )}
               </div>
               <div className="flex-1 min-w-0">

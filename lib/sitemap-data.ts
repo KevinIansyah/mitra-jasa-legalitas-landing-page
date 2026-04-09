@@ -22,9 +22,6 @@ async function expandServiceCityPaths(
   return paths;
 }
 
-/**
- * Pasangan route `/layanan/[slug]/[citySlug]` — dipakai sitemap & `generateStaticParams`.
- */
 export async function fetchServiceCityPaths(): Promise<
   { slug: string; citySlug: string }[]
 > {
@@ -75,10 +72,6 @@ function servicesToDetailEntries(
   }));
 }
 
-/**
- * Menggabungkan URL statis + data dari backend (API_URL / NEXT_PUBLIC_API_URL).
- * Jika API gagal, kembalikan hanya URL statis agar `/sitemap.xml` tetap valid.
- */
 export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },

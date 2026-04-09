@@ -9,7 +9,14 @@ import { CHATBOT_SESSION_STORAGE_KEY, postChatbotSession, postChatbotMessage, pa
 import { whatsappWaMeUrl } from "@/lib/whatsapp-cta";
 import { hasPublicApiBaseUrl } from "@/lib/api/client";
 import { ChatBotMessageContent, ChatUserMessageContent } from "@/components/chat-bot-message-content";
-import { type ChatThreadMessage as Message, loadThreadMessages, saveThreadMessages, clearThreadMessages, MOCK_THREAD_TOKEN } from "@/lib/chat-widget-storage";
+import {
+  type ChatThreadMessage as Message,
+  loadThreadMessages,
+  saveThreadMessages,
+  clearChatWidgetStorage,
+  pruneExpiredChatStorageIfNeeded,
+  MOCK_THREAD_TOKEN,
+} from "@/lib/chat-widget-storage";
 import { LeadFormBubble } from "@/components/lead-form-bubble";
 import { EASE } from "@/lib/types/constants";
 
@@ -108,6 +115,9 @@ export function ChatWidget() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const initSession = useCallback(async () => {
+    if (typeof window !== "undefined") {
+      pruneExpiredChatStorageIfNeeded();
+    }
     if (!hasPublicApiBaseUrl()) {
       setMode("mock");
       setSessionReady(true);
@@ -249,8 +259,7 @@ export function ChatWidget() {
         setMode("offline");
         setOfflineWhatsapp(res.whatsapp ?? null);
         if (typeof window !== "undefined") {
-          localStorage.removeItem(CHATBOT_SESSION_STORAGE_KEY);
-          clearThreadMessages();
+          clearChatWidgetStorage();
         }
         setSessionToken(null);
         const botMsg: Message = {
@@ -278,13 +287,13 @@ export function ChatWidget() {
       const msgText = e instanceof ApiError ? e.message : "Maaf, terjadi kesalahan. Silakan coba lagi.";
       if (e instanceof ApiError && e.status === 404) {
         if (typeof window !== "undefined") {
-          localStorage.removeItem(CHATBOT_SESSION_STORAGE_KEY);
+          clearChatWidgetStorage();
         }
         setSessionToken(null);
         const botMsg: Message = {
           id: `b-${Date.now()}`,
           role: "bot",
-          text: `${msgText} Membuat sesi baru…`,
+          text: `${msgText} Membuat sesi baru...`,
           time: formatTimeLabel(),
         };
         setMessages((m) => [...m, botMsg]);
@@ -363,8 +372,7 @@ export function ChatWidget() {
     setIsConverted(false);
     setShowLeadForm(false);
     if (typeof window !== "undefined") {
-      localStorage.removeItem(CHATBOT_SESSION_STORAGE_KEY);
-      clearThreadMessages();
+      clearChatWidgetStorage();
     }
     setSessionToken(null);
     void initSession();
@@ -406,7 +414,7 @@ export function ChatWidget() {
                   ) : mode === "loading" ? (
                     <>
                       <Loader2 className="w-3 h-3 text-white/80 animate-spin" />
-                      <p className="text-xs text-white/70">Menghubungkan…</p>
+                      <p className="text-xs text-white/70">Menghubungkan...</p>
                     </>
                   ) : mode === "mock" ? (
                     <>
@@ -516,7 +524,7 @@ export function ChatWidget() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={inputDisabled && mode !== "mock" ? (mode === "offline" ? "Asisten tidak tersedia" : "Menghubungkan…") : "Ketik pesan…"}
+                placeholder={inputDisabled && mode !== "mock" ? (mode === "offline" ? "Asisten tidak tersedia" : "Menghubungkan...") : "Ketik pesan..."}
                 disabled={inputDisabled}
                 className="flex-1 text-sm px-3 py-2 rounded-full border border-gray-200 dark:border-white/15 bg-gray-50 dark:bg-white/8 text-gray-900 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none focus:border-brand-blue transition-colors disabled:opacity-50"
               />
@@ -561,7 +569,7 @@ export function ChatWidget() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-white text-[10px] font-bold flex items-center justify-center"
             >
               {unread}
             </motion.span>

@@ -35,3 +35,28 @@ export async function fetchBlogsList(
 export async function fetchBlogCategories(): Promise<BlogCategory[]> {
   return apiClient.get<BlogCategory[]>('/blog-categories');
 }
+
+// ============================================================================
+// BLOG SUBSCRIBERS (POST /blogs/subscribers)
+// ============================================================================
+
+export type BlogSubscriberSubscribeBody = {
+  email: string;
+  /** Kirim jika backend memvalidasi `name` (nullable). */
+  name?: string | null;
+};
+
+/**
+ * Langganan blog; backend mengirim email verifikasi (double opt-in).
+ */
+export async function postBlogSubscriberSubscribe(
+  body: BlogSubscriberSubscribeBody,
+): Promise<void> {
+  const payload: Record<string, string> = {
+    email: body.email.trim(),
+  };
+  const name = body.name?.trim();
+  if (name) payload.name = name;
+
+  await apiClient.post<unknown>('/blogs/subscribers', payload);
+}

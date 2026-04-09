@@ -113,7 +113,7 @@ export const missionVision = {
       <>
         Membantu UMKM dan perusahaan dalam pengurusan legalitas usaha dengan
         layanan yang{' '}
-        <strong className="text-gray-800 dark:text-gray-200">
+        <strong className="font-semibold text-brand-orange">
           profesional, transparan, dan tepat waktu
         </strong>
         . Kami berkomitmen menjadi solusi terpercaya untuk semua kebutuhan
@@ -126,7 +126,7 @@ export const missionVision = {
     body: (
       <>
         Menjadi{' '}
-        <strong className="text-gray-800 dark:text-gray-200">
+        <strong className="font-semibold text-brand-orange">
           mitra terpercaya nomor satu
         </strong>{' '}
         dalam pertumbuhan bisnis melalui layanan legalitas terbaik di Indonesia.

@@ -54,7 +54,6 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                     transition={{ duration: 0.45, delay: stepIndex * 0.07, ease: EASE }}
                     className="relative sm:pl-16"
                   >
-                    {/* Step number circle */}
                     <div
                       className="hidden sm:flex absolute left-0 top-5 w-12 h-12 rounded-2xl items-center justify-center shrink-0 z-10 transition-transform duration-300 group-hover/proc:scale-110"
                       style={{
@@ -62,14 +61,13 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                       }}
                     >
                       <span
-                        className="text-sm font-extrabold"
+                        className="text-sm font-bold"
                         style={{ color }}
                       >
                         {String(stepIndex + 1).padStart(2, '0')}
                       </span>
                     </div>
 
-                    {/*  Connector step */}
                     {stepIndex < steps.length - 1 && (
                       <div
                         aria-hidden
@@ -81,7 +79,6 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                       />
                     )}
 
-                    {/* Card */}
                     <div
                       className={`blog-card group/proc relative rounded-2xl border bg-surface-card transition-all duration-300 overflow-hidden ${
                         isExpanded
@@ -99,9 +96,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                           : undefined
                       }
                     >
-                      {/* Header row */}
                       <div className="flex items-start gap-4 p-5">
-                        {/* Mobile step number */}
                         <div
                           className="sm:hidden flex w-9 h-9 rounded-xl items-center justify-center shrink-0 mt-0.5"
                           style={{
@@ -109,7 +104,7 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                           }}
                         >
                           <span
-                            className="text-xs font-extrabold"
+                            className="text-xs font-bold"
                             style={{ color }}
                           >
                             {String(stepIndex + 1).padStart(2, '0')}
@@ -138,7 +133,6 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                             </span>
                           </div>
 
-                          {/* Toggle button */}
                           {hasExtra && (
                             <button
                               onClick={() =>
@@ -158,7 +152,6 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
                         </div>
                       </div>
 
-                      {/* Expandable detail */}
                       <AnimatePresence initial={false}>
                         {isExpanded && hasExtra && (
                           <motion.div

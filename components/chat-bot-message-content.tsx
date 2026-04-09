@@ -28,7 +28,7 @@ function urlButtonLabel(url: string): string {
     const path = u.pathname === '/' ? '' : u.pathname;
     const short = `${u.hostname}${path}`;
     if (short.length > 42) {
-      return `${u.hostname}${path.slice(0, 18)}…`;
+      return `${u.hostname}${path.slice(0, 18)}...`;
     }
     return short || u.hostname || 'Buka tautan';
   } catch {

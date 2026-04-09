@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getHomeData } from "@/lib/api/endpoints/home";
 import { HeroSection } from "./_components/hero-section";
 import { ClientMarquee } from "./_components/client-marque-section";
+import { ClientLogosSection } from "./_components/client-logos-section";
 import { TrustBadges } from "./_components/trust-badges";
 import { HowItWorksSection } from "./_components/how-it-works-section";
 import { ServicesSection } from "./_components/services-section";
@@ -11,6 +12,7 @@ import { CaseStudySection } from "./_components/case-study-section";
 import { TestimonialSection } from "./_components/testimonial-section";
 import { BlogSection } from "./_components/blog-section";
 import { FaqSection } from "./_components/faq-section";
+import { CtaSection } from "./_components/cta-section";
 import { cache } from "react";
 
 const getCachedHomeData = cache(getHomeData);
@@ -64,6 +66,7 @@ export default async function Page() {
       <HeroSection stats={home.stats} whatsappCta={home.whatsapp_cta} />
       <ClientMarquee allServices={home.all_services} />
       <TrustBadges />
+      <ClientLogosSection clientCompanies={home.client_companies} />
       <ServicesSection featuredServices={home.featured_services} />
       <WhyUsSection stats={home.stats} />
       <HowItWorksSection />
@@ -72,6 +75,7 @@ export default async function Page() {
       <TestimonialSection testimonials={home.testimonials} stats={home.stats} />
       <BlogSection posts={home.latest_blogs} />
       <FaqSection faqs={home.faqs} />
+      <CtaSection whatsappCta={home.whatsapp_cta} />
     </>
   );
 }

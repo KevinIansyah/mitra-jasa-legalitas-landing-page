@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Tag, Clock, MapPin, CheckCheck } from "lucide-react";
+import { Tag, Clock, MapPin, CheckCheck, Toolbox } from "lucide-react";
 import type { ServiceListItem } from "@/lib/types/service";
 import { formatIdrFromApi } from "@/lib/utils";
 import { BRAND_BLUE, BRAND_ORANGE } from "@/lib/types/constants";
@@ -46,9 +46,13 @@ export function ServiceCard({ service, index, href }: { service: ServiceListItem
       <Link href={cardHref} className="blog-card group flex flex-col h-full rounded-2xl border border-gray-200 bg-white dark:bg-surface-card overflow-hidden">
         <div className="relative h-36 w-full shrink-0 bg-gray-100 dark:bg-white/5">
           {service.featured_image ? (
-            <Image src={service.featured_image} alt={service.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" />
+            <Image src={service.featured_image} alt={service.name} fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" unoptimized />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-5xl">📋</div>
+            <div className="absolute inset-0 flex items-center justify-center text-5xl">
+              <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                <Toolbox className="size-8" />
+              </div>
+            </div>
           )}
         </div>
 

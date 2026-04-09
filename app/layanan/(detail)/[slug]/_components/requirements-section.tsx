@@ -148,7 +148,7 @@ export function RequirementsSection({
                                       {requirement.name}
                                     </p>
                                     {requirement.is_required ? (
-                                      <span className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap bg-red-50 dark:bg-red-900/20 text-red-500">
+                                      <span className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-semibold whitespace-nowrap bg-destructive/10 text-destructive">
                                         Wajib
                                       </span>
                                     ) : (

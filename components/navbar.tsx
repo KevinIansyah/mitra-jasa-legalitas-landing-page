@@ -5,7 +5,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
-import { Menu, X, Building2, FileText, Shield, Award, Gavel, HelpCircle, ChevronDown, ChevronRight, Sun, Moon, Loader2 } from "lucide-react";
+import { Menu, X, Building2, FileText, Shield, Award, Gavel, HelpCircle, ChevronDown, ChevronRight, Sun, Moon, Loader2, Bell } from "lucide-react";
 import { DropdownMenu } from "radix-ui";
 import { useAuth } from "@/hooks/use-auth";
 import { User } from "@/lib/types/user";
@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import navLogo from "@/public/nav-logo.svg";
 import Image from "next/image";
 import { NavigationData } from "@/lib/types/navigation";
+import { fetchUnreadCount } from "@/lib/api/endpoints/notifications";
 
 function userInitials(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
@@ -27,8 +28,8 @@ function userInitials(name: string): string {
 function NavbarUserAvatar({ user, size = "default" }: { user: User; size?: "default" | "large" }) {
   return (
     <Avatar className={cn(size === "large" ? "h-10 w-10  border-none shadow-none" : "h-9 w-9  border-none shadow-none")}>
-      {user.avatar ? <AvatarImage src={user.avatar} alt="Foto profil" /> : null}
-      <AvatarFallback className={cn("font-semibold", size === "large" ? "text-sm" : "text-xs")} style={{ backgroundColor: BRAND_BLUE }}>
+      {user.avatar ? <AvatarImage src={user.avatar} alt="Foto profil" className="object-cover object-center" /> : null}
+      <AvatarFallback className={cn("font-semibold text-white", size === "large" ? "text-sm" : "text-xs")} style={{ backgroundColor: BRAND_BLUE }}>
         {userInitials(user.name)}
       </AvatarFallback>
     </Avatar>
@@ -51,7 +52,7 @@ function ThemeToggle() {
       aria-label="Toggle dark mode"
       className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300"
     >
-      {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+      {isDark ? <Sun className="size-4.5" /> : <Moon className="size-4.5" />}
     </button>
   );
 }
@@ -66,6 +67,27 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
     initialUser: initialUser ?? undefined,
   });
   const showAccount = Boolean(isAuthenticated && user && !isError);
+
+  const [notifUnread, setNotifUnread] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!showAccount || !user) {
+      setNotifUnread(null);
+      return;
+    }
+    let cancelled = false;
+    fetchUnreadCount()
+      .then((count) => {
+        if (!cancelled) setNotifUnread(count);
+      })
+      .catch(() => {
+        if (!cancelled) setNotifUnread(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAccount, user?.id]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState<string | null>(null);
@@ -242,8 +264,28 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
           </div>
 
           {/* ────────────────── Auth Buttons + Theme Toggle ────────────────── */}
-          <div className="hidden lg:flex items-center gap-2 shrink-0">
+          <div className="hidden lg:flex items-center shrink-0">
             <ThemeToggle />
+
+            {showAccount && user ? (
+              <Link
+                href="/portal/notifikasi"
+                className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 mr-3"
+                aria-label={
+                  notifUnread != null && notifUnread > 0
+                    ? `Notifikasi, ${notifUnread} belum dibaca`
+                    : "Notifikasi"
+                }
+              >
+                <Bell className="size-4.5" aria-hidden />
+                {notifUnread != null && notifUnread > 0 ? (
+                  <div className="absolute -right-px -top-px flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-white">
+                    <span className="mb-0.5">{notifUnread > 99 ? "99+" : notifUnread}</span>
+                  </div>
+                ) : null}
+              </Link>
+            ) : null}
+
             {isLoading ? (
               <div className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-white/10" aria-hidden />
             ) : showAccount && user ? (
@@ -274,15 +316,22 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                     </DropdownMenu.Item>
                     <DropdownMenu.Item asChild>
                       <Link
-                        href="/portal/pengaturan-profil"
+                        href="/portal/notifikasi"
                         className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
                       >
+                     
+                        Notifikasi
+           
+                      </Link>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item asChild>
+                      <Link href="/pengaturan/profil" className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10">
                         Pengaturan profil
                       </Link>
                     </DropdownMenu.Item>
                     <DropdownMenu.Separator className="my-1 h-px bg-gray-100 dark:bg-white/10" />
                     <DropdownMenu.Item
-                      className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-red-600 outline-none data-highlighted:bg-red-50 dark:text-red-400 dark:data-highlighted:bg-red-950/40"
+                      className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-destructive outline-none data-highlighted:bg-destructive/10 dark:data-highlighted:bg-destructive/15"
                       onSelect={(e) => {
                         e.preventDefault();
                         void logout();
@@ -294,20 +343,38 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>
             ) : (
-              <>
+              <div className="flex items-center gap-3">
                 <Link href="/masuk" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors px-3">
                   Masuk
                 </Link>
                 <Link href="/daftar" className="px-5 py-2.5 text-sm font-semibold text-white rounded-full hover:opacity-90 transition-opacity shadow-sm" style={{ backgroundColor: BRAND_BLUE }}>
                   Mulai Sekarang
                 </Link>
-              </>
+              </div>
             )}
           </div>
 
           {/* ───────────────── mobile Right Humberger ───────────────── */}
-          <div className="lg:hidden flex items-center gap-1 md:gap-2">
+          <div className="lg:hidden flex items-center">
             <ThemeToggle />
+            {showAccount && user ? (
+              <Link
+                href="/portal/notifikasi"
+                className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 lg:hidden mr-1"
+                aria-label={
+                  notifUnread != null && notifUnread > 0
+                    ? `Notifikasi, ${notifUnread} belum dibaca`
+                    : "Notifikasi"
+                }
+              >
+                <Bell className="size-4.5" aria-hidden />
+                {notifUnread != null && notifUnread > 0 ? (
+                  <div className="absolute -right-px -top-px flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold leading-none text-white ">
+                    <span className="mb-0.5">{notifUnread > 99 ? "99+" : notifUnread}</span>
+                  </div>
+                ) : null}
+              </Link>
+            ) : null}
             <div className="hidden md:flex items-center gap-2 shrink-0">
               {isLoading ? (
                 <div className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-gray-200 dark:bg-white/10" aria-hidden />
@@ -339,7 +406,17 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                       </DropdownMenu.Item>
                       <DropdownMenu.Item asChild>
                         <Link
-                          href="/portal/pengaturan-profil"
+                          href="/portal/notifikasi"
+                          className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
+                        >
+                          
+                          Notifikasi
+             
+                        </Link>
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item asChild>
+                        <Link
+                          href="/pengaturan/profil"
                           className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
                         >
                           Pengaturan profil
@@ -347,7 +424,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                       </DropdownMenu.Item>
                       <DropdownMenu.Separator className="my-1 h-px bg-gray-100 dark:bg-white/10" />
                       <DropdownMenu.Item
-                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-red-600 outline-none data-highlighted:bg-red-50 dark:text-red-400 dark:data-highlighted:bg-red-950/40"
+                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm text-destructive outline-none data-highlighted:bg-destructive/10 dark:data-highlighted:bg-destructive/15"
                         onSelect={(e) => {
                           e.preventDefault();
                           void logout();
@@ -442,7 +519,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
             {isLoading ? (
               <div className="flex items-center justify-center gap-2 px-4 py-3 text-sm text-gray-500">
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                Memuat akun…
+                Memuat akun...
               </div>
             ) : showAccount && user ? (
               <>
@@ -461,7 +538,16 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                   Portal
                 </Link>
                 <Link
-                  href="/portal/pengaturan-profil"
+                  href="/portal/notifikasi"
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
+                  onClick={() => setIsOpen(false)}
+                >
+                
+                 Notifikasi
+    
+                </Link>
+                <Link
+                  href="/pengaturan/profil"
                   className="flex items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
                   onClick={() => setIsOpen(false)}
                 >
@@ -469,7 +555,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                 </Link>
                 <button
                   type="button"
-                  className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-red-600 rounded-xl hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/30"
+                  className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm font-medium text-destructive rounded-xl hover:bg-destructive/10 dark:hover:bg-destructive/15"
                   onClick={() => {
                     setIsOpen(false);
                     void logout();

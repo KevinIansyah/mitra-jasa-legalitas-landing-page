@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { cache } from 'react';
 import { BlogHero } from './_components/blog-hero';
-import { BlogListClient } from './_components/blog-list-client';
+import { BlogList } from './_components/blog-list';
 import { BlogNewsletter } from './_components/blog-newsletter';
 import {
   getBlogsList,
@@ -94,7 +94,7 @@ export default async function BlogPage({
             <div className="min-h-[50vh] bg-gray-50 dark:bg-surface-subtle animate-pulse" />
           }
         >
-          <BlogListClient
+          <BlogList
             initialListData={list}
             categories={cats}
             initialUrlKey={initialUrlKey}

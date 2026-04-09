@@ -172,6 +172,16 @@ export interface HomeSeo {
 }
 
 // ============================================================================
+// CLIENT COMPANIES (logo strip / trust section)
+// ============================================================================
+
+export interface ClientCompany {
+  id: number;
+  name: string;
+  logo: string | null;
+}
+
+// ============================================================================
 // HOME DATA
 // ============================================================================
 
@@ -183,6 +193,7 @@ export interface HomeData {
   testimonials: Testimonial[];
   faqs: Faq[];
   client_success_stories: ClientSuccessStory[];
+  client_companies?: ClientCompany[];
   latest_blogs: BlogCard[];
   whatsapp_cta: WhatsappCta | null;
   seo: HomeSeo;
@@ -204,6 +215,7 @@ export const EMPTY_HOME_DATA: HomeData = {
   testimonials: [],
   faqs: [],
   client_success_stories: [],
+  client_companies: [],
   latest_blogs: [],
   whatsapp_cta: null,
   seo: {

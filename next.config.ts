@@ -11,11 +11,32 @@ const extraHosts = (process.env.NEXT_IMAGE_REMOTE_HOSTNAMES ?? "")
   }));
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/invoices", destination: "/portal/faktur", permanent: true },
+      { source: "/invoices/:id", destination: "/portal/faktur/:id", permanent: true },
+      { source: "/proposals", destination: "/portal/proposal", permanent: true },
+      { source: "/proposals/:id", destination: "/portal/proposal/:id", permanent: true },
+      { source: "/estimates", destination: "/portal/estimasi", permanent: true },
+      { source: "/notifications", destination: "/portal/notifikasi", permanent: true },
+      { source: "/portal/notifications", destination: "/portal/notifikasi", permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {
         protocol: "https",
         hostname: "pub-d3ac298b441547f387442ac76499bdc2.r2.dev",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "dashboard-mitra-jasa-legalitas.keviniansyah.site",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "mitrajasalegalitas.co.id",
         pathname: "/**",
       },
       ...extraHosts,

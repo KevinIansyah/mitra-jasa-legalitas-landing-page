@@ -110,7 +110,7 @@ function RecommendedPackageCta({
       <p className="text-xs font-bold uppercase tracking-widest text-white/70">
         Paket Rekomendasi
       </p>
-      <p className="text-2xl font-extrabold leading-none tracking-tight">
+      <p className="text-2xl font-bold leading-none tracking-tight">
         {formatServicePrice(pkg.price)}
       </p>
       <p className="text-xs text-white/80 leading-snug">

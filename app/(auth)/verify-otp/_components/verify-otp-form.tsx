@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Loader2, AlertCircle, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useAuth, otpSession } from '@/hooks/use-auth';
 import { ApiError } from '@/lib/types/api';
 import { Label } from '@/components/ui/label';
@@ -130,7 +130,7 @@ export function VerifyOtpForm() {
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {formError ? (
           <p
-            className="text-sm text-destructive bg-destructive/10 border border-destructive/25 dark:bg-red-950/40 dark:border-red-900/50 dark:text-red-400 rounded-xl px-3 py-2.5 flex items-center gap-2"
+            className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2"
             role="alert"
           >
             <AlertCircle className="w-4 h-4 shrink-0" aria-hidden />
@@ -163,7 +163,7 @@ export function VerifyOtpForm() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin shrink-0" aria-hidden />
-              Memverifikasi…
+              Memverifikasi...
             </>
           ) : (
             'Verifikasi'
@@ -176,7 +176,7 @@ export function VerifyOtpForm() {
           className="mt-4 text-sm text-emerald-700 bg-emerald-500/10 border border-emerald-600/25 dark:text-emerald-300 dark:bg-emerald-950/40 dark:border-emerald-900/50 rounded-xl px-3 py-2.5 flex items-center gap-2"
           role="status"
         >
-          <CheckCircle className="w-4 h-4 shrink-0" aria-hidden />
+          <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden />
           {resendSuccess}
         </p>
       ) : null}
@@ -199,7 +199,7 @@ export function VerifyOtpForm() {
           className="text-sm font-medium text-foreground/90 underline underline-offset-4 hover:text-foreground disabled:opacity-50 disabled:no-underline"
         >
           {resendLoading
-            ? 'Mengirim…'
+            ? 'Mengirim...'
             : resendCooldown > 0
               ? `Kirim ulang (${resendCooldown}s)`
               : 'Kirim ulang kode'}

@@ -3,32 +3,6 @@
 import type { HomeServiceSummary } from "@/lib/types/home";
 import { MarqueeRow, type MarqueeItem } from "./marque-row";
 
-const FALLBACK_ROW_ONE: MarqueeItem[] = [
-  { icon: "⚖️", label: "Pendirian PT" },
-  { icon: "📋", label: "Pendirian CV" },
-  { icon: "🏢", label: "PT Perorangan" },
-  { icon: "📄", label: "NIB & OSS" },
-  { icon: "🔖", label: "SIUP & TDP" },
-  { icon: "™️", label: "Daftar Merek" },
-  { icon: "🌿", label: "Sertifikasi Halal" },
-  { icon: "💊", label: "Izin BPOM" },
-  { icon: "🏗️", label: "IMB & PBG" },
-  { icon: "📑", label: "NPWP Badan" },
-];
-
-const FALLBACK_ROW_TWO: MarqueeItem[] = [
-  { icon: "📜", label: "Akta Notaris" },
-  { icon: "🔐", label: "Hak Cipta" },
-  { icon: "🏦", label: "Rekening Perusahaan" },
-  { icon: "📊", label: "Laporan Keuangan" },
-  { icon: "🤝", label: "Perjanjian Bisnis" },
-  { icon: "🌐", label: "Izin Ekspor Impor" },
-  { icon: "🏥", label: "Izin Klinik" },
-  { icon: "🎓", label: "Izin Lembaga Pendidikan" },
-  { icon: "🚗", label: "Izin Transportasi" },
-  { icon: "🏪", label: "Izin Retail" },
-];
-
 function marqueeItemsFromAllServices(allServices: HomeServiceSummary[]): MarqueeItem[] {
   return allServices.map((service) => ({
     icon: service.icon?.trim() || "📋",
@@ -55,9 +29,12 @@ type ClientMarqueeProps = {
 };
 
 export function ClientMarquee({ allServices }: ClientMarqueeProps) {
-  const fromApi = Array.isArray(allServices) && allServices.length > 0 ? marqueeItemsFromAllServices(allServices) : null;
+  if (!Array.isArray(allServices) || allServices.length === 0) {
+    return null;
+  }
 
-  const { rowOne, rowTwo } = fromApi ? splitIntoTwoRows(fromApi) : { rowOne: FALLBACK_ROW_ONE, rowTwo: FALLBACK_ROW_TWO };
+  const fromApi = marqueeItemsFromAllServices(allServices);
+  const { rowOne, rowTwo } = splitIntoTwoRows(fromApi);
 
   return (
     <section className="relative overflow-hidden bg-surface-page">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Check, ArrowRight, Star } from "lucide-react";
+import { Check, ArrowRight, Star, Toolbox } from "lucide-react";
 import { SectionHeading } from "../../../components/section-heading";
 import { motion } from "framer-motion";
 import type { HomeFeaturedService } from "@/lib/types/home";
@@ -47,21 +47,28 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
           </div>
         )}
 
-        {service.featured_image ? (
-          <div className="relative h-36 w-full shrink-0 overflow-hidden bg-gray-100">
+        <div className="relative h-36 w-full shrink-0 overflow-hidden bg-gray-100 dark:bg-white/5">
+          {service.featured_image ? (
             <Image
               src={service.featured_image}
               alt={service.name}
               fill
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 400px"
+              unoptimized
             />
-          </div>
-        ) : null}
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
+                <Toolbox className="size-8" />
+              </div>
+            </div>
+          )}
+        </div>
 
         <div className="flex flex-col flex-1 p-6 gap-5">
           <div className="space-y-2">
-            <h3 className="text-xl font-extrabold text-gray-900 leading-snug group-hover:text-brand-blue transition-colors">{service.name}</h3>
+            <h3 className="text-lg font-bold text-gray-900 leading-snug group-hover:text-brand-blue transition-colors">{service.name}</h3>
             <p className="text-sm text-gray-500 leading-relaxed line-clamp-3">{service.short_description ?? ""}</p>
           </div>
 
@@ -81,7 +88,7 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
           <div className="mt-auto pt-5 border-t border-gray-100 flex items-end justify-between gap-3">
             <div>
               <p className="text-xs text-gray-400 mb-0.5">Mulai dari</p>
-              <p className="text-lg font-extrabold text-gray-900">{priceLabel}</p>
+              <p className="text-xl font-bold text-gray-900">{priceLabel}</p>
               <p className="text-xs text-gray-400 mt-0.5">{durationLabel}</p>
             </div>
             <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1" style={{ backgroundColor: bgColor }}>
@@ -95,6 +102,10 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
 }
 
 export function ServicesSection({ featuredServices }: { featuredServices: HomeFeaturedService[] }) {
+  if (featuredServices.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-20 lg:py-28 bg-surface-page">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -111,20 +122,11 @@ export function ServicesSection({ featuredServices }: { featuredServices: HomeFe
           />
         </motion.div>
 
-        {featuredServices.length === 0 ? (
-          <p className="text-center text-sm text-gray-500 py-8">
-            Belum ada layanan unggulan.{" "}
-            <Link href="/layanan" className="font-semibold text-brand-blue">
-              Lihat semua layanan
-            </Link>
-          </p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {featuredServices.map((service) => (
-              <ServiceCard key={service.id} service={service} />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {featuredServices.map((service) => (
+            <ServiceCard key={service.id} service={service} />
+          ))}
+        </div>
 
         <div className="mt-12 flex justify-center">
           <Link

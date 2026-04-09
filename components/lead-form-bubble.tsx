@@ -115,7 +115,7 @@ function FormField({ icon, placeholder, value, onChange, error, type }: { icon: 
     <div className="space-y-0.5">
       <div
         className={`flex items-center gap-2 bg-white dark:bg-white/10 rounded-lg px-2.5 py-2 border transition-colors ${
-          error ? "border-red-400 dark:border-red-500" : "border-gray-200 dark:border-white/15 focus-within:border-blue-400"
+          error ? "border-destructive focus-within:ring-destructive/25" : "border-gray-200 dark:border-white/15 focus-within:border-blue-400"
         }`}
       >
         <span className="text-gray-400 shrink-0">{icon}</span>
@@ -127,7 +127,7 @@ function FormField({ icon, placeholder, value, onChange, error, type }: { icon: 
           className="flex-1 text-xs bg-transparent text-gray-800 dark:text-gray-100 placeholder:text-gray-400 focus:outline-none"
         />
       </div>
-      {error && <p className="text-[10px] text-red-500 dark:text-red-400 px-1">{error}</p>}
+      {error && <p className="text-[10px] text-destructive px-1">{error}</p>}
     </div>
   );
 }

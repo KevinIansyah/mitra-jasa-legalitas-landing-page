@@ -95,7 +95,7 @@ export function ServiceFilter({
         </AnimatePresence>
       </div>
 
-      <div className="pb-4 border-b border-gray-100 dark:border-white/8">
+      <div className={cn("border-gray-100 dark:border-white/8", cities.length > 0 ? "border-b pb-4 " : "")}>
         <button type="button" onClick={() => setOpenPrice((isOpen) => !isOpen)} className="flex items-center justify-between w-full py-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
           Rentang Harga
           <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${openPrice ? "rotate-180" : ""}`} />
@@ -127,7 +127,7 @@ export function ServiceFilter({
         </AnimatePresence>
       </div>
 
-      {cityFilterVariant !== "hidden" && (
+      {cityFilterVariant !== "hidden" && cities.length > 0 && (
         <div className="pb-4">
           <button type="button" onClick={() => setOpenCity((isOpen) => !isOpen)} className="flex items-center justify-between w-full py-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
             Kota
