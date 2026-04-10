@@ -106,7 +106,7 @@ function ClientLogoCard({ client, index }: { client: ClientLogoItem; index: numb
             className="max-h-12 w-auto object-contain transition-transform duration-700 ease-out group-hover:scale-105"
           />
         ) : (
-          <span className="text-lg font-extrabold uppercase tracking-tight text-brand-blue" aria-hidden>
+          <span className="text-lg font-extrabold uppercase leading-tight line-clamp-2 text-brand-blue" aria-hidden>
             {client.name}
           </span>
         )}
@@ -134,6 +134,7 @@ function LogosCarousel({ slides, reduceMotion }: { slides: ClientLogoItem[][]; r
         delay: AUTO_SLIDE_INTERVAL_MS,
         stopOnMouseEnter: true,
         stopOnInteraction: false,
+        stopOnLastSnap: false,
       }),
     ];
   }, [reduceMotion, slides.length]);
@@ -142,7 +143,7 @@ function LogosCarousel({ slides, reduceMotion }: { slides: ClientLogoItem[][]; r
     {
       loop: slides.length > 1,
       align: "start",
-      containScroll: "trimSnaps",
+      containScroll: false,
     },
     plugins,
   );
