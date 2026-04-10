@@ -228,7 +228,8 @@ export function ClientLogosSection({ clientCompanies }: ClientLogosSectionProps)
             badge="Klien kami"
             title={
               <>
-                Dipercaya Berbagai <span className="text-brand-blue">Bisnis & Organisasi</span>
+                Dipercaya Berbagai <br className="hidden sm:block" />
+                <span className="text-brand-blue">Bisnis & Organisasi</span>
               </>
             }
             description="Bersama Mitra Jasa Legalitas, ratusan pelaku usaha telah menyelesaikan legalitas dengan tenang."
