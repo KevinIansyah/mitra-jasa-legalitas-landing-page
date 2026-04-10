@@ -23,14 +23,12 @@ function appendCommon(fd: FormData, body: InvoicePaymentFormPayload) {
   if (body.proof_file) fd.set("proof_file", body.proof_file);
 }
 
-/** POST /invoices/{invoice}/payments */
 export async function postInvoicePayment(invoiceId: number | string, body: InvoicePaymentFormPayload): Promise<unknown> {
   const fd = new FormData();
   appendCommon(fd, body);
   return apiClient.postFormData<unknown>(`/invoices/${encodeURIComponent(String(invoiceId))}/payments`, fd);
 }
 
-/** POST /invoices/{invoice}/payments/{payment} */
 export async function updateInvoicePayment(
   invoiceId: number | string,
   paymentId: number | string,

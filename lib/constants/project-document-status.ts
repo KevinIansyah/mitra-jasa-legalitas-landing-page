@@ -1,6 +1,5 @@
 import type { DocumentStatus } from "@/lib/types/project";
 
-/** Badge solid + teks putih, pola sama seperti faktur / proposal. */
 const DOCUMENT_STATUSES: ReadonlyArray<{
   value: DocumentStatus;
   label: string;

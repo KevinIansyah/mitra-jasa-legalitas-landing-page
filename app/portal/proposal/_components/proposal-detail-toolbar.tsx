@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { apiClient } from "@/lib/api/client";
 import { patchProposalStatus } from "@/lib/api/endpoints/proposals";
 import { getProposalStatusMeta } from "@/lib/constants/proposal-status";
 import type { ProposalStatus } from "@/lib/types/proposal";
@@ -17,9 +19,10 @@ type Props = {
   proposalId: number;
   status: ProposalStatus;
   pdfHref: string | null;
+  pdfDownloadFilename: string;
 };
 
-export function ProposalDetailToolbar({ proposalId, status, pdfHref }: Props) {
+export function ProposalDetailToolbar({ proposalId, status, pdfHref, pdfDownloadFilename }: Props) {
   const router = useRouter();
   const canRespond = status === "sent" || status === "draft";
 
@@ -27,6 +30,7 @@ export function ProposalDetailToolbar({ proposalId, status, pdfHref }: Props) {
   const [rejectOpen, setRejectOpen] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [pending, setPending] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   async function submitAccept() {
     setPending(true);
@@ -81,14 +85,30 @@ export function ProposalDetailToolbar({ proposalId, status, pdfHref }: Props) {
     <>
       <div className="flex flex-wrap items-center gap-2">
         {pdfHref ? (
-          <a
-            href={pdfHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-blue px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          <button
+            type="button"
+            disabled={pdfLoading}
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-blue px-4 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-70"
+            onClick={async () => {
+              setPdfLoading(true);
+              try {
+                await apiClient.downloadPortalAttachment(pdfHref, pdfDownloadFilename);
+              } catch (e) {
+                toast.error(e instanceof ApiError ? e.message : e instanceof Error ? e.message : "Tidak dapat mengunduh proposal.");
+              } finally {
+                setPdfLoading(false);
+              }
+            }}
           >
-            Unduh Proposal
-          </a>
+            {pdfLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+                Mengunduh…
+              </>
+            ) : (
+              "Unduh Proposal"
+            )}
+          </button>
         ) : null}
 
         {canRespond ? (

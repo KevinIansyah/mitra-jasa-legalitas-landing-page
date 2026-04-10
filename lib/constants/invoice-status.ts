@@ -1,4 +1,3 @@
-/** Badge solid + teks putih, pola sama seperti proyek / proposal. */
 export const INVOICE_STATUSES = [
   { value: "paid", label: "Lunas", classes: "bg-emerald-600 text-white" },
   { value: "sent", label: "Terkirim", classes: "bg-brand-blue text-white" },

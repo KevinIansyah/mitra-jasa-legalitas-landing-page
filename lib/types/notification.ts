@@ -1,6 +1,5 @@
 import type { PaginationMeta } from "@/lib/types/api";
 
-/** Normalizes Laravel `GET /notifications/unread-count` (bentuk data bisa bervariasi). */
 export function normalizeUnreadCount(payload: unknown): number {
   if (typeof payload === "number" && Number.isFinite(payload)) {
     return Math.max(0, Math.floor(payload));

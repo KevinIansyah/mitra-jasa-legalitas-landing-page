@@ -1,9 +1,5 @@
 import type { Invoice, InvoicesListResult } from "@/lib/types/invoice";
 
-/**
- * GET /invoices kadang hanya mengembalikan `data` sebagai array (tanpa `meta`).
- * `extractData` pada client/server mengembalikan array mentah → perlu dibentuk jadi InvoicesListResult.
- */
 export function normalizeInvoicesListResult(raw: unknown): InvoicesListResult {
   if (Array.isArray(raw)) {
     const data = raw as Invoice[];

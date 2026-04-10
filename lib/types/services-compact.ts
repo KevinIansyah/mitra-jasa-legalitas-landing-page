@@ -1,4 +1,4 @@
-/** GET /services/compact — `data.services` */
+
 export type ServiceCompactCategory = {
   id: number;
   name: string;
@@ -16,7 +16,6 @@ export type ServiceCompact = {
   category: ServiceCompactCategory;
 };
 
-/** GET /services/:id/packages — `data` */
 export type ServicePackagesMeta = {
   id: number;
   name: string;

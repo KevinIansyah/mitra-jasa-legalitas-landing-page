@@ -8,8 +8,14 @@ import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 
 import { SectionHeading } from "@/components/section-heading";
 import { EASE } from "@/lib/types/constants";
 import type { ClientCompany } from "@/lib/types/home";
-import type { ClientLogoItem } from "../_data/client-logos-dummy";
 import { cn } from "@/lib/utils";
+
+type ClientLogoItem = {
+  id: string;
+  name: string;
+  sector?: string;
+  logoUrl?: string | null;
+};
 
 const AUTO_SLIDE_INTERVAL_MS = 7500;
 

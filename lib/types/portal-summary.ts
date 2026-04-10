@@ -1,4 +1,4 @@
-/** Respons `data` untuk GET ringkasan portal (dashboard klien). */
+  
 export type PortalSummary = {
   notifications: {
     unread_count: number;

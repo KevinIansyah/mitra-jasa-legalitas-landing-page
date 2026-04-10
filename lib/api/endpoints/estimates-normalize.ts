@@ -1,9 +1,5 @@
 import type { Estimate, EstimatesListResult } from "@/lib/types/estimate";
 
-/**
- * GET /estimates tanpa `meta` → `extractData` mengembalikan array mentah.
- * Disamakan bentuknya dengan daftar yang punya pagination.
- */
 export function normalizeEstimatesListResult(raw: unknown): EstimatesListResult {
   if (Array.isArray(raw)) {
     const data = raw as Estimate[];

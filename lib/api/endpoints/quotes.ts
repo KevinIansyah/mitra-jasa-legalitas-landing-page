@@ -2,7 +2,6 @@ import { apiClient } from "@/lib/api/client";
 import type { QuoteRequest, QuoteRequestDetail, QuotesListResult } from "@/lib/types/quote-request";
 import { normalizeQuoteDetail, normalizeQuotesListResult } from "./quotes-normalize";
 
-/** Body POST /quotes (klien terautentikasi; `user_id` biasanya diisi backend dari token). */
 export type CreateQuotePayload = {
   service_id: number;
   service_package_id: number;

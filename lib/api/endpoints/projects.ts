@@ -51,7 +51,6 @@ export async function uploadProjectDocument(args: {
     formData,
   );
 
-  // Respons upload sering hanya berisi subset proyek atau struktur berbeda; ambil ulang detail lengkap seperti halaman awal.
   return fetchProjectDetail(projectId);
 }
 

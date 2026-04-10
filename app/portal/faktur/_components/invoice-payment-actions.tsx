@@ -1,9 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CheckCircle2, Loader2 } from "lucide-react";
+import { apiClient } from "@/lib/api/client";
 import type { InvoiceDetail, InvoicePayment } from "@/lib/types/invoice";
+import { ApiError } from "@/lib/types/api";
+import { toast } from "sonner";
 import { InvoicePaymentModal } from "./invoice-payment-modal";
-import { CheckCircle2 } from "lucide-react";
 
 type Props = {
   invoice: InvoiceDetail;
@@ -22,6 +25,40 @@ const invoiceToolbarSkin =
 const invoiceToolbarPrimaryBase = `inline-flex ${invoiceToolbarSkin}`;
 
 const invoiceToolbarRow = "flex flex-wrap items-center gap-2";
+
+function safeInvoiceFileStem(invoiceNumber: string): string {
+  return invoiceNumber.replace(/[/\\?%*:|"<>]/g, "-").trim() || "faktur";
+}
+
+function InvoicePdfDownloadButton({ pdfHref, invoiceNumber, className }: { pdfHref: string; invoiceNumber: string; className: string }) {
+  const [loading, setLoading] = useState(false);
+  return (
+    <button
+      type="button"
+      className={className}
+      disabled={loading}
+      onClick={() => {
+        setLoading(true);
+        try {
+          apiClient.downloadPublicFile(pdfHref, `Faktur-${safeInvoiceFileStem(invoiceNumber)}.pdf`);
+        } catch (e) {
+          toast.error(e instanceof ApiError ? e.message : e instanceof Error ? e.message : "Tidak dapat mengunduh faktur.");
+        } finally {
+          setLoading(false);
+        }
+      }}
+    >
+      {loading ? (
+        <>
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin" aria-hidden />
+          Mengunduh…
+        </>
+      ) : (
+        "Unduh Faktur"
+      )}
+    </button>
+  );
+}
 
 export function InvoicePaymentActions({ invoice, pdfHref }: Props) {
   const [modal, setModal] = useState<"create" | "revise" | null>(null);
@@ -61,11 +98,7 @@ export function InvoicePaymentActions({ invoice, pdfHref }: Props) {
       <div className="space-y-3">
         {showTopRow ? (
           <div className={invoiceToolbarRow}>
-            {pdf ? (
-              <a href={pdf} target="_blank" rel="noopener noreferrer" className={invoiceToolbarPrimaryBase}>
-                Unduh Faktur
-              </a>
-            ) : null}
+            {pdf ? <InvoicePdfDownloadButton pdfHref={pdf} invoiceNumber={invoice.invoice_number} className={invoiceToolbarPrimaryBase} /> : null}
             <button type="button" className={invoiceToolbarPrimaryBase} onClick={() => setModal("revise")}>
               Revisi pembayaran
             </button>
@@ -79,11 +112,7 @@ export function InvoicePaymentActions({ invoice, pdfHref }: Props) {
   if (pendingPayment) {
     return (
       <div className="space-y-4">
-        {pdf ? (
-          <a href={pdf} target="_blank" rel="noopener noreferrer" className={invoiceToolbarPrimaryBase}>
-            Unduh Faktur
-          </a>
-        ) : null}
+        {pdf ? <InvoicePdfDownloadButton pdfHref={pdf} invoiceNumber={invoice.invoice_number} className={invoiceToolbarPrimaryBase} /> : null}
         <p
           className="flex w-full items-center gap-2 rounded-xl border border-emerald-600/25 bg-emerald-500/10 px-3 py-2.5 text-sm text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-950/40 dark:text-emerald-300"
           role="status"
@@ -96,21 +125,13 @@ export function InvoicePaymentActions({ invoice, pdfHref }: Props) {
   }
 
   if (!canRecordNew) {
-    return pdf ? (
-      <a href={pdf} target="_blank" rel="noopener noreferrer" className={invoiceToolbarPrimaryBase}>
-        Unduh Faktur
-      </a>
-    ) : null;
+    return pdf ? <InvoicePdfDownloadButton pdfHref={pdf} invoiceNumber={invoice.invoice_number} className={invoiceToolbarPrimaryBase} /> : null;
   }
 
   return (
     <div>
       <div className={invoiceToolbarRow}>
-        {pdf ? (
-          <a href={pdf} target="_blank" rel="noopener noreferrer" className={invoiceToolbarPrimaryBase}>
-            Unduh Faktur
-          </a>
-        ) : null}
+        {pdf ? <InvoicePdfDownloadButton pdfHref={pdf} invoiceNumber={invoice.invoice_number} className={invoiceToolbarPrimaryBase} /> : null}
         <button type="button" className={invoiceToolbarPrimaryBase} onClick={() => setModal("create")}>
           Catat pembayaran
         </button>

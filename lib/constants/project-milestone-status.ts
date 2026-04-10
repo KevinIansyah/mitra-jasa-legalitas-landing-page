@@ -1,6 +1,5 @@
 import type { MilestoneStatus } from "@/lib/types/project";
 
-/** Badge solid + teks putih, pola sama seperti faktur / proposal. */
 const MILESTONE_STATUSES: ReadonlyArray<{
   value: MilestoneStatus;
   label: string;

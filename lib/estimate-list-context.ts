@@ -1,9 +1,5 @@
 import type { Estimate } from "@/lib/types/estimate";
 
-/**
- * Ringkasan untuk daftar / kartu / metadata: nama proyek selalu dari objek relasi
- * (`proposal.project_name` atau `quote.project_name`), bukan field di root estimasi.
- */
 export function getEstimateListContext(row: Estimate): string {
   if (row.proposal) {
     const num = row.proposal.proposal_number?.trim();

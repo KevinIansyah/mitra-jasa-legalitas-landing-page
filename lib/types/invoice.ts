@@ -60,7 +60,6 @@ export type InvoicePayment = {
   proof_file_url: string | null;
 };
 
-/** Respons GET /invoices/:id */
 export type InvoiceDetail = {
   id: number;
   project_id: number | null;
@@ -120,10 +119,6 @@ export type Invoice = {
   project: InvoiceProject;
 };
 
-/**
- * Bentuk konsumen daftar faktur setelah `normalizeInvoicesListResult`.
- * API bisa mengirim hanya `data: [...]` tanpa `meta`; normalisasi mengisi pagination.
- */
 export type InvoicesListResult = {
   data: Invoice[];
 } & PaginationMeta;

@@ -41,10 +41,6 @@ export type EstimateProposalSummary = {
   updated_at: string;
 } | null;
 
-/**
- * Relasi `quote` di response estimasi (bisa berisi field lengkap dari API;
- * UI memakai minimal `id`, `reference_number`, `project_name`).
- */
 export type EstimateQuoteSummary = {
   id: number;
   reference_number?: string | null;
@@ -71,7 +67,6 @@ export type Estimate = {
   notes: string | null;
   rejected_reason: string | null;
   file_path: string | null;
-  /** URL publik langsung ke PDF (mis. R2); jika ada, dipakai untuk unduhan. */
   file_url?: string | null;
   deleted_at: string | null;
   created_at: string;
@@ -82,7 +77,6 @@ export type Estimate = {
   quote: EstimateQuoteSummary;
 };
 
-/** Setelah `extractData` pada GET /estimates (data array + meta jika paginasi Laravel). */
 export type EstimatesListResult = {
   data: Estimate[];
 } & Partial<PaginationMeta> &

@@ -6,12 +6,7 @@ import type { Estimate } from "@/lib/types/estimate";
 import { cn, formatDate, formatIdrFromApi, resolvePublicFileUrl } from "@/lib/utils";
 import { PortalDetailSectionHeading } from "@/app/portal/_components/portal-detail-section-heading";
 import { PortalEmptyState } from "@/app/portal/_components/portal-empty-state";
-import {
-  PORTAL_DATA_TABLE,
-  PORTAL_DATA_TABLE_BODY,
-  PORTAL_DATA_TABLE_HEAD,
-  PORTAL_DATA_TABLE_WRAP,
-} from "@/app/portal/_components/portal-table-classes";
+import { PORTAL_DATA_TABLE, PORTAL_DATA_TABLE_BODY, PORTAL_DATA_TABLE_HEAD, PORTAL_DATA_TABLE_WRAP } from "@/app/portal/_components/portal-table-classes";
 import { EstimateDetailToolbar } from "./estimate-detail-toolbar";
 
 type Props = {
@@ -45,13 +40,10 @@ export function EstimateDetailView({ estimate: e }: Props) {
 
   return (
     <div className="space-y-10">
-      <EstimateDetailToolbar estimateId={e.id} status={e.status} pdfHref={pdfHref} />
+      <EstimateDetailToolbar estimateId={e.id} status={e.status} pdfHref={pdfHref} pdfDownloadFilename={`estimasi-${e.estimate_number.replace(/[/\\?%*:|"<>]/g, "-").trim() || "berkas"}.pdf`} />
 
       <section className="space-y-6">
-        <PortalDetailSectionHeading
-          title="Informasi estimasi"
-          description="Nomor, versi, jadwal berlaku, status, dan tautan ke proposal atau permintaan penawaran terkait."
-        />
+        <PortalDetailSectionHeading title="Informasi estimasi" description="Nomor, versi, jadwal berlaku, status, dan tautan ke proposal atau permintaan penawaran terkait." />
         <Field label="Status">
           <span className={cn("inline-flex rounded-full px-2.5 py-1.5 text-xs font-semibold", statusMeta.classes)}>{statusMeta.label}</span>
         </Field>
@@ -76,10 +68,7 @@ export function EstimateDetailView({ estimate: e }: Props) {
             </Field>
             <Field label="Nama proyek">{e.proposal.project_name}</Field>
             <Field label="Proposal">
-              <Link
-                href={`/portal/proposal/${e.proposal.id}`}
-                className="inline-flex items-center gap-1 font-medium text-brand-blue hover:underline"
-              >
+              <Link href={`/portal/proposal/${e.proposal.id}`} className="inline-flex items-center gap-1 font-medium text-brand-blue hover:underline">
                 Buka detail proposal
                 <ExternalLink className="size-3.5 shrink-0" aria-hidden />
               </Link>
@@ -90,18 +79,11 @@ export function EstimateDetailView({ estimate: e }: Props) {
         {quoteLinkId != null ? (
           <>
             <Field label="No. permintaan penawaran">
-              <span className="font-mono">
-                {e.quote?.reference_number?.trim() ?? `Permintaan #${quoteLinkId}`}
-              </span>
+              <span className="font-mono">{e.quote?.reference_number?.trim() ?? `Permintaan #${quoteLinkId}`}</span>
             </Field>
-            <Field label="Nama proyek (penawaran)">
-              {e.quote?.project_name?.trim() ? e.quote.project_name.trim() : "-"}
-            </Field>
+            <Field label="Nama proyek (penawaran)">{e.quote?.project_name?.trim() ? e.quote.project_name.trim() : "-"}</Field>
             <Field label="Permintaan penawaran">
-              <Link
-                href={`/portal/permintaan-penawaran/${quoteLinkId}`}
-                className="inline-flex items-center gap-1 font-medium text-brand-blue hover:underline"
-              >
+              <Link href={`/portal/permintaan-penawaran/${quoteLinkId}`} className="inline-flex items-center gap-1 font-medium text-brand-blue hover:underline">
                 Buka detail permintaan penawaran
                 <ExternalLink className="size-3.5 shrink-0" aria-hidden />
               </Link>
@@ -125,11 +107,7 @@ export function EstimateDetailView({ estimate: e }: Props) {
       <section className="space-y-5 border-t border-gray-200 pt-10 dark:border-white/10">
         <PortalDetailSectionHeading title="Item estimasi" description="Rincian baris biaya, pajak per baris, dan total." />
         {items.length === 0 ? (
-          <PortalEmptyState
-            icon={Calculator}
-            title="Tidak ada baris item"
-            description="Estimasi ini belum memiliki rincian pos biaya."
-          />
+          <PortalEmptyState icon={Calculator} title="Tidak ada baris item" description="Estimasi ini belum memiliki rincian pos biaya." />
         ) : (
           <div className={PORTAL_DATA_TABLE_WRAP}>
             <table className={PORTAL_DATA_TABLE}>

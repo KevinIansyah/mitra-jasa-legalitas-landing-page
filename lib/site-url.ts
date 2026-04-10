@@ -1,7 +1,3 @@
-/**
- * Origin situs untuk canonical, sitemap, robots.
- * Set `NEXT_PUBLIC_SITE_URL` di production (mis. https://mitrajasa.id).
- */
 export function getSiteOrigin(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim();
   if (explicit) return explicit.replace(/\/$/, "");

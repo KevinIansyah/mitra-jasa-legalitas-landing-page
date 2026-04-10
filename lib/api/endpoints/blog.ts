@@ -1,6 +1,5 @@
-
-import { apiClient } from '@/lib/api/client';
-import type { BlogCategory, BlogsListPageData } from '@/lib/types/blog';
+import { apiClient } from "@/lib/api/client";
+import type { BlogCategory, BlogsListPageData } from "@/lib/types/blog";
 
 export type BlogsListParams = {
   page?: number;
@@ -12,28 +11,26 @@ export function buildBlogsPath(params: BlogsListParams = {}): string {
   const sp = new URLSearchParams();
   const page = params.page ?? 1;
   if (page > 1) {
-    sp.set('page', String(page));
+    sp.set("page", String(page));
   }
   for (const categorySlug of params.category ?? []) {
     const trimmed = categorySlug.trim();
-    if (trimmed) sp.append('category[]', trimmed);
+    if (trimmed) sp.append("category[]", trimmed);
   }
   for (const tagSlug of params.tag ?? []) {
     const trimmed = tagSlug.trim();
-    if (trimmed) sp.append('tag[]', trimmed);
+    if (trimmed) sp.append("tag[]", trimmed);
   }
   const q = sp.toString();
-  return `/blogs${q ? `?${q}` : ''}`;
+  return `/blogs${q ? `?${q}` : ""}`;
 }
 
-export async function fetchBlogsList(
-  params: BlogsListParams = {},
-): Promise<BlogsListPageData> {
+export async function fetchBlogsList(params: BlogsListParams = {}): Promise<BlogsListPageData> {
   return apiClient.get<BlogsListPageData>(buildBlogsPath(params));
 }
 
 export async function fetchBlogCategories(): Promise<BlogCategory[]> {
-  return apiClient.get<BlogCategory[]>('/blog-categories');
+  return apiClient.get<BlogCategory[]>("/blog-categories");
 }
 
 // ============================================================================
@@ -42,21 +39,15 @@ export async function fetchBlogCategories(): Promise<BlogCategory[]> {
 
 export type BlogSubscriberSubscribeBody = {
   email: string;
-  /** Kirim jika backend memvalidasi `name` (nullable). */
   name?: string | null;
 };
 
-/**
- * Langganan blog; backend mengirim email verifikasi (double opt-in).
- */
-export async function postBlogSubscriberSubscribe(
-  body: BlogSubscriberSubscribeBody,
-): Promise<void> {
+export async function postBlogSubscriberSubscribe(body: BlogSubscriberSubscribeBody): Promise<void> {
   const payload: Record<string, string> = {
     email: body.email.trim(),
   };
   const name = body.name?.trim();
   if (name) payload.name = name;
 
-  await apiClient.post<unknown>('/blogs/subscribers', payload);
+  await apiClient.post<unknown>("/blogs/subscribers", payload);
 }

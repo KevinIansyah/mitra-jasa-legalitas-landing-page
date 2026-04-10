@@ -2,15 +2,18 @@
 
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
-import { ArrowDownFromLine, ArrowUpFromLine, FileText, Flag, Package } from "lucide-react";
+import { ArrowDownFromLine, ArrowUpFromLine, FileText, Flag, Loader2, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { getProjectDocumentFormatLabel } from "@/lib/constants/project-document-format";
 import { getProjectDocumentStatusMeta } from "@/lib/constants/project-document-status";
 import { getProjectMilestoneStatusMeta } from "@/lib/constants/project-milestone-status";
 import { getProjectStatusMeta } from "@/lib/constants/project-status";
-import type { ProjectDetail, ProjectDocument } from "@/lib/types/project";
+import { apiClient } from "@/lib/api/client";
+import type { ProjectDeliverable, ProjectDetail, ProjectDocument } from "@/lib/types/project";
+import { ApiError } from "@/lib/types/api";
 import { cn, formatDate, formatDateTime, formatIdrFromApi } from "@/lib/utils";
+import { toast } from "sonner";
 import { PortalDetailSectionHeading } from "@/app/portal/_components/portal-detail-section-heading";
 import { PortalEmptyState } from "@/app/portal/_components/portal-empty-state";
 import {
@@ -45,6 +48,22 @@ function formatDeliverableVersionLabel(version: string | null | undefined): stri
   return `v${t}`;
 }
 
+function safeFilenameBase(name: string): string {
+  return name.replace(/[/\\?%*:|"<>]/g, "-").trim() || "unduhan";
+}
+
+function fallbackProjectDocumentFilename(doc: ProjectDocument): string {
+  const fromPath = doc.file_path?.split("/").pop()?.trim();
+  if (fromPath) return fromPath;
+  return safeFilenameBase(doc.name);
+}
+
+function fallbackDeliverableFilename(item: ProjectDeliverable): string {
+  const fromPath = item.file_path?.split("/").pop()?.trim();
+  if (fromPath) return fromPath;
+  return safeFilenameBase(item.name);
+}
+
 const FIELD_TEXT = "text-sm leading-relaxed";
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
@@ -59,7 +78,29 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 export function ProjectDetailView({ initialProject }: Props) {
   const [project, setProject] = useState<ProjectDetail>(initialProject);
   const [uploadModalDocument, setUploadModalDocument] = useState<ProjectDocument | null>(null);
+  const [downloadKey, setDownloadKey] = useState<string | null>(null);
   const projectStatus = getProjectStatusMeta(project.status);
+
+  async function handleAuthenticatedDownload(path: string, fallbackFilename: string, key: string) {
+    setDownloadKey(key);
+    try {
+      const { blob, filename } = await apiClient.getBlob(path);
+      const name = (filename?.trim() || fallbackFilename).replace(/^"(.*)"$/, "$1");
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = name;
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : "Tidak dapat mengunduh berkas.");
+    } finally {
+      setDownloadKey(null);
+    }
+  }
 
   const documents = useMemo(() => [...(project.documents ?? [])].sort((a, b) => a.sort_order - b.sort_order), [project.documents]);
   const milestones = useMemo(() => [...(project.milestones ?? [])].sort((a, b) => a.sort_order - b.sort_order), [project.milestones]);
@@ -179,10 +220,25 @@ export function ProjectDetailView({ initialProject }: Props) {
                           {document.download_url ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button asChild variant="secondary" size="icon" className="rounded-md">
-                                  <a href={document.download_url} target="_blank" rel="noopener noreferrer">
+                                <Button
+                                  type="button"
+                                  variant="secondary"
+                                  size="icon"
+                                  className="rounded-md"
+                                  disabled={downloadKey === `doc-${document.id}`}
+                                  onClick={() =>
+                                    handleAuthenticatedDownload(
+                                      `/projects/${project.id}/documents/${document.id}/download`,
+                                      fallbackProjectDocumentFilename(document),
+                                      `doc-${document.id}`,
+                                    )
+                                  }
+                                >
+                                  {downloadKey === `doc-${document.id}` ? (
+                                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                                  ) : (
                                     <ArrowDownFromLine className="size-3.5" aria-hidden />
-                                  </a>
+                                  )}
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="top">Unduh dokumen</TooltipContent>
@@ -252,10 +308,25 @@ export function ProjectDetailView({ initialProject }: Props) {
                           {item.download_url ? (
                             <Tooltip>
                               <TooltipTrigger asChild>
-                                <Button asChild variant="secondary" size="icon" className="rounded-md">
-                                  <a href={item.download_url} target="_blank" rel="noopener noreferrer">
+                                <Button
+                                  type="button"
+                                  variant="secondary"
+                                  size="icon"
+                                  className="rounded-md"
+                                  disabled={downloadKey === `del-${item.id}`}
+                                  onClick={() =>
+                                    handleAuthenticatedDownload(
+                                      `/projects/${project.id}/deliverables/${item.id}/download`,
+                                      fallbackDeliverableFilename(item),
+                                      `del-${item.id}`,
+                                    )
+                                  }
+                                >
+                                  {downloadKey === `del-${item.id}` ? (
+                                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                                  ) : (
                                     <ArrowDownFromLine className="size-3.5" aria-hidden />
-                                  </a>
+                                  )}
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="top">Unduh dokumen hasil akhir</TooltipContent>

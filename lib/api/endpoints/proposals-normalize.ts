@@ -1,8 +1,5 @@
 import type { Proposal, ProposalsListResult } from "@/lib/types/proposal";
 
-/**
- * GET /proposals tanpa `meta` → `extractData` mengembalikan array mentah.
- */
 export function normalizeProposalsListResult(raw: unknown): ProposalsListResult {
   if (Array.isArray(raw)) {
     const data = raw as Proposal[];

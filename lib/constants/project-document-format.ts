@@ -1,4 +1,3 @@
-/** Label singkat untuk ditampilkan ke klien (selaras dengan validasi unggah). */
 export function getProjectDocumentFormatLabel(documentFormat: string | null | undefined): string | null {
   const f = (documentFormat ?? "").toLowerCase().trim();
   if (!f) return null;

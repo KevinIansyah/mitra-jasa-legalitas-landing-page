@@ -1,4 +1,3 @@
-/** Label & gaya badge untuk jenis usaha (selaras admin / API `business_type`). */
 export const CATEGORY_BUSINESS = [
   { value: "perdagangan", label: "Perdagangan", classes: "bg-blue-500 text-white" },
   { value: "retail", label: "Retail", classes: "bg-blue-600 text-white" },
@@ -25,12 +24,8 @@ export const CATEGORY_BUSINESS = [
   { value: "lainnya", label: "Lainnya", classes: "bg-muted text-muted-foreground" },
 ] as const;
 
-export const CATEGORY_BUSINESS_MAP = Object.fromEntries(CATEGORY_BUSINESS.map((item) => [item.value, item])) as Record<
-  string,
-  (typeof CATEGORY_BUSINESS)[number]
->;
+export const CATEGORY_BUSINESS_MAP = Object.fromEntries(CATEGORY_BUSINESS.map((item) => [item.value, item])) as Record<string, (typeof CATEGORY_BUSINESS)[number]>;
 
-/** Label & gaya badge untuk bentuk badan hukum (`business_legal_status`). */
 export const STATUS_LEGAL = [
   { value: "belum_ada", label: "Belum Ada Legalitas", classes: "bg-gray-400 text-white" },
   { value: "pt", label: "Perseroan Terbatas (PT)", classes: "bg-indigo-500 text-white" },
@@ -47,10 +42,7 @@ export const STATUS_LEGAL = [
   { value: "lainnya", label: "Lainnya", classes: "bg-muted text-muted-foreground" },
 ] as const;
 
-export const STATUS_LEGAL_MAP = Object.fromEntries(STATUS_LEGAL.map((item) => [item.value, item])) as Record<
-  string,
-  (typeof STATUS_LEGAL)[number]
->;
+export const STATUS_LEGAL_MAP = Object.fromEntries(STATUS_LEGAL.map((item) => [item.value, item])) as Record<string, (typeof STATUS_LEGAL)[number]>;
 
 function fallbackLabel(raw: string): string {
   if (!raw.trim()) return "-";

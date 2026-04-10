@@ -1,6 +1,5 @@
 import type { ProjectStatusValue } from "@/lib/constants/project-status";
 
-/** Selaras dengan API / enum backend. */
 export type DocumentStatus = "not_uploaded" | "pending_review" | "uploaded" | "verified" | "rejected";
 
 export type MilestoneStatus = "not_started" | "in_progress" | "completed" | "blocked" | "cancelled";

@@ -41,7 +41,12 @@ export function ProposalDetailView({ proposal: p }: Props) {
 
   return (
     <div className="space-y-10">
-      <ProposalDetailToolbar proposalId={p.id} status={p.status} pdfHref={pdfHref} />
+      <ProposalDetailToolbar
+        proposalId={p.id}
+        status={p.status}
+        pdfHref={pdfHref}
+        pdfDownloadFilename={`proposal-${p.proposal_number.replace(/[/\\?%*:|"<>]/g, "-").trim() || "berkas"}.pdf`}
+      />
 
       <section className="space-y-6">
         <PortalDetailSectionHeading
