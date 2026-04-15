@@ -146,33 +146,33 @@ export function NotificationsList({ initial }: Props) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-muted-foreground">
-          {unreadCount > 0 ? (
-            <>
-              <span className="font-semibold text-gray-900 dark:text-white">{unreadCount}</span> belum dibaca
-            </>
-          ) : (
-            "Semua sudah dibaca"
-          )}
-          {meta.total > 0 && (
+      {meta.total > 0 ? (
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm text-muted-foreground">
+            {unreadCount > 0 ? (
+              <>
+                <span className="font-semibold text-gray-900 dark:text-white">{unreadCount}</span> belum dibaca
+              </>
+            ) : (
+              "Semua sudah dibaca"
+            )}
             <span className="text-muted-foreground">
               {" "}
               · {meta.total} total
             </span>
-          )}
-        </p>
-        {meta.total > 0 && unreadCount > 0 ? (
-          <button
-            type="button"
-            onClick={() => void handleReadAll()}
-            disabled={readAllLoading}
-            className="text-sm font-semibold text-brand-blue hover:underline disabled:opacity-50"
-          >
-            {readAllLoading ? "Memproses..." : "Tandai semua dibaca"}
-          </button>
-        ) : null}
-      </div>
+          </p>
+          {unreadCount > 0 ? (
+            <button
+              type="button"
+              onClick={() => void handleReadAll()}
+              disabled={readAllLoading}
+              className="text-sm font-semibold text-brand-blue hover:underline disabled:opacity-50"
+            >
+              {readAllLoading ? "Memproses..." : "Tandai semua dibaca"}
+            </button>
+          ) : null}
+        </div>
+      ) : null}
 
       {error && (
         <p className="rounded-xl border border-destructive/25 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
