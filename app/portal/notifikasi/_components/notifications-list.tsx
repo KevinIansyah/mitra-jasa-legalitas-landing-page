@@ -11,6 +11,7 @@ import {
 import type { NotificationItem, NotificationsListData } from "@/lib/types/notification";
 import { ApiError } from "@/lib/types/api";
 import { cn } from "@/lib/utils";
+import { PortalEmptyState } from "@/app/portal/_components/portal-empty-state";
 
 function actionPath(actionUrl: string): string {
   try {
@@ -180,11 +181,11 @@ export function NotificationsList({ initial }: Props) {
       )}
 
       {items.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-gray-200 dark:border-white/15 bg-gray-50/50 dark:bg-white/5 px-6 py-14 text-center">
-          <Bell className="mx-auto size-10 text-muted-foreground opacity-60" aria-hidden />
-          <p className="mt-4 text-sm font-medium text-gray-900 dark:text-white">Belum ada notifikasi</p>
-          <p className="mt-1 text-sm text-muted-foreground">Notifikasi pembayaran, faktur, dan lainnya akan muncul di sini.</p>
-        </div>
+        <PortalEmptyState
+          icon={Bell}
+          title="Belum ada notifikasi"
+          description="Notifikasi pembayaran, faktur, dan lainnya akan muncul di sini."
+        />
       ) : (
         <ul className="space-y-4">
           {items.map((item) => (

@@ -25,8 +25,9 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
       .sort((left, right) => left.sort_order - right.sort_order)
       .slice(0, 3)
       .map((feature) => ({ text: feature.feature_name })) ?? [];
-  const priceLabel = service.cheapest_package ? formatIdrFromApi(service.cheapest_package.price) : "Konsultasi harga";
-  const durationLabel = service.cheapest_package?.duration ?? "-";
+  const cheapestPackage = service.cheapest_package;
+  const priceLabel = cheapestPackage ? formatIdrFromApi(cheapestPackage.price) : "Konsultasi harga";
+  const durationLabel = cheapestPackage?.duration ;
 
   return (
     <Link href={`/layanan/${service.slug}`}>
@@ -85,16 +86,17 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
             </ul>
           ) : null}
 
-          <div className="mt-auto pt-5 border-t border-gray-100 flex items-end justify-between gap-3">
-            <div>
-              <p className="text-xs text-gray-400 mb-0.5">Mulai dari</p>
-              <p className="text-xl font-bold text-gray-900">{priceLabel}</p>
-              <p className="text-xs text-gray-400 mt-0.5">{durationLabel}</p>
+      
+            <div className="mt-auto pt-5 border-t border-gray-100 flex items-end justify-between gap-3">
+              <div>
+                <p className="text-xs text-gray-400 mb-0.5">Mulai dari</p>
+                <p className="text-xl font-bold text-gray-900">{priceLabel}</p>
+                {durationLabel && <p className="text-xs text-gray-400 mt-0.5">{durationLabel}</p>}
+              </div>
+              <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1" style={{ backgroundColor: bgColor }}>
+                <ArrowRight className="size-4" style={{ color: accent }} />
+              </div>
             </div>
-            <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1" style={{ backgroundColor: bgColor }}>
-              <ArrowRight className="size-4" style={{ color: accent }} />
-            </div>
-          </div>
         </div>
       </motion.div>
     </Link>

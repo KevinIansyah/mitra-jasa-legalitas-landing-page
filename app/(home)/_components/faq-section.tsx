@@ -31,7 +31,7 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
             badge="FAQ"
             title={
               <>
-                Pertanyaan yang
+                Pertanyaan yang{' '}
                 <br className="hidden sm:block" />
                 <span style={{ color: 'oklch(0.7319 0.1856 52.89)' }}>
                   Sering Diajukan
