@@ -14,7 +14,7 @@ import { cn, firstApiValidationMessage } from "@/lib/utils";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
+import { toR2ProxySrc } from "@/lib/r2-loader";
 
 const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
 
@@ -234,7 +234,7 @@ export function SettingsProfileForm({ initialUser }: Props) {
             >
               {previewUrl ? (
                 <>
-                  <Image loader={r2Loader} src={previewUrl} alt="Foto profil" className="h-full w-full object-cover" width={100} height={100} unoptimized />
+                  <Image src={toR2ProxySrc(previewUrl)} alt="Foto profil" className="h-full w-full object-cover" width={100} height={100} unoptimized />
                   <div className="absolute right-2 top-2 flex items-center gap-1">
                     <Button
                       type="button"

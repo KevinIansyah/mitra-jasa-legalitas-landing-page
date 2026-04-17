@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
 import { Mail, Phone, MapPin, Instagram, Youtube, Facebook, Linkedin, Twitter, MessageCircle, Globe, Link2 } from "lucide-react";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
 import navLogo from "@/public/nav-logo.svg";
 import type { NavigationData, NavigationSocialMedia } from "@/lib/types/navigation";
 
@@ -104,7 +103,7 @@ export function Footer({ navigation }: FooterProps) {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-10">
           <div className="col-span-2 md:col-span-3 lg:col-span-1 space-y-6">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <Image loader={r2Loader} src={navLogo} alt="Logo Mitra Jasa Legalitas" height={40} />
+              <Image src={navLogo} alt="Logo Mitra Jasa Legalitas" height={40} />
             </Link>
 
             <p className="text-sm text-white/45 leading-relaxed max-w-xs">{tagline}</p>

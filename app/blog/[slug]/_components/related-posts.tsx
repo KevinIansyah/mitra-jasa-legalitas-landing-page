@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
+import { toR2ProxySrc } from "@/lib/r2-loader";
 import { Clock, Newspaper, Tag } from "lucide-react";
 import { formatBlogDate } from "@/lib/blog-utils";
 import type { BlogRelatedCard } from "@/lib/types/blog";
@@ -12,7 +12,7 @@ function RelatedCard({ post }: { post: BlogRelatedCard }) {
     <Link href={`/blog/${post.slug}`} className="blog-card group flex flex-col rounded-2xl border border-gray-200 dark:border-white/10 bg-white dark:bg-surface-card overflow-hidden">
       <div className="relative h-[180px] overflow-hidden bg-gray-100 dark:bg-white/5">
         {post.featured_image ? (
-          <Image loader={r2Loader} src={post.featured_image} alt="" fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 768px) 100vw, 33vw" />
+          <Image src={toR2ProxySrc(post.featured_image)} alt="" fill className="object-cover transition-transform duration-700 group-hover:scale-110" sizes="(max-width: 768px) 100vw, 33vw" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">

@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import navLogo from "@/public/nav-logo.svg";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
 import { NavigationData } from "@/lib/types/navigation";
 import { fetchUnreadCount } from "@/lib/api/endpoints/notifications";
 
@@ -87,7 +86,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
     return () => {
       cancelled = true;
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showAccount, user?.id]);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -112,7 +111,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/">
-            <Image loader={r2Loader} src={navLogo} alt="Logo Mitra Jasa Legalitas" height={40} loading="eager" />
+            <Image src={navLogo} alt="Logo Mitra Jasa Legalitas" height={40} loading="eager" />
           </Link>
 
           {/* ────────────────── Desktop Navigation ────────────────── */}
@@ -272,11 +271,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
               <Link
                 href="/portal/notifikasi"
                 className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 mr-3"
-                aria-label={
-                  notifUnread != null && notifUnread > 0
-                    ? `Notifikasi, ${notifUnread} belum dibaca`
-                    : "Notifikasi"
-                }
+                aria-label={notifUnread != null && notifUnread > 0 ? `Notifikasi, ${notifUnread} belum dibaca` : "Notifikasi"}
               >
                 <Bell className="size-4.5" aria-hidden />
                 {notifUnread != null && notifUnread > 0 ? (
@@ -316,13 +311,8 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                       </Link>
                     </DropdownMenu.Item>
                     <DropdownMenu.Item asChild>
-                      <Link
-                        href="/portal/notifikasi"
-                        className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
-                      >
-                     
+                      <Link href="/portal/notifikasi" className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10">
                         Notifikasi
-           
                       </Link>
                     </DropdownMenu.Item>
                     <DropdownMenu.Item asChild>
@@ -362,11 +352,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
               <Link
                 href="/portal/notifikasi"
                 className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 lg:hidden mr-1"
-                aria-label={
-                  notifUnread != null && notifUnread > 0
-                    ? `Notifikasi, ${notifUnread} belum dibaca`
-                    : "Notifikasi"
-                }
+                aria-label={notifUnread != null && notifUnread > 0 ? `Notifikasi, ${notifUnread} belum dibaca` : "Notifikasi"}
               >
                 <Bell className="size-4.5" aria-hidden />
                 {notifUnread != null && notifUnread > 0 ? (
@@ -410,9 +396,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                           href="/portal/notifikasi"
                           className="flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none data-highlighted:bg-gray-100 dark:data-highlighted:bg-white/10"
                         >
-                          
                           Notifikasi
-             
                         </Link>
                       </DropdownMenu.Item>
                       <DropdownMenu.Item asChild>
@@ -543,9 +527,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                   className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
                   onClick={() => setIsOpen(false)}
                 >
-                
-                 Notifikasi
-    
+                  Notifikasi
                 </Link>
                 <Link
                   href="/pengaturan/profil"

@@ -1,32 +1,28 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { r2Loader } from '@/lib/r2-loader';
-import { useRouter } from 'next/navigation';
-import { Loader2, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
-import { useAuth, otpSession } from '@/hooks/use-auth';
-import { ApiError } from '@/lib/types/api';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { BRAND_BLUE } from '@/lib/types/constants';
-import { cn } from '@/lib/utils';
-import { authInputClass } from '@/app/(auth)/_components/auth-input-class';
-import {
-  getFieldError,
-  maskEmailForDisplay,
-} from '@/app/(auth)/_components/auth-api-error';
-import { OtpInputSix } from '../../_components/otp-input-six';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Loader2, Eye, EyeOff, AlertCircle, ArrowLeft } from "lucide-react";
+import { useAuth, otpSession } from "@/hooks/use-auth";
+import { ApiError } from "@/lib/types/api";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { BRAND_BLUE } from "@/lib/types/constants";
+import { cn } from "@/lib/utils";
+import { authInputClass } from "@/app/(auth)/_components/auth-input-class";
+import { getFieldError, maskEmailForDisplay } from "@/app/(auth)/_components/auth-api-error";
+import { OtpInputSix } from "../../_components/otp-input-six";
 
 export function ResetPasswordForm() {
   const router = useRouter();
   const { resetPassword } = useAuth();
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
-  const [otp, setOtp] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+  const [otp, setOtp] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -40,7 +36,7 @@ export function ResetPasswordForm() {
   useEffect(() => {
     const e = otpSession.getEmail();
     if (!e) {
-      router.replace('/lupa-password');
+      router.replace("/lupa-password");
       return;
     }
     setEmail(e);
@@ -51,29 +47,29 @@ export function ResetPasswordForm() {
     e.preventDefault();
     setFormError(null);
     setFieldErrors({});
-    const code = otp.replace(/\D/g, '').slice(0, 8);
+    const code = otp.replace(/\D/g, "").slice(0, 8);
     if (code.length < 4) {
-      setFormError('Masukkan kode OTP yang valid.');
+      setFormError("Masukkan kode OTP yang valid.");
       return;
     }
     if (password !== passwordConfirmation) {
-      setFormError('Konfirmasi password tidak sama.');
+      setFormError("Konfirmasi password tidak sama.");
       return;
     }
     setLoading(true);
     try {
       await resetPassword(code, password, passwordConfirmation);
-      router.push('/masuk');
+      router.push("/masuk");
     } catch (err) {
       if (err instanceof ApiError) {
         setFormError(err.message);
         setFieldErrors({
-          otp: getFieldError(err, 'otp'),
-          password: getFieldError(err, 'password'),
-          password_confirmation: getFieldError(err, 'password_confirmation'),
+          otp: getFieldError(err, "otp"),
+          password: getFieldError(err, "password"),
+          password_confirmation: getFieldError(err, "password_confirmation"),
         });
       } else {
-        setFormError('Gagal mengatur ulang password. Coba lagi.');
+        setFormError("Gagal mengatur ulang password. Coba lagi.");
       }
     } finally {
       setLoading(false);
@@ -83,43 +79,23 @@ export function ResetPasswordForm() {
   if (!ready || !email) {
     return (
       <div className="w-full max-w-[400px] mx-auto flex justify-center py-12">
-        <Loader2
-          className="w-8 h-8 animate-spin text-muted-foreground"
-          aria-hidden
-        />
+        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" aria-hidden />
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-[400px] mx-auto flex flex-col items-stretch">
-      <Image
-        loader={r2Loader}
-        src="/auth-logo.png"
-        alt=""
-        width={100}
-        height={100}
-        className="mx-auto mb-6 max-h-12 w-auto max-w-12 object-contain"
-        priority
-      />
+      <Image src="/auth-logo.png" alt="" width={100} height={100} className="mx-auto mb-6 max-h-12 w-auto max-w-12 object-contain" priority />
 
-      <h1 className="text-center text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-        Password baru
-      </h1>
+      <h1 className="text-center text-xl sm:text-2xl font-bold text-foreground tracking-tight">Password baru</h1>
       <p className="mt-2 text-center text-sm text-muted-foreground">
-        Kode dikirim ke{' '}
-        <span className="font-medium text-foreground">
-          {maskEmailForDisplay(email)}
-        </span>
-        . Masukkan kode dan password baru Anda.
+        Kode dikirim ke <span className="font-medium text-foreground">{maskEmailForDisplay(email)}</span>. Masukkan kode dan password baru Anda.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {formError ? (
-          <p
-            className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2"
-            role="alert"
-          >
+          <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2" role="alert">
             <AlertCircle className="w-4 h-4 shrink-0" aria-hidden />
             {formError}
           </p>
@@ -129,108 +105,68 @@ export function ResetPasswordForm() {
           <Label htmlFor="verify-otp" className="text-xs text-muted-foreground">
             Kode OTP (6 digit)
           </Label>
-          <OtpInputSix
-            id="verify-otp"
-            value={otp}
-            onChange={(next) => setOtp(next.replace(/\D/g, '').slice(0, 6))}
-            disabled={loading}
-            hasError={Boolean(fieldErrors.otp)}
-          />
-          {fieldErrors.otp ? (
-            <p className="text-xs text-destructive">{fieldErrors.otp}</p>
-          ) : null}
+          <OtpInputSix id="verify-otp" value={otp} onChange={(next) => setOtp(next.replace(/\D/g, "").slice(0, 6))} disabled={loading} hasError={Boolean(fieldErrors.otp)} />
+          {fieldErrors.otp ? <p className="text-xs text-destructive">{fieldErrors.otp}</p> : null}
         </div>
 
         <div className="space-y-1.5">
-          <Label
-            htmlFor="reset-password"
-            className="text-xs text-muted-foreground"
-          >
+          <Label htmlFor="reset-password" className="text-xs text-muted-foreground">
             Password baru
           </Label>
           <div className="relative">
             <Input
               id="reset-password"
               name="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               autoComplete="new-password"
               required
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Minimal 8 karakter"
-              className={cn(
-                authInputClass,
-                'pr-11',
-                fieldErrors.password && 'border-destructive',
-              )}
+              className={cn(authInputClass, "pr-11", fieldErrors.password && "border-destructive")}
               aria-invalid={Boolean(fieldErrors.password)}
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
               className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-              aria-label={
-                showPassword ? 'Sembunyikan password' : 'Tampilkan password'
-              }
+              aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" aria-hidden />
-              ) : (
-                <Eye className="h-4 w-4" aria-hidden />
-              )}
+              {showPassword ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
             </button>
           </div>
-          {fieldErrors.password ? (
-            <p className="text-xs text-destructive">{fieldErrors.password}</p>
-          ) : null}
+          {fieldErrors.password ? <p className="text-xs text-destructive">{fieldErrors.password}</p> : null}
         </div>
 
         <div className="space-y-1.5">
-          <Label
-            htmlFor="reset-password2"
-            className="text-xs text-muted-foreground"
-          >
+          <Label htmlFor="reset-password2" className="text-xs text-muted-foreground">
             Konfirmasi password
           </Label>
           <div className="relative">
             <Input
               id="reset-password2"
               name="password_confirmation"
-              type={showPassword2 ? 'text' : 'password'}
+              type={showPassword2 ? "text" : "password"}
               autoComplete="new-password"
               required
               minLength={8}
               value={passwordConfirmation}
               onChange={(e) => setPasswordConfirmation(e.target.value)}
               placeholder="Ulangi password baru"
-              className={cn(
-                authInputClass,
-                'pr-11',
-                fieldErrors.password_confirmation && 'border-destructive',
-              )}
+              className={cn(authInputClass, "pr-11", fieldErrors.password_confirmation && "border-destructive")}
               aria-invalid={Boolean(fieldErrors.password_confirmation)}
             />
             <button
               type="button"
               onClick={() => setShowPassword2((v) => !v)}
               className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
-              aria-label={
-                showPassword2 ? 'Sembunyikan password' : 'Tampilkan password'
-              }
+              aria-label={showPassword2 ? "Sembunyikan password" : "Tampilkan password"}
             >
-              {showPassword2 ? (
-                <EyeOff className="h-4 w-4" aria-hidden />
-              ) : (
-                <Eye className="h-4 w-4" aria-hidden />
-              )}
+              {showPassword2 ? <EyeOff className="h-4 w-4" aria-hidden /> : <Eye className="h-4 w-4" aria-hidden />}
             </button>
           </div>
-          {fieldErrors.password_confirmation ? (
-            <p className="text-xs text-destructive">
-              {fieldErrors.password_confirmation}
-            </p>
-          ) : null}
+          {fieldErrors.password_confirmation ? <p className="text-xs text-destructive">{fieldErrors.password_confirmation}</p> : null}
         </div>
 
         <button
@@ -245,26 +181,20 @@ export function ResetPasswordForm() {
               Menyimpan...
             </>
           ) : (
-            'Simpan password'
+            "Simpan password"
           )}
         </button>
       </form>
 
       <p className="mt-8 text-center text-sm text-muted-foreground">
-        Ingat password?{' '}
-        <Link
-          href="/masuk"
-          className="font-medium text-foreground underline underline-offset-4 hover:opacity-90"
-        >
+        Ingat password?{" "}
+        <Link href="/masuk" className="font-medium text-foreground underline underline-offset-4 hover:opacity-90">
           Masuk
         </Link>
       </p>
 
       <p className="mt-6 text-center">
-        <Link
-          href="/"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
-        >
+        <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2">
           <ArrowLeft className="w-4 h-4" aria-hidden /> Kembali ke beranda
         </Link>
       </p>

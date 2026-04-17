@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
+import { toR2ProxySrc } from "@/lib/r2-loader";
 import Autoplay from "embla-carousel-autoplay";
 import useEmblaCarousel from "embla-carousel-react";
 import { motion } from "framer-motion";
@@ -99,8 +99,7 @@ function ClientLogoCard({ client, index }: { client: ClientLogoItem; index: numb
       <div className="blog-card group flex h-30 w-[140px] max-w-full shrink-0 flex-col items-center justify-center space-y-4 overflow-hidden rounded-2xl border border-gray-200 bg-white p-5">
         {client.logoUrl ? (
           <Image
-            loader={r2Loader}
-            src={client.logoUrl}
+            src={toR2ProxySrc(client.logoUrl)}
             alt={client.name}
             width={112}
             height={56}

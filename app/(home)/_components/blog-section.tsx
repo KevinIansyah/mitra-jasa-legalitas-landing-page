@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
+import { toR2ProxySrc } from "@/lib/r2-loader";
 import { ArrowRight, Clock, Newspaper, Tag } from "lucide-react";
 import { SectionHeading } from "../../../components/section-heading";
 import { motion } from "framer-motion";
@@ -54,8 +54,7 @@ function FeaturedCard({ post }: { post: BlogPost }) {
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-800 dark:bg-gray-900">
           {post.imageUrl && post.imageUrl.length > 0 ? (
             <Image
-              loader={r2Loader}
-              src={post.imageUrl}
+              src={toR2ProxySrc(post.imageUrl)}
               alt={post.title}
               fill
               className="object-cover object-right transition-transform duration-700 ease-out group-hover:scale-110"
@@ -106,15 +105,7 @@ function TextCard({ post }: { post: BlogPost }) {
       >
         <div className="relative h-[120px] w-full overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
           {post.imageUrl && post.imageUrl.length > 0 ? (
-            <Image
-              loader={r2Loader}
-              src={post.imageUrl}
-              alt={post.title}
-              fill
-              className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              sizes="400px"
-              unoptimized
-            />
+            <Image src={toR2ProxySrc(post.imageUrl)} alt={post.title} fill className="object-cover transition-transform duration-700 ease-out group-hover:scale-110" sizes="400px" unoptimized />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-12 h-12 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
@@ -158,8 +149,7 @@ function TallImageCard({ post }: { post: BlogPost }) {
         <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-800 dark:bg-gray-900">
           {post.imageUrl && post.imageUrl.length > 0 ? (
             <Image
-              loader={r2Loader}
-              src={post.imageUrl}
+              src={toR2ProxySrc(post.imageUrl)}
               alt={post.title}
               fill
               className="object-cover object-right transition-transform duration-700 ease-out group-hover:scale-110"
@@ -211,8 +201,7 @@ function GridCard({ post }: { post: BlogPost }) {
         <div className="relative h-[180px] w-full overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
           {post.imageUrl && post.imageUrl.length > 0 ? (
             <Image
-              loader={r2Loader}
-              src={post.imageUrl}
+              src={toR2ProxySrc(post.imageUrl)}
               alt={post.title}
               fill
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"

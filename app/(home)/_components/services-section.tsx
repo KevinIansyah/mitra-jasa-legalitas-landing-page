@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
+import { toR2ProxySrc } from "@/lib/r2-loader";
 import { Check, ArrowRight, Star, Toolbox } from "lucide-react";
 import { SectionHeading } from "../../../components/section-heading";
 import { motion } from "framer-motion";
@@ -28,7 +28,7 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
       .map((feature) => ({ text: feature.feature_name })) ?? [];
   const cheapestPackage = service.cheapest_package;
   const priceLabel = cheapestPackage ? formatIdrFromApi(cheapestPackage.price) : "Konsultasi harga";
-  const durationLabel = cheapestPackage?.duration ;
+  const durationLabel = cheapestPackage?.duration;
 
   return (
     <Link href={`/layanan/${service.slug}`}>
@@ -52,8 +52,7 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
         <div className="relative h-36 w-full shrink-0 overflow-hidden bg-gray-100 dark:bg-white/5">
           {service.featured_image ? (
             <Image
-              loader={r2Loader}
-              src={service.featured_image}
+              src={toR2ProxySrc(service.featured_image)}
               alt={service.name}
               fill
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -88,17 +87,16 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
             </ul>
           ) : null}
 
-      
-            <div className="mt-auto pt-5 border-t border-gray-100 flex items-end justify-between gap-3">
-              <div>
-                <p className="text-xs text-gray-400 mb-0.5">Mulai dari</p>
-                <p className="text-xl font-bold text-gray-900">{priceLabel}</p>
-                {durationLabel && <p className="text-xs text-gray-400 mt-0.5">{durationLabel}</p>}
-              </div>
-              <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1" style={{ backgroundColor: bgColor }}>
-                <ArrowRight className="size-4" style={{ color: accent }} />
-              </div>
+          <div className="mt-auto pt-5 border-t border-gray-100 flex items-end justify-between gap-3">
+            <div>
+              <p className="text-xs text-gray-400 mb-0.5">Mulai dari</p>
+              <p className="text-xl font-bold text-gray-900">{priceLabel}</p>
+              {durationLabel && <p className="text-xs text-gray-400 mt-0.5">{durationLabel}</p>}
             </div>
+            <div className="w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-transform group-hover:translate-x-1" style={{ backgroundColor: bgColor }}>
+              <ArrowRight className="size-4" style={{ color: accent }} />
+            </div>
+          </div>
         </div>
       </motion.div>
     </Link>

@@ -1,27 +1,23 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { r2Loader } from '@/lib/r2-loader';
-import { useRouter } from 'next/navigation';
-import { Loader2, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { useAuth, otpSession } from '@/hooks/use-auth';
-import { ApiError } from '@/lib/types/api';
-import { Label } from '@/components/ui/label';
-import { BRAND_BLUE } from '@/lib/types/constants';
-import { OtpInputSix } from '@/app/(auth)/_components/otp-input-six';
-import {
-  getFieldError,
-  maskEmailForDisplay,
-} from '@/app/(auth)/_components/auth-api-error';
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Loader2, AlertCircle, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { useAuth, otpSession } from "@/hooks/use-auth";
+import { ApiError } from "@/lib/types/api";
+import { Label } from "@/components/ui/label";
+import { BRAND_BLUE } from "@/lib/types/constants";
+import { OtpInputSix } from "@/app/(auth)/_components/otp-input-six";
+import { getFieldError, maskEmailForDisplay } from "@/app/(auth)/_components/auth-api-error";
 
 export function VerifyOtpForm() {
   const router = useRouter();
   const { verifyOtp, resendOtp } = useAuth();
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
   const [otpFieldError, setOtpFieldError] = useState<string | null>(null);
   const [resendError, setResendError] = useState<string | null>(null);
@@ -33,7 +29,7 @@ export function VerifyOtpForm() {
   useEffect(() => {
     const e = otpSession.getEmail();
     if (!e) {
-      router.replace('/daftar');
+      router.replace("/daftar");
       return;
     }
     setEmail(e);
@@ -52,22 +48,22 @@ export function VerifyOtpForm() {
     e.preventDefault();
     setFormError(null);
     setOtpFieldError(null);
-    const code = otp.replace(/\D/g, '').slice(0, 6);
+    const code = otp.replace(/\D/g, "").slice(0, 6);
     if (code.length !== 6) {
-      setFormError('Masukkan 6 digit kode OTP.');
+      setFormError("Masukkan 6 digit kode OTP.");
       return;
     }
     setLoading(true);
     try {
       await verifyOtp(code);
       router.refresh();
-      router.push('/portal');
+      router.push("/portal");
     } catch (err) {
       if (err instanceof ApiError) {
         setFormError(err.message);
-        setOtpFieldError(getFieldError(err, 'otp') ?? null);
+        setOtpFieldError(getFieldError(err, "otp") ?? null);
       } else {
-        setFormError('Terjadi kesalahan. Coba lagi.');
+        setFormError("Terjadi kesalahan. Coba lagi.");
       }
     } finally {
       setLoading(false);
@@ -81,17 +77,13 @@ export function VerifyOtpForm() {
     setResendLoading(true);
     try {
       const res = await resendOtp();
-      setResendSuccess(
-        res != null && typeof res.message === 'string'
-          ? res.message
-          : 'Kode baru telah dikirim. Periksa email Anda.',
-      );
+      setResendSuccess(res != null && typeof res.message === "string" ? res.message : "Kode baru telah dikirim. Periksa email Anda.");
       setResendCooldown(60);
     } catch (err) {
       if (err instanceof ApiError) {
         setResendError(err.message);
       } else {
-        setResendError('Gagal mengirim ulang. Coba lagi.');
+        setResendError("Gagal mengirim ulang. Coba lagi.");
       }
     } finally {
       setResendLoading(false);
@@ -108,33 +100,16 @@ export function VerifyOtpForm() {
 
   return (
     <div className="w-full max-w-[400px] mx-auto flex flex-col items-stretch">
-      <Image
-        loader={r2Loader}
-        src="/auth-logo.png"
-        alt=""
-        width={100}
-        height={100}
-        className="mx-auto mb-6 max-h-12 w-auto max-w-12 object-contain"
-        priority
-      />
+      <Image src="/auth-logo.png" alt="" width={100} height={100} className="mx-auto mb-6 max-h-12 w-auto max-w-12 object-contain" priority />
 
-      <h1 className="text-center text-xl sm:text-2xl font-bold text-foreground tracking-tight">
-        Verifikasi email
-      </h1>
+      <h1 className="text-center text-xl sm:text-2xl font-bold text-foreground tracking-tight">Verifikasi email</h1>
       <p className="mt-2 text-center text-sm text-muted-foreground">
-        Kode OTP telah dikirim ke{' '}
-        <span className="font-medium text-foreground">
-          {maskEmailForDisplay(email)}
-        </span>
-        . Periksa kotak masuk atau spam.
+        Kode OTP telah dikirim ke <span className="font-medium text-foreground">{maskEmailForDisplay(email)}</span>. Periksa kotak masuk atau spam.
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         {formError ? (
-          <p
-            className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2"
-            role="alert"
-          >
+          <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2" role="alert">
             <AlertCircle className="w-4 h-4 shrink-0" aria-hidden />
             {formError}
           </p>
@@ -144,16 +119,8 @@ export function VerifyOtpForm() {
           <Label htmlFor="verify-otp" className="text-xs text-muted-foreground">
             Kode OTP (6 digit)
           </Label>
-          <OtpInputSix
-            id="verify-otp"
-            value={otp}
-            onChange={(next) => setOtp(next.replace(/\D/g, '').slice(0, 6))}
-            disabled={loading}
-            hasError={Boolean(otpFieldError)}
-          />
-          {otpFieldError ? (
-            <p className="text-xs text-destructive">{otpFieldError}</p>
-          ) : null}
+          <OtpInputSix id="verify-otp" value={otp} onChange={(next) => setOtp(next.replace(/\D/g, "").slice(0, 6))} disabled={loading} hasError={Boolean(otpFieldError)} />
+          {otpFieldError ? <p className="text-xs text-destructive">{otpFieldError}</p> : null}
         </div>
 
         <button
@@ -168,7 +135,7 @@ export function VerifyOtpForm() {
               Memverifikasi...
             </>
           ) : (
-            'Verifikasi'
+            "Verifikasi"
           )}
         </button>
       </form>
@@ -184,10 +151,7 @@ export function VerifyOtpForm() {
       ) : null}
 
       {resendError ? (
-        <p
-          className="mt-4 text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2"
-          role="alert"
-        >
+        <p className="mt-4 text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2" role="alert">
           <AlertCircle className="w-4 h-4 shrink-0" aria-hidden />
           {resendError}
         </p>
@@ -200,29 +164,19 @@ export function VerifyOtpForm() {
           disabled={resendLoading || resendCooldown > 0}
           className="text-sm font-medium text-foreground/90 underline underline-offset-4 hover:text-foreground disabled:opacity-50 disabled:no-underline"
         >
-          {resendLoading
-            ? 'Mengirim...'
-            : resendCooldown > 0
-              ? `Kirim ulang (${resendCooldown}s)`
-              : 'Kirim ulang kode'}
+          {resendLoading ? "Mengirim..." : resendCooldown > 0 ? `Kirim ulang (${resendCooldown}s)` : "Kirim ulang kode"}
         </button>
       </div>
 
       <p className="mt-8 text-center text-sm text-muted-foreground">
-        Salah email?{' '}
-        <Link
-          href="/daftar"
-          className="font-medium text-foreground underline underline-offset-4"
-        >
+        Salah email?{" "}
+        <Link href="/daftar" className="font-medium text-foreground underline underline-offset-4">
           Daftar ulang
         </Link>
       </p>
 
       <p className="mt-6 text-center">
-        <Link
-          href="/"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
-        >
+        <Link href="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2">
           <ArrowLeft className="w-4 h-4" aria-hidden /> Kembali ke beranda
         </Link>
       </p>

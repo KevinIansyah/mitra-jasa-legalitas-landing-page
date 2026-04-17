@@ -3,7 +3,7 @@
 import { startTransition, useCallback, useEffect, useId, useRef, useState } from "react";
 import { FileText, ImagePlus } from "lucide-react";
 import Image from "next/image";
-import { r2Loader } from "@/lib/r2-loader";
+import { toR2ProxySrc } from "@/lib/r2-loader";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -118,15 +118,7 @@ export function ProofUploadZone({
         <p className="text-xs text-gray-400">{hint}</p>
       </div>
 
-      <input
-        ref={fileInputRef}
-        id={inputId}
-        type="file"
-        accept={accept}
-        className="sr-only"
-        disabled={disabled}
-        onChange={onFileChange}
-      />
+      <input ref={fileInputRef} id={inputId} type="file" accept={accept} className="sr-only" disabled={disabled} onChange={onFileChange} />
 
       <div
         tabIndex={0}
@@ -171,7 +163,16 @@ export function ProofUploadZone({
             </span>
             <span className="text-xs text-muted-foreground">PDF</span>
             {!disabled ? (
-              <Button type="button" variant="secondary" size="sm" className="mt-1" onClick={(e) => { e.stopPropagation(); onPick(); }}>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="mt-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPick();
+                }}
+              >
                 Ganti file
               </Button>
             ) : null}
@@ -185,17 +186,35 @@ export function ProofUploadZone({
               {value.name}
             </span>
             {!disabled ? (
-              <Button type="button" variant="secondary" size="sm" className="mt-1" onClick={(e) => { e.stopPropagation(); onPick(); }}>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="mt-1"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onPick();
+                }}
+              >
                 Ganti file
               </Button>
             ) : null}
           </div>
         ) : previewUrl ? (
           <>
-            <Image loader={r2Loader} src={previewUrl} alt="Pratinjau bukti" className="h-full w-full object-contain" width={400} height={300} unoptimized />
+            <Image src={toR2ProxySrc(previewUrl)} alt="Pratinjau bukti" className="h-full w-full object-contain" width={400} height={300} unoptimized />
             {!disabled ? (
               <div className="absolute right-2 top-2">
-                <Button type="button" variant="secondary" size="sm" className="text-xs shadow-sm" onClick={(e) => { e.stopPropagation(); onPick(); }}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  className="text-xs shadow-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPick();
+                  }}
+                >
                   Ganti
                 </Button>
               </div>
