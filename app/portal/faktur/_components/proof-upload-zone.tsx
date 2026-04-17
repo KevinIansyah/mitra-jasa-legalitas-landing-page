@@ -3,6 +3,7 @@
 import { startTransition, useCallback, useEffect, useId, useRef, useState } from "react";
 import { FileText, ImagePlus } from "lucide-react";
 import Image from "next/image";
+import { r2Loader } from "@/lib/r2-loader";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -191,7 +192,7 @@ export function ProofUploadZone({
           </div>
         ) : previewUrl ? (
           <>
-            <Image src={previewUrl} alt="Pratinjau bukti" className="h-full w-full object-contain" width={400} height={300} unoptimized />
+            <Image loader={r2Loader} src={previewUrl} alt="Pratinjau bukti" className="h-full w-full object-contain" width={400} height={300} unoptimized />
             {!disabled ? (
               <div className="absolute right-2 top-2">
                 <Button type="button" variant="secondary" size="sm" className="text-xs shadow-sm" onClick={(e) => { e.stopPropagation(); onPick(); }}>

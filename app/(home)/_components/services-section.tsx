@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { r2Loader } from "@/lib/r2-loader";
 import { Check, ArrowRight, Star, Toolbox } from "lucide-react";
 import { SectionHeading } from "../../../components/section-heading";
 import { motion } from "framer-motion";
@@ -51,6 +52,7 @@ function ServiceCard({ service }: { service: HomeFeaturedService }) {
         <div className="relative h-36 w-full shrink-0 overflow-hidden bg-gray-100 dark:bg-white/5">
           {service.featured_image ? (
             <Image
+              loader={r2Loader}
               src={service.featured_image}
               alt={service.name}
               fill

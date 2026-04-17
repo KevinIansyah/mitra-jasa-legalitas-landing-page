@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { r2Loader } from '@/lib/r2-loader';
 import { Clock, ArrowRight, MessageCircle, Newspaper } from 'lucide-react';
 import type { BlogAuthor, BlogCard, BlogTocItem } from '@/lib/types/blog';
 import { authorInitials } from '@/lib/blog-utils';
@@ -71,6 +72,7 @@ export function AuthorCard({ author }: { author: BlogAuthor }) {
       >
         {author.avatar ? (
           <Image
+            loader={r2Loader}
             src={author.avatar}
             alt=""
             fill
@@ -110,6 +112,7 @@ export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
               <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-100 dark:bg-white/10">
                 {relatedPost.featured_image ? (
                   <Image
+                    loader={r2Loader}
                     src={relatedPost.featured_image}
                     alt=""
                     fill

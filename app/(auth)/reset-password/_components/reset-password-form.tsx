@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { r2Loader } from '@/lib/r2-loader';
 import { useRouter } from 'next/navigation';
 import { Loader2, Eye, EyeOff, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useAuth, otpSession } from '@/hooks/use-auth';
@@ -93,6 +94,7 @@ export function ResetPasswordForm() {
   return (
     <div className="w-full max-w-[400px] mx-auto flex flex-col items-stretch">
       <Image
+        loader={r2Loader}
         src="/auth-logo.png"
         alt=""
         width={100}

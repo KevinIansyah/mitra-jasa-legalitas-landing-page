@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { r2Loader } from "@/lib/r2-loader";
 import { Clock, Tag, Newspaper } from "lucide-react";
 import { motion } from "framer-motion";
 import type { BlogCard as BlogCardModel } from "@/lib/types/blog";
@@ -46,6 +47,7 @@ export function BlogCard({ post, index }: { post: BlogCardModel; index: number }
         <div className="relative h-[200px] w-full overflow-hidden shrink-0 bg-gray-100 dark:bg-white/5">
           {post.featured_image ? (
             <Image
+              loader={r2Loader}
               src={post.featured_image}
               alt={post.title}
               fill

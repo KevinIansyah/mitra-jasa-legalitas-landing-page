@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import navLogo from "@/public/nav-logo.svg";
 import Image from "next/image";
+import { r2Loader } from "@/lib/r2-loader";
 import { NavigationData } from "@/lib/types/navigation";
 import { fetchUnreadCount } from "@/lib/api/endpoints/notifications";
 
@@ -111,7 +112,7 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/">
-            <Image src={navLogo} alt="Logo Mitra Jasa Legalitas" height={40} loading="eager" />
+            <Image loader={r2Loader} src={navLogo} alt="Logo Mitra Jasa Legalitas" height={40} loading="eager" />
           </Link>
 
           {/* ────────────────── Desktop Navigation ────────────────── */}

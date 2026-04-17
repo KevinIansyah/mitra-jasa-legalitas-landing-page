@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { r2Loader } from '@/lib/r2-loader';
 import { ChevronRight, MapPin, Tag, Toolbox } from 'lucide-react';
 import type { ServiceCityPage } from '@/lib/types/service';
 
@@ -78,6 +79,7 @@ export function DetailHero({
         <div className="relative w-full h-[260px] sm:h-[340px] lg:h-[420px] rounded-t-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
           {service.featured_image ? (
             <Image
+              loader={r2Loader}
               src={service.featured_image}
               alt={heading}
               fill
