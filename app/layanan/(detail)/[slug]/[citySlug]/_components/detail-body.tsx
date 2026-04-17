@@ -1,5 +1,6 @@
 import { ServiceSidebar } from '../../_components/service-sidebar';
 import type {
+  ServiceDetailCityPage,
   ServiceLegalBasis,
   ServicePackage,
   ServiceProcessStep,
@@ -11,6 +12,7 @@ export type DetailBodyProps = {
   introduction: string | null;
   content: string | null;
   cityName: string;
+  serviceSlug: string;
   serviceName: string;
   whatsapp: string;
   packages: ServicePackage[];
@@ -18,6 +20,7 @@ export type DetailBodyProps = {
   requirementCategories: ServiceRequirementCategory[];
   legalBases: ServiceLegalBasis[];
   faqCount: number;
+  cityPages?: ServiceDetailCityPage[];
 };
 
 export function DetailBody({
@@ -25,6 +28,7 @@ export function DetailBody({
   introduction,
   content,
   cityName,
+  serviceSlug,
   serviceName,
   whatsapp,
   packages,
@@ -32,6 +36,7 @@ export function DetailBody({
   requirementCategories,
   legalBases,
   faqCount,
+  cityPages = [],
 }: DetailBodyProps) {
   return (
     <div className="bg-surface-card">
@@ -48,16 +53,16 @@ export function DetailBody({
             {introduction || content ? (
               <>
                 {introduction ? (
-                  <div className="mb-14">
+                  <div className="mb-10">
                     <div
-                      className="service-prose"
+                      className="service-prose -mt-2"
                       dangerouslySetInnerHTML={{ __html: introduction }}
                     />
                   </div>
                 ) : null}
 
                 {content ? (
-                  <div className="pt-6 border-t border-gray-100 dark:border-white/8">
+                  <div className="pt-2 border-t border-gray-100 dark:border-white/8">
                     <div
                       className="service-prose"
                       dangerouslySetInnerHTML={{ __html: content }}
@@ -75,6 +80,7 @@ export function DetailBody({
 
           <div className="w-full shrink-0 lg:w-[280px] xl:w-[300px] flex flex-col min-h-0 lg:self-stretch">
             <ServiceSidebar
+              serviceSlug={serviceSlug}
               serviceName={serviceName}
               whatsapp={whatsapp}
               packages={packages}
@@ -83,6 +89,7 @@ export function DetailBody({
               legalBases={legalBases}
               faqCount={faqCount}
               hasDescription={hasDescription}
+              cityPages={cityPages}
             />
           </div>
         </div>

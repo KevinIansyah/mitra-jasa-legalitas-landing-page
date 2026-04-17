@@ -14,8 +14,8 @@ export function LegalBasesSection({ bases }: { bases: LegalBase[] }) {
   };
 
   return (
-    <section id="dasar-hukum" className="py-16 bg-surface-card">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="dasar-hukum" className="py-16 lg:py-20 bg-surface-card">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <SectionHeading
             badge="Referensi Hukum"

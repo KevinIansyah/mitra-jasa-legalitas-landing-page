@@ -116,6 +116,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
         introduction={data.introduction}
         content={data.content}
         cityName={city.name}
+        serviceSlug={slug}
         serviceName={service.name}
         whatsapp={whatsapp}
         packages={data.packages}
@@ -123,6 +124,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string;
         requirementCategories={data.requirement_categories}
         legalBases={data.legal_bases}
         faqCount={data.faq.length}
+        cityPages={[]}
       />
 
       {data.packages.length > 0 && <PackagesSection packages={data.packages} whatsapp={whatsapp} />}

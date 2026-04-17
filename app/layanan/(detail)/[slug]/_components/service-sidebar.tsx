@@ -1,20 +1,16 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
-import { ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
-import { whatsappWaMeUrlWithText } from '@/lib/whatsapp-cta';
-import type {
-  ServiceLegalBasis,
-  ServicePackage,
-  ServiceProcessStep,
-  ServiceRequirementCategory,
-} from '@/lib/types/service';
-import { formatServicePrice } from '@/lib/utils';
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, MapPin, MessageCircle, Sparkles } from "lucide-react";
+import { whatsappWaMeUrlWithText } from "@/lib/whatsapp-cta";
+import type { ServiceDetailCityPage, ServiceLegalBasis, ServicePackage, ServiceProcessStep, ServiceRequirementCategory } from "@/lib/types/service";
+import { formatServicePrice } from "@/lib/utils";
 
-const BRAND_BLUE = 'oklch(0.3811 0.1315 260.22)';
+const BRAND_BLUE = "oklch(0.3811 0.1315 260.22)";
 
 export type ServiceSidebarProps = {
+  serviceSlug: string;
   serviceName: string;
   whatsapp: string;
   packages: ServicePackage[];
@@ -23,12 +19,13 @@ export type ServiceSidebarProps = {
   legalBases: ServiceLegalBasis[];
   faqCount: number;
   hasDescription: boolean;
+  cityPages: ServiceDetailCityPage[];
 };
 
 type TocItem = { id: string; label: string };
 
 function ServiceTableOfContents({ items }: { items: TocItem[] }) {
-  const [active, setActive] = useState<string>('');
+  const [active, setActive] = useState<string>("");
 
   useEffect(() => {
     if (!items.length) return;
@@ -41,7 +38,7 @@ function ServiceTableOfContents({ items }: { items: TocItem[] }) {
           }
         }
       },
-      { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
+      { rootMargin: "-80px 0px -60% 0px", threshold: 0 },
     );
 
     items.forEach(({ id }) => {
@@ -55,9 +52,7 @@ function ServiceTableOfContents({ items }: { items: TocItem[] }) {
 
   return (
     <nav aria-label="Daftar Isi">
-      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">
-        Daftar Isi
-      </p>
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">Daftar Isi</p>
       <ul className="space-y-1">
         {items.map((item) => (
           <li key={item.id}>
@@ -65,8 +60,8 @@ function ServiceTableOfContents({ items }: { items: TocItem[] }) {
               href={`#${item.id}`}
               className={`block text-sm py-1 pl-3 border-l-2 transition-colors leading-snug ${
                 active === item.id
-                  ? 'font-semibold border-brand-blue'
-                  : 'text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-white/30'
+                  ? "font-semibold border-brand-blue"
+                  : "text-gray-500 dark:text-gray-400 border-transparent hover:text-gray-800 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-white/30"
               }`}
               style={active === item.id ? { color: BRAND_BLUE } : {}}
             >
@@ -79,59 +74,59 @@ function ServiceTableOfContents({ items }: { items: TocItem[] }) {
   );
 }
 
-function RecommendedPackageCta({
-  serviceName,
-  whatsapp,
-  pkg,
-}: {
-  serviceName: string;
-  whatsapp: string;
-  pkg: ServicePackage;
-}) {
-  const waConsultHref = whatsapp.trim()
-    ? whatsappWaMeUrlWithText(
-        whatsapp,
-        `Halo, saya tertarik dengan layanan ${serviceName}`,
-      )
-    : '';
+function CityPagesNav({ serviceSlug, cities }: { serviceSlug: string; cities: ServiceDetailCityPage[] }) {
+  if (!cities.length) return null;
+
+  return (
+    <nav aria-label="Halaman layanan per kota">
+      <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">Layanan di kota</p>
+      <ul className="space-y-1">
+        {cities.map((city) => (
+          <li key={city.id}>
+            <Link
+              href={`/layanan/${serviceSlug}/${city.slug}`}
+              className="group flex items-center gap-2 text-sm py-1.5 pl-1 rounded-lg text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"
+            >
+              <div className="w-8 h-8 flex items-center justify-center bg-brand-blue/10 rounded-lg">
+                <MapPin className="size-4 shrink-0 text-brand-blue" aria-hidden />
+              </div>
+
+              <span className="leading-snug">
+                <span className="font-medium text-gray-800 dark:text-gray-200 group-hover:text-brand-blue">{city.name}</span>
+                {city.province ? <span className="block text-xs text-gray-400 dark:text-gray-500 font-normal">{city.province}</span> : null}
+              </span>
+              <ArrowRight className="size-3.5 shrink-0 ml-auto mt-1 text-gray-300 dark:text-gray-600 group-hover:text-brand-blue group-hover:translate-x-0.5 transition-transform" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function RecommendedPackageCta({ serviceName, whatsapp, pkg }: { serviceName: string; whatsapp: string; pkg: ServicePackage }) {
+  const waConsultHref = whatsapp.trim() ? whatsappWaMeUrlWithText(whatsapp, `Halo, saya tertarik dengan layanan ${serviceName}`) : "";
   const included = pkg.features.filter((feature) => feature.is_included);
 
   return (
-    <div
-      className="rounded-2xl p-5 text-white space-y-3"
-      style={{ backgroundColor: BRAND_BLUE }}
-    >
-      <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center"
-        style={{ backgroundColor: 'oklch(1 0 0 / 0.15)' }}
-      >
+    <div className="rounded-2xl p-5 text-white space-y-3" style={{ backgroundColor: BRAND_BLUE }}>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: "oklch(1 0 0 / 0.15)" }}>
         <Sparkles className="size-5 text-white" aria-hidden />
       </div>
-      <p className="text-xs font-bold uppercase tracking-widest text-white/70">
-        Paket Rekomendasi
-      </p>
-      <p className="text-2xl font-bold leading-none tracking-tight">
-        {formatServicePrice(pkg.price)}
-      </p>
+      <p className="text-xs font-bold uppercase tracking-widest text-white/70">Paket Rekomendasi</p>
+      <p className="text-2xl font-bold leading-none tracking-tight">{formatServicePrice(pkg.price)}</p>
       <p className="text-xs text-white/80 leading-snug">
         {pkg.name} · {pkg.duration}
       </p>
       {included.length > 0 ? (
         <ul className="space-y-1.5 pt-1">
           {included.slice(0, 4).map((includedFeature) => (
-            <li
-              key={includedFeature.feature_name}
-              className="flex items-start gap-2 text-xs text-white/85 leading-snug"
-            >
+            <li key={includedFeature.feature_name} className="flex items-start gap-2 text-xs text-white/85 leading-snug">
               <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-white/80" />
               <span>{includedFeature.feature_name}</span>
             </li>
           ))}
-          {included.length > 4 ? (
-            <li className="text-xs text-white/60 pl-3">
-              +{included.length - 4} fitur lainnya
-            </li>
-          ) : null}
+          {included.length > 4 ? <li className="text-xs text-white/60 pl-3">+{included.length - 4} fitur lainnya</li> : null}
         </ul>
       ) : null}
       <div className="pt-1 space-y-2">
@@ -146,18 +141,12 @@ function RecommendedPackageCta({
             Konsultasi via WhatsApp
           </a>
         ) : (
-          <Link
-            href="/kontak"
-            className="flex justify-center items-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-white/90 transition-colors"
-          >
+          <Link href="/kontak" className="flex justify-center items-center gap-2 w-full py-3 rounded-xl text-sm font-semibold bg-white text-gray-900 hover:bg-white/90 transition-colors">
             <MessageCircle className="size-4 shrink-0" aria-hidden />
             Hubungi kami
           </Link>
         )}
-        <a
-          href="#paket"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-white underline underline-offset-2 hover:no-underline group"
-        >
+        <a href="#paket" className="inline-flex items-center gap-1 text-xs font-semibold text-white underline underline-offset-2 hover:no-underline group">
           Lihat semua paket
           <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
         </a>
@@ -166,50 +155,33 @@ function RecommendedPackageCta({
   );
 }
 
-export function ServiceSidebar({
-  serviceName,
-  whatsapp,
-  packages,
-  processSteps,
-  requirementCategories,
-  legalBases,
-  faqCount,
-  hasDescription,
-}: ServiceSidebarProps) {
-  const highlighted =
-    packages.length > 0
-      ? (packages.find((p) => p.is_highlighted) ?? packages[0])
-      : null;
+export function ServiceSidebar({ serviceSlug, serviceName, whatsapp, packages, processSteps, requirementCategories, legalBases, faqCount, hasDescription, cityPages }: ServiceSidebarProps) {
+  const highlighted = packages.length > 0 ? (packages.find((p) => p.is_highlighted) ?? packages[0]) : null;
 
   const tocItems = useMemo((): TocItem[] => {
     const items: TocItem[] = [];
     if (hasDescription) {
-      items.push({ id: 'deskripsi', label: 'Deskripsi' });
+      items.push({ id: "deskripsi", label: "Deskripsi" });
     }
     if (packages.length) {
-      items.push({ id: 'paket', label: 'Harga & Paket' });
+      items.push({ id: "paket", label: "Harga & Paket" });
     }
     if (processSteps.length) {
-      items.push({ id: 'proses', label: 'Alur Proses' });
+      items.push({ id: "proses", label: "Alur Proses" });
     }
     if (requirementCategories.length) {
-      items.push({ id: 'persyaratan', label: 'Persyaratan' });
+      items.push({ id: "persyaratan", label: "Persyaratan" });
     }
     if (legalBases.length) {
-      items.push({ id: 'dasar-hukum', label: 'Dasar Hukum' });
+      items.push({ id: "dasar-hukum", label: "Dasar Hukum" });
     }
     if (faqCount > 0) {
-      items.push({ id: 'faq', label: 'FAQ' });
+      items.push({ id: "faq", label: "FAQ" });
     }
     return items;
-  }, [
-    hasDescription,
-    packages.length,
-    processSteps.length,
-    requirementCategories.length,
-    legalBases.length,
-    faqCount,
-  ]);
+  }, [hasDescription, packages.length, processSteps.length, requirementCategories.length, legalBases.length, faqCount]);
+
+  const showCityNav = cityPages.length > 0;
 
   return (
     <aside className="w-full lg:flex lg:h-full lg:min-h-0 lg:flex-col">
@@ -217,19 +189,18 @@ export function ServiceSidebar({
         {tocItems.length > 0 ? (
           <>
             <ServiceTableOfContents items={tocItems} />
-            {highlighted ? (
-              <div className="h-px bg-gray-100 dark:bg-white/10" />
-            ) : null}
+            {showCityNav || highlighted ? <div className="h-px bg-gray-100 dark:bg-white/10" /> : null}
           </>
         ) : null}
 
-        {highlighted ? (
-          <RecommendedPackageCta
-            serviceName={serviceName}
-            whatsapp={whatsapp}
-            pkg={highlighted}
-          />
+        {showCityNav ? (
+          <>
+            <CityPagesNav serviceSlug={serviceSlug} cities={cityPages} />
+            {highlighted ? <div className="h-px bg-gray-100 dark:bg-white/10" /> : null}
+          </>
         ) : null}
+
+        {highlighted ? <RecommendedPackageCta serviceName={serviceName} whatsapp={whatsapp} pkg={highlighted} /> : null}
       </div>
     </aside>
   );

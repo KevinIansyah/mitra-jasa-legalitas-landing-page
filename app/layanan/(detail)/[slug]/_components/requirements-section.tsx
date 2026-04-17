@@ -31,8 +31,8 @@ export function RequirementsSection({
   if (!categories.length) return null;
 
   return (
-    <section id="persyaratan" className="py-16 bg-surface-page">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="persyaratan" className="py-16 lg:py-20 bg-surface-page">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <SectionHeading
             badge="Persyaratan"
@@ -118,7 +118,7 @@ export function RequirementsSection({
                         transition={{ duration: 0.28 }}
                         style={{ overflow: 'hidden' }}
                       >
-                        <div className="px-5 pb-5 border-t border-gray-100 dark:border-white/8 pt-4 space-y-3">
+                        <div className="px-5 pb-5 pt-4 space-y-3">
                           {categoryGroup.description && (
                             <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-4">
                               {categoryGroup.description}

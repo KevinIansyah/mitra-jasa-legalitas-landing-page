@@ -55,6 +55,8 @@ export interface BlogCard {
   tags: BlogTag[];
 }
 
+export type BlogRelatedCard = Pick<BlogCard, "id" | "title" | "slug" | "featured_image" | "published_at" | "reading_time" | "category" | "short_description">;
+
 // ============================================================================
 // BLOG LIST (GET /blogs)
 // ============================================================================
@@ -78,7 +80,7 @@ export interface BlogTocItem {
 export interface BlogDetail extends BlogCard {
   content: string | null;
   seo: BlogSeo | null;
-  related?: BlogCard[];
+  related?: BlogRelatedCard[];
 }
 
 export interface BlogSeo {

@@ -19,8 +19,8 @@ export function ProcessSection({ steps }: { steps: ProcessStep[] }) {
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
 
   return (
-    <section id="proses" className="py-16 bg-surface-card">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="proses" className="py-16 lg:py-20 bg-surface-card">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-10">
           <SectionHeading
             badge="Alur Layanan"

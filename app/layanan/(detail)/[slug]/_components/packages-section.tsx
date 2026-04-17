@@ -13,7 +13,7 @@ export function PackagesSection({ packages, whatsapp }: { packages: ServicePacka
   const waPkgHref = (pkgName: string) => (wa ? whatsappWaMeUrlWithText(wa, `Halo, saya tertarik dengan ${pkgName}`) : "");
   const waCustomHref = wa ? whatsappWaMeUrl(wa) : "";
   return (
-    <section id="paket" className="py-16 bg-surface-page">
+    <section id="paket" className="py-16 lg:py-20 bg-surface-page">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <SectionHeading

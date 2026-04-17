@@ -1,3 +1,5 @@
+import type { BlogRelatedCard } from "@/lib/types/blog";
+
 // ============================================================================
 // SHARED
 // ============================================================================
@@ -216,6 +218,7 @@ export interface ServiceDetail {
   requirement_categories: ServiceRequirementCategory[];
   legal_bases: ServiceLegalBasis[];
   faqs: ServiceFaq[];
+  blogs?: BlogRelatedCard[];
 }
 
 // ============================================================================

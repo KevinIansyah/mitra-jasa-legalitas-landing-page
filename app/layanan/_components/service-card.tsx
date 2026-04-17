@@ -9,6 +9,14 @@ import { formatIdrFromApi } from "@/lib/utils";
 import { BRAND_BLUE, BRAND_ORANGE } from "@/lib/types/constants";
 import { EASE } from "@/lib/types/constants";
 
+function formatPriceLine(service: ServiceListItem): string {
+  const pkg = service.cheapest_package;
+  if (!pkg?.price || String(pkg.price).trim() === "") return "Mulai: Konsultasi harga";
+  const formatted = formatIdrFromApi(pkg.price);
+  if (!formatted) return "Mulai: Konsultasi harga";
+  return `Mulai: ${formatted}`;
+}
+
 function packageFeatureNames(pkg: ServiceListItem["cheapest_package"], max = 3): string[] {
   if (!pkg?.features?.length) return [];
   const sorted = [...pkg.features].sort((left, right) => left.sort_order - right.sort_order);
@@ -23,8 +31,8 @@ function packageFeatureNames(pkg: ServiceListItem["cheapest_package"], max = 3):
 
 export function ServiceCard({ service, index, href }: { service: ServiceListItem; index: number; href?: string }) {
   const catColor = service.category?.palette_color?.trim() || BRAND_BLUE;
-  const priceLabel = service.cheapest_package ? formatIdrFromApi(service.cheapest_package.price) : "-";
-  const duration = service.cheapest_package?.duration ?? "-";
+  const priceLine = formatPriceLine(service);
+  const duration = service.cheapest_package?.duration ?? null;
   const desc = service.short_description?.trim() || "-";
   const features = packageFeatureNames(service.cheapest_package);
   const cities = service.city_pages.length > 0 ? service.city_pages.map((cityPage) => cityPage.name) : null;
@@ -71,6 +79,11 @@ export function ServiceCard({ service, index, href }: { service: ServiceListItem
                     <p className="sm:mb-0.5">Populer</p>
                   </div>
                 )}
+                {service.is_featured && (
+                  <div className="px-2 py-[2px] rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 leading-none">
+                    <p className="sm:mb-0.5">Unggulan</p>
+                  </div>
+                )}
               </div>
               <h3 className="text-sm font-bold text-gray-900 dark:text-gray-100 mt-2 leading-snug group-hover:text-brand-blue transition-colors">{service.name}</h3>
             </div>
@@ -88,20 +101,24 @@ export function ServiceCard({ service, index, href }: { service: ServiceListItem
           </ul>
 
           <div className="mt-auto pt-4 border-t border-gray-100 dark:border-white/8 space-y-2">
-            <p className="font-semibold text-gray-900 dark:text-white text-xs">{priceLabel ? `Mulai ${priceLabel}` : "-"}</p>
+            <p className="font-semibold text-gray-900 dark:text-white text-xs">{priceLine}</p>
 
-            <div className="space-y-1">
-              <div className="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-500">
-                <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>{duration}</span>
+            {duration || cities ? (
+              <div className="space-y-1">
+                {duration && (
+                  <div className="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-500">
+                    <Clock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    <span>{duration}</span>
+                  </div>
+                )}
+                {cities && (
+                  <div className="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-500">
+                    <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    <span className="line-clamp-2">{cities.join(", ")}</span>
+                  </div>
+                )}
               </div>
-              {cities && (
-                <div className="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-500">
-                  <MapPin className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span className="line-clamp-2">{cities.join(", ")}</span>
-                </div>
-              )}
-            </div>
+            ) : null}
           </div>
         </div>
       </Link>

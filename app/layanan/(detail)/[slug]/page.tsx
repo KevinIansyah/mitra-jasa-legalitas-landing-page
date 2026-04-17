@@ -14,6 +14,7 @@ import { LegalBasesSection } from "./_components/legal-bases-section";
 import { BottomCta } from "./_components/bottom-cta";
 import { DetailBody } from "./_components/detail-body";
 import { DetailHero } from "./_components/detail-hero";
+import { RelatedPostsSection } from "../../../blog/[slug]/_components/related-posts";
 import { ServiceSeo } from "@/lib/types/service";
 
 const BRAND_BLUE = "oklch(0.3811 0.1315 260.22)";
@@ -42,9 +43,7 @@ function ServiceJsonLd({ seo }: { seo: ServiceSeo | null }) {
   if (!seo?.schema_markup) return null;
 
   const graph = [seo.schema_markup.service, seo.schema_markup.howto, seo.schema_markup.faq, seo.schema_markup.breadcrumb]
-    .filter(
-      (schema): schema is Record<string, unknown> => !!schema && typeof schema === "object" && Object.keys(schema).length > 0,
-    )
+    .filter((schema): schema is Record<string, unknown> => !!schema && typeof schema === "object" && Object.keys(schema).length > 0)
     .map((schema) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { "@context": _, ...rest } = schema;
@@ -130,6 +129,8 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
       {service.legal_bases.length > 0 && <LegalBasesSection bases={service.legal_bases} />}
 
       {service.faqs.length > 0 && <FaqSection faqs={service.faqs} />}
+
+      <RelatedPostsSection posts={service.blogs ?? []} />
 
       <BottomCta name={service.name} whatsapp={whatsapp} />
     </>

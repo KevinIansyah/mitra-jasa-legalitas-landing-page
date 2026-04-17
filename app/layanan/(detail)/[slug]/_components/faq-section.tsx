@@ -13,7 +13,7 @@ export function FaqSection({ faqs }: { faqs: ServiceFaq[] }) {
   if (!faqs.length) return null;
 
   return (
-    <section id="faq" className="py-16 bg-surface-page">
+    <section id="faq" className="py-16 lg:py-20 bg-surface-page">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <SectionHeading
@@ -93,7 +93,7 @@ export function FaqSection({ faqs }: { faqs: ServiceFaq[] }) {
                           transition={{ duration: 0.28, ease: EASE }}
                           style={{ overflow: 'hidden' }}
                         >
-                          <p className="p-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed border-t border-gray-100 dark:border-white/8">
+                          <p className="p-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                             {faq.answer}
                           </p>
                         </motion.div>

@@ -18,6 +18,7 @@ export function DetailBody({
         <div className="flex flex-col lg:flex-row lg:items-stretch gap-10">
           <div className="block lg:hidden shrink-0">
             <ServiceSidebar
+              serviceSlug={service.slug}
               serviceName={service.name}
               whatsapp={whatsapp}
               packages={service.packages}
@@ -26,6 +27,7 @@ export function DetailBody({
               legalBases={service.legal_bases}
               faqCount={service.faqs.length}
               hasDescription={hasDescription}
+              cityPages={service.city_pages ?? []}
             />
           </div>
 
@@ -70,6 +72,7 @@ export function DetailBody({
           <div className="hidden lg:flex lg:w-[280px] xl:w-[300px] shrink-0 flex-col min-h-0 self-stretch">
             <div className="sticky top-24">
               <ServiceSidebar
+                serviceSlug={service.slug}
                 serviceName={service.name}
                 whatsapp={whatsapp}
                 packages={service.packages}
@@ -78,6 +81,7 @@ export function DetailBody({
                 legalBases={service.legal_bases}
                 faqCount={service.faqs.length}
                 hasDescription={hasDescription}
+                cityPages={service.city_pages ?? []}
               />
             </div>
           </div>

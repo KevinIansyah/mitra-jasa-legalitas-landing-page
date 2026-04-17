@@ -12,7 +12,7 @@ export function AboutCtaSection({ whatsapp }: AboutCtaSectionProps) {
   const waHref = wa ? whatsappWaMeUrlWithText(wa, "Halo, saya tertarik dengan legalitas bisnis saya") : "";
 
   return (
-    <section className="py-16 bg-surface-card border-t border-gray-100 dark:border-white/8">
+    <section className="py-16 lg:py-20 bg-surface-card">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <div className="rounded-2xl p-8 sm:p-12 overflow-hidden relative" style={{ backgroundColor: "oklch(0.3811 0.1315 260.22)" }}>
           <div className="absolute top-[-60px] right-[-60px] w-[220px] h-[220px] rounded-full opacity-10" style={{ backgroundColor: "white" }} />

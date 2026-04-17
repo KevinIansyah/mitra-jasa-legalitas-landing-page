@@ -31,7 +31,22 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "pub-8c1ce0172c6d4135bf5db8344f0bbb65.r2.dev",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "dashboard-mitra-jasa-legalitas.keviniansyah.site",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "mitra-jasa-legalitas.keviniansyah.site",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "dashboard.mitrajasalegalitas.co.id",
         pathname: "/**",
       },
       {

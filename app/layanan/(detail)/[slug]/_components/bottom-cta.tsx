@@ -16,7 +16,7 @@ export function BottomCta({ name, whatsapp }: BottomCtaProps) {
       )
     : '';
   return (
-    <section className="py-16 bg-surface-card border-gray-100 dark:border-white/8">
+    <section className="py-16 lg:py-20 bg-surface-card border-gray-100 dark:border-white/8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <div
           className="rounded-2xl p-8 sm:p-12 overflow-hidden relative"

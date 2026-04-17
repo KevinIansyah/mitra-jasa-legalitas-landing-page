@@ -42,7 +42,7 @@ export function DetailBody({
             )}
 
             {tags.length > 0 ? (
-              <div className="mt-10 pt-10 border-t border-gray-100 dark:border-white/8 flex flex-wrap gap-2">
+              <div className="mt-10 pt-10 flex flex-wrap gap-2">
                 {tags.map((tag) => (
                   <Link
                     key={tag.id}

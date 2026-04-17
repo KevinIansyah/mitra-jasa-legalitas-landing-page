@@ -115,7 +115,7 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
                         transition={{ duration: 0.28, ease: EASE }}
                         style={{ overflow: 'hidden' }}
                       >
-                        <p className="p-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed border-t border-gray-100 dark:border-white/8">
+                        <p className="p-5 text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                           {faq.answer}
                         </p>
                       </motion.div>
