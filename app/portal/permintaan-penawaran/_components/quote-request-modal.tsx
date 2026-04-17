@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { postQuote } from "@/lib/api/endpoints/quotes";
+import { postQuote, type CreateQuotePayload } from "@/lib/api/endpoints/quotes";
 import { fetchServicePackages, fetchServicesCompact } from "@/lib/api/endpoints/services-compact";
 import { CATEGORY_BUSINESS, STATUS_LEGAL } from "@/lib/constants/quote-business-context";
 import { getQuoteBudgetLabel, getQuoteTimelineLabel } from "@/lib/constants/quote-request-labels";
@@ -50,7 +50,7 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
   const [businessType, setBusinessType] = useState("");
   const [businessLegalStatus, setBusinessLegalStatus] = useState("");
   const [timeline, setTimeline] = useState<QuoteTimeline>("normal");
-  const [budgetRange, setBudgetRange] = useState<QuoteBudgetRange>("10_25jt");
+  const [budgetRange, setBudgetRange] = useState<QuoteBudgetRange | "">("");
   const [notes, setNotes] = useState("");
 
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -66,7 +66,7 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
     setBusinessType("");
     setBusinessLegalStatus("");
     setTimeline("normal");
-    setBudgetRange("10_25jt");
+    setBudgetRange("");
     setNotes("");
     setPackages([]);
   }, []);
@@ -122,12 +122,9 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
   const submit = async () => {
     setFieldErrors({});
     const errors: Record<string, string> = {};
-    if (!serviceId) errors.service_id = "Pilih layanan.";
-    if (!packageId) errors.service_package_id = "Pilih paket.";
     if (!projectName.trim()) errors.project_name = "Nama proyek wajib diisi.";
     if (!description.trim()) errors.description = "Deskripsi wajib diisi.";
-    if (!businessType) errors.business_type = "Jenis usaha wajib dipilih.";
-    if (!businessLegalStatus) errors.business_legal_status = "Status legalitas wajib dipilih.";
+    if (!timeline) errors.timeline = "Timeline wajib dipilih.";
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors);
       return;
@@ -136,18 +133,18 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
     if (pending || submitLockRef.current) return;
     submitLockRef.current = true;
 
-    const payload = {
-      service_id: Number.parseInt(serviceId, 10),
-      service_package_id: Number.parseInt(packageId, 10),
+    const payload: CreateQuotePayload = {
       project_name: projectName.trim(),
       description: description.trim(),
-      business_type: businessType,
-      business_legal_status: businessLegalStatus,
       timeline,
-      budget_range: budgetRange,
-      source: "portal" as const,
-      notes: notes.trim() || undefined,
+      source: "portal",
     };
+    if (serviceId) payload.service_id = Number.parseInt(serviceId, 10);
+    if (packageId) payload.service_package_id = Number.parseInt(packageId, 10);
+    if (businessType) payload.business_type = businessType;
+    if (businessLegalStatus) payload.business_legal_status = businessLegalStatus;
+    if (budgetRange) payload.budget_range = budgetRange;
+    if (notes.trim()) payload.notes = notes.trim();
 
     setPending(true);
     const toastId = toast.loading("Mengirim!", { description: "Mohon tunggu sebentar." });
@@ -213,9 +210,7 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
         <div className="min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-y-contain [scrollbar-gutter:stable]">
           <div className="space-y-4 pr-1">
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">
-                Layanan <span className="text-destructive">*</span>
-              </Label>
+              <Label className="text-xs text-muted-foreground">Layanan</Label>
               <Select
                 value={serviceId || "none"}
                 onValueChange={(v) => {
@@ -248,9 +243,7 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
             </div>
 
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">
-                Paket <span className="text-destructive">*</span>
-              </Label>
+              <Label className="text-xs text-muted-foreground">Paket</Label>
               <Select
                 value={packageId || "none"}
                 onValueChange={(v) => {
@@ -315,9 +308,7 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">
-                  Jenis usaha <span className="text-destructive">*</span>
-                </Label>
+                <Label className="text-xs text-muted-foreground">Jenis usaha</Label>
                 <Select
                   value={businessType || "none"}
                   onValueChange={(v) => {
@@ -346,9 +337,7 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">
-                  Status legalitas <span className="text-destructive">*</span>
-                </Label>
+                <Label className="text-xs text-muted-foreground">Status legalitas</Label>
                 <Select
                   value={businessLegalStatus || "none"}
                   onValueChange={(v) => {
@@ -379,8 +368,21 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">Timeline</Label>
-                <Select value={timeline} onValueChange={(v) => setTimeline(v as QuoteTimeline)} disabled={pending}>
+                <Label className="text-xs text-muted-foreground">
+                  Timeline <span className="text-destructive">*</span>
+                </Label>
+                <Select
+                  value={timeline}
+                  onValueChange={(v) => {
+                    setTimeline(v as QuoteTimeline);
+                    setFieldErrors((prev) => {
+                      const n = { ...prev };
+                      delete n.timeline;
+                      return n;
+                    });
+                  }}
+                  disabled={pending}
+                >
                   <SelectTrigger className="rounded-xl border border-input bg-white dark:bg-white/5 w-full shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20">
                     <SelectValue />
                   </SelectTrigger>
@@ -392,15 +394,21 @@ export function QuoteRequestModal({ open, onClose, onSubmitted }: Props) {
                     ))}
                   </SelectContent>
                 </Select>
+                {fieldErrors.timeline ? <p className="text-xs text-destructive">{fieldErrors.timeline}</p> : null}
               </div>
 
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Estimasi anggaran</Label>
-                <Select value={budgetRange} onValueChange={(v) => setBudgetRange(v as QuoteBudgetRange)} disabled={pending}>
+                <Select
+                  value={budgetRange || "none"}
+                  onValueChange={(v) => setBudgetRange(v === "none" ? "" : (v as QuoteBudgetRange))}
+                  disabled={pending}
+                >
                   <SelectTrigger className="rounded-xl border border-input bg-white dark:bg-white/5 w-full shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/20">
-                    <SelectValue />
+                    <SelectValue placeholder="Pilih estimasi anggaran..." />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="none">Estimasi anggaran</SelectItem>
                     {BUDGETS.map((b) => (
                       <SelectItem key={b} value={b}>
                         {getQuoteBudgetLabel(b)}

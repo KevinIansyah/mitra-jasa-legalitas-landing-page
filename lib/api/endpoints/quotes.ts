@@ -3,14 +3,14 @@ import type { QuoteRequest, QuoteRequestDetail, QuotesListResult } from "@/lib/t
 import { normalizeQuoteDetail, normalizeQuotesListResult } from "./quotes-normalize";
 
 export type CreateQuotePayload = {
-  service_id: number;
-  service_package_id: number;
+  service_id?: number | null;
+  service_package_id?: number | null;
   project_name: string;
   description: string;
-  business_type: string;
-  business_legal_status: string;
+  business_type?: string | null;
+  business_legal_status?: string | null;
   timeline: string;
-  budget_range: string;
+  budget_range?: string | null;
   source: "portal";
   notes?: string | null;
 };
