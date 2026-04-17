@@ -104,4 +104,11 @@ export interface ContactMessagePayload {
   email?: string | null;
   topic?: string | null;
   message: string;
+  cf_turnstile_token: string;
+  website?: string;
+  company_website?: string;
+}
+
+export interface ContactMessageResponse {
+  message?: string;
 }

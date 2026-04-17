@@ -31,16 +31,19 @@ export interface ApiErrorResponse {
 export class ApiError extends Error {
   status: number;
   errors?: Record<string, string[] | boolean>;
+  retryAfter?: number;
 
   constructor(
     message: string,
     status: number,
     errors?: Record<string, string[] | boolean>,
+    retryAfter?: number,
   ) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.errors = errors;
+    this.retryAfter = retryAfter;
   }
 }
 

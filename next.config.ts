@@ -26,7 +26,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "pub-d3ac298b441547f387442ac76499bdc2.r2.dev",
+        hostname: "cdn.mitrajasalegalitas.co.id",
         pathname: "/**",
       },
       {
@@ -36,12 +36,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "dashboard-mitra-jasa-legalitas.keviniansyah.site",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "mitra-jasa-legalitas.keviniansyah.site",
+        hostname: "pub-d3ac298b441547f387442ac76499bdc2.r2.dev",
         pathname: "/**",
       },
       {

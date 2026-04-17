@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
+import { Mail, Phone, MapPin, Send, CheckCircle2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -13,6 +15,8 @@ import type { CompanyInformationData } from "@/lib/types/company-information";
 import { zoomOutGoogleMapsEmbedUrl } from "@/lib/google-maps-embed";
 import { whatsappWaMeUrl } from "@/lib/whatsapp-cta";
 import { EASE } from "@/lib/types/constants";
+import { TurnstileWidget, TurnstileRef } from "@/components/common/turnstile-widget";
+import { getTurnstileErrorMessage, isTurnstileValidationError } from "@/lib/api/turnstile-error";
 
 const subjectOptions = ["Pendirian PT / CV", "Pendaftaran Merek", "NIB & Perizinan", "Akta Perubahan", "Konsultasi Hukum", "Lainnya"];
 
@@ -63,12 +67,23 @@ type Props = {
 
 export function ContactSection({ data }: Props) {
   const { contact, address } = data;
+  const { resolvedTheme } = useTheme();
 
   const [form, setForm] = useState<FormState>(emptyForm);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const [honeypotWebsite, setHoneypotWebsite] = useState("");
+  const [honeypotCompanyWebsite, setHoneypotCompanyWebsite] = useState("");
+  const turnstileRef = useRef<TurnstileRef>(null);
+
+  const turnstileTheme = resolvedTheme === "dark" ? "dark" : "light";
+
+  function resetTurnstile() {
+    turnstileRef.current?.reset();
+    setTurnstileToken("");
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -76,8 +91,11 @@ export function ContactSection({ data }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!turnstileToken) {
+      toast.error("Selesaikan verifikasi CAPTCHA terlebih dahulu.");
+      return;
+    }
     setLoading(true);
-    setFormError(null);
     setFieldErrors({});
     try {
       await postContactMessage({
@@ -86,21 +104,30 @@ export function ContactSection({ data }: Props) {
         email: form.email.trim() || null,
         topic: form.topic.trim() || null,
         message: form.message.trim(),
+        cf_turnstile_token: turnstileToken,
+        website: honeypotWebsite,
+        company_website: honeypotCompanyWebsite,
       });
       setSubmitted(true);
+      resetTurnstile();
     } catch (err) {
+      resetTurnstile();
       if (err instanceof ApiError) {
-        setFormError(err.message);
-        if (err.errors) {
-          const next: Record<string, string> = {};
-          for (const key of ["name", "whatsapp_number", "email", "topic", "message"] as const) {
-            const msg = firstFieldError(err.errors, key);
-            if (msg) next[key] = msg;
+        if (isTurnstileValidationError(err)) {
+          toast.error(getTurnstileErrorMessage(err) ?? "Verifikasi keamanan gagal. Silakan coba lagi.");
+        } else {
+          toast.error(err.message);
+          if (err.errors) {
+            const next: Record<string, string> = {};
+            for (const key of ["name", "whatsapp_number", "email", "topic", "message"] as const) {
+              const msg = firstFieldError(err.errors, key);
+              if (msg) next[key] = msg;
+            }
+            setFieldErrors(next);
           }
-          setFieldErrors(next);
         }
       } else {
-        setFormError("Gagal mengirim pesan. Silakan coba lagi.");
+        toast.error("Gagal mengirim pesan. Silakan coba lagi.");
       }
     } finally {
       setLoading(false);
@@ -222,8 +249,6 @@ export function ContactSection({ data }: Props) {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-4">Kirim pesan ke tim kami</p>
 
-                {formError && <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-lg px-3 py-2">{formError}</p>}
-
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <Label htmlFor="name" className="text-xs text-gray-500">
@@ -319,18 +344,54 @@ export function ContactSection({ data }: Props) {
                   {fieldErrors.message && <p className="text-xs text-destructive">{fieldErrors.message}</p>}
                 </div>
 
+                <input
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypotWebsite}
+                  onChange={(e) => setHoneypotWebsite(e.target.value)}
+                  style={{
+                    position: "absolute",
+                    left: "-9999px",
+                    width: "1px",
+                    height: "1px",
+                    opacity: 0,
+                    pointerEvents: "none",
+                  }}
+                  aria-hidden="true"
+                />
+                <input
+                  type="text"
+                  name="company_website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={honeypotCompanyWebsite}
+                  onChange={(e) => setHoneypotCompanyWebsite(e.target.value)}
+                  style={{
+                    position: "absolute",
+                    left: "-9999px",
+                    width: "1px",
+                    height: "1px",
+                    opacity: 0,
+                    pointerEvents: "none",
+                  }}
+                  aria-hidden="true"
+                />
+
+                <div className="flex justify-center pt-1">
+                  <TurnstileWidget ref={turnstileRef} theme={turnstileTheme} onVerify={setTurnstileToken} onExpire={() => setTurnstileToken("")} onError={() => setTurnstileToken("")} />
+                </div>
+
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !turnstileToken}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 mt-2"
                   style={{ backgroundColor: "oklch(0.3811 0.1315 260.22)" }}
                 >
                   {loading ? (
                     <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
-                      </svg>
+                      <Loader2 className="w-4 h-4 animate-spin shrink-0" aria-hidden />
                       Mengirim...
                     </>
                   ) : (

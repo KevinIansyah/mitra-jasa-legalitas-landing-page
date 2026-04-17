@@ -1,58 +1,110 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Loader2, Eye, EyeOff, AlertCircle, ArrowLeft } from "lucide-react";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
+import { Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { useAuthSubmitCooldown } from "@/hooks/use-auth-submit-cooldown";
 import { ApiError } from "@/lib/types/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BRAND_BLUE } from "@/lib/types/constants";
 import { cn } from "@/lib/utils";
 import { authInputClass } from "@/app/(auth)/_components/auth-input-class";
-import { getFieldError } from "@/app/(auth)/_components/auth-api-error";
+import {
+  getFieldError,
+  getTurnstileErrorMessage,
+  isTurnstileValidationError,
+} from "@/app/(auth)/_components/auth-api-error";
+import { TurnstileWidget, TurnstileRef } from "@/components/common/turnstile-widget";
+
+const LOGIN_CAPTCHA_FAIL_THRESHOLD = 1;
 
 export function MasukForm() {
   const router = useRouter();
   const { login } = useAuth();
+  const { cooldown, handleRateLimit } = useAuthSubmitCooldown();
+  const { resolvedTheme } = useTheme();
+  const turnstileRef = useRef<TurnstileRef>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
     email?: string;
     password?: string;
   }>({});
   const [loading, setLoading] = useState(false);
+  const [requireCaptcha, setRequireCaptcha] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const failedCountRef = useRef(0);
+
+  const turnstileTheme = resolvedTheme === "dark" ? "dark" : "light";
+
+  function resetTurnstile() {
+    turnstileRef.current?.reset();
+    setTurnstileToken("");
+  }
+
+  function resetCaptchaState() {
+    failedCountRef.current = 0;
+    setRequireCaptcha(false);
+    setTurnstileToken("");
+    turnstileRef.current?.reset();
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setFormError(null);
     setFieldErrors({});
+    if (requireCaptcha && !turnstileToken) {
+      toast.error("Selesaikan verifikasi CAPTCHA terlebih dahulu.");
+      return;
+    }
     setLoading(true);
     try {
-      const result = await login(email, password, rememberMe);
+      const result = await login(email, password, rememberMe, requireCaptcha ? turnstileToken : undefined);
       if (result) {
+        resetCaptchaState();
         router.refresh();
         router.push("/portal");
       }
     } catch (err) {
+      resetTurnstile();
+      if (handleRateLimit(err)) {
+        setRequireCaptcha(true);
+        setLoading(false);
+        return;
+      }
+      if (isTurnstileValidationError(err)) {
+        toast.error(getTurnstileErrorMessage(err) ?? "Verifikasi CAPTCHA gagal. Silakan coba lagi.");
+        setLoading(false);
+        return;
+      }
       if (err instanceof ApiError) {
-        setFormError(err.message);
+        toast.error(err.message);
         setFieldErrors({
           email: getFieldError(err, "email"),
           password: getFieldError(err, "password"),
         });
+        if (err.status === 401) {
+          failedCountRef.current += 1;
+          if (failedCountRef.current >= LOGIN_CAPTCHA_FAIL_THRESHOLD) {
+            setRequireCaptcha(true);
+          }
+        }
       } else {
-        setFormError("Tidak dapat terhubung. Periksa koneksi internet Anda.");
+        toast.error("Tidak dapat terhubung. Periksa koneksi internet Anda.");
       }
     } finally {
       setLoading(false);
     }
   }
+
+  const submitDisabled = loading || cooldown > 0 || (requireCaptcha && !turnstileToken);
 
   return (
     <div className="w-full max-w-[400px] mx-auto flex flex-col items-stretch">
@@ -60,13 +112,6 @@ export function MasukForm() {
 
       <h1 className="text-center text-xl sm:text-2xl font-bold text-foreground tracking-tight">Selamat datang di Mitra Jasa Legalitas</h1>
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        {formError ? (
-          <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2" role="alert">
-            <AlertCircle className="w-4 h-4" aria-hidden />
-            {formError}
-          </p>
-        ) : null}
-
         <div className="space-y-1.5">
           <Label htmlFor="masuk-email" className="text-xs text-muted-foreground">
             Email
@@ -146,9 +191,21 @@ export function MasukForm() {
           </Link>
         </div>
 
+        {requireCaptcha ? (
+          <div className="flex justify-center">
+            <TurnstileWidget
+              ref={turnstileRef}
+              theme={turnstileTheme}
+              onVerify={setTurnstileToken}
+              onExpire={() => setTurnstileToken("")}
+              onError={() => setTurnstileToken("")}
+            />
+          </div>
+        ) : null}
+
         <button
           type="submit"
-          disabled={loading}
+          disabled={submitDisabled}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 mt-1"
           style={{ backgroundColor: BRAND_BLUE }}
         >
@@ -157,6 +214,8 @@ export function MasukForm() {
               <Loader2 className="w-4 h-4 animate-spin shrink-0" aria-hidden />
               Memproses...
             </>
+          ) : cooldown > 0 ? (
+            `Coba lagi dalam ${cooldown}s`
           ) : (
             "Masuk"
           )}

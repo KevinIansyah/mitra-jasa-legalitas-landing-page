@@ -1,5 +1,7 @@
 import { ApiError } from '@/lib/types/api';
 
+export { isTurnstileValidationError, getTurnstileErrorMessage } from '@/lib/api/turnstile-error';
+
 export function formatAuthApiError(err: unknown, fallback: string): string {
   if (err instanceof ApiError) {
     if (err.errors) {

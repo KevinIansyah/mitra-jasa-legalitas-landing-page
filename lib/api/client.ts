@@ -2,8 +2,9 @@
  * API Client for Client Components
  */
 
+import { toast } from "sonner";
 import { parseApiErrorResponse } from "./parse-api-error";
-import { ApiSuccessResponse } from "../types/api";
+import { ApiError, ApiSuccessResponse } from "../types/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL?.trim() ?? "";
 
@@ -98,12 +99,26 @@ function buildFormDataHeaders(): HeadersInit {
   };
 }
 
+let lastRateLimitToastAt = 0;
+
+function notifyRateLimit(error: ApiError): void {
+  if (typeof window === "undefined") return;
+  const now = Date.now();
+  if (now - lastRateLimitToastAt < 1500) return;
+  lastRateLimitToastAt = now;
+  toast.error(error.message);
+}
+
 async function handleResponse<T>(res: Response): Promise<T> {
   if (!res.ok) {
     if (res.status === 401) {
       cookieHelpers.removeToken();
     }
-    throw await parseApiErrorResponse(res);
+    const error = await parseApiErrorResponse(res);
+    if (error.status === 429) {
+      notifyRateLimit(error);
+    }
+    throw error;
   }
 
   if (res.status === 204) {
@@ -170,7 +185,11 @@ async function getBlob(url: string): Promise<{ blob: Blob; filename: string | nu
     if (res.status === 401) {
       cookieHelpers.removeToken();
     }
-    throw await parseApiErrorResponse(res);
+    const error = await parseApiErrorResponse(res);
+    if (error.status === 429) {
+      notifyRateLimit(error);
+    }
+    throw error;
   }
 
   const cd = res.headers.get("Content-Disposition");

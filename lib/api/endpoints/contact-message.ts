@@ -1,8 +1,11 @@
 import { apiClient } from '@/lib/api/client';
-import type { ContactMessagePayload } from '@/lib/types/company-information';
+import type {
+  ContactMessagePayload,
+  ContactMessageResponse,
+} from '@/lib/types/company-information';
 
 export async function postContactMessage(
   payload: ContactMessagePayload,
-): Promise<unknown> {
-  return apiClient.post<unknown>('/contact-messages', payload);
+): Promise<ContactMessageResponse> {
+  return apiClient.post<ContactMessageResponse>('/contact-messages', payload);
 }

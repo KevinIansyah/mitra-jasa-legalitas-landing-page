@@ -1,22 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Loader2, Eye, EyeOff, AlertCircle, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
+import { Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { useAuth, otpSession } from "@/hooks/use-auth";
+import { useAuthSubmitCooldown } from "@/hooks/use-auth-submit-cooldown";
 import { ApiError } from "@/lib/types/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { BRAND_BLUE } from "@/lib/types/constants";
 import { cn } from "@/lib/utils";
 import { authInputClass } from "@/app/(auth)/_components/auth-input-class";
-import { getFieldError } from "@/app/(auth)/_components/auth-api-error";
+import {
+  getFieldError,
+  getTurnstileErrorMessage,
+  isTurnstileValidationError,
+} from "@/app/(auth)/_components/auth-api-error";
+import { TurnstileWidget, TurnstileRef } from "@/components/common/turnstile-widget";
+
+function looksLikeEmailAlreadyRegistered(err: ApiError): boolean {
+  if (err.status !== 422) return false;
+  const rawFieldError = err.errors?.email;
+  const emailFieldMessages = Array.isArray(rawFieldError) ? rawFieldError.map((v) => String(v).toLowerCase()) : [];
+  const allMessages = [err.message.toLowerCase(), ...emailFieldMessages];
+  return allMessages.some((m) => m.includes("sudah terdaftar"));
+}
 
 export function DaftarForm() {
   const router = useRouter();
   const { register } = useAuth();
+  const { cooldown, handleRateLimit } = useAuthSubmitCooldown();
+  const { resolvedTheme } = useTheme();
+  const turnstileRef = useRef<TurnstileRef>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -24,7 +43,6 @@ export function DaftarForm() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
     name?: string;
     email?: string;
@@ -32,42 +50,74 @@ export function DaftarForm() {
     password?: string;
     password_confirmation?: string;
   }>({});
+  const [emailAlreadyRegistered, setEmailAlreadyRegistered] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const turnstileTheme = resolvedTheme === "dark" ? "dark" : "light";
+
+  function resetTurnstile() {
+    turnstileRef.current?.reset();
+    setTurnstileToken("");
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setFormError(null);
     setFieldErrors({});
+    setEmailAlreadyRegistered(false);
     if (password !== passwordConfirmation) {
-      setFormError("Konfirmasi password tidak sama.");
+      toast.error("Konfirmasi password tidak sama.");
       return;
     }
     const phoneDigits = phone.replace(/\D/g, "");
     if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-      setFormError("Masukkan nomor ponsel yang valid (10-15 digit).");
+      toast.error("Masukkan nomor ponsel yang valid (10-15 digit).");
+      return;
+    }
+    if (!turnstileToken) {
+      toast.error("Selesaikan verifikasi CAPTCHA terlebih dahulu.");
       return;
     }
     setLoading(true);
     try {
-      await register(name, email, phoneDigits, password, passwordConfirmation);
+      await register(name, email, phoneDigits, password, passwordConfirmation, turnstileToken);
       router.push("/verify-otp");
     } catch (err) {
+      resetTurnstile();
+      if (handleRateLimit(err)) {
+        return;
+      }
+      if (isTurnstileValidationError(err)) {
+        toast.error(getTurnstileErrorMessage(err) ?? "Verifikasi CAPTCHA gagal. Silakan coba lagi.");
+        return;
+      }
       if (err instanceof ApiError) {
-        setFormError(err.message);
+        const alreadyRegistered = looksLikeEmailAlreadyRegistered(err);
+        toast.error(err.message);
         setFieldErrors({
           name: getFieldError(err, "name"),
-          email: getFieldError(err, "email"),
+          email: getFieldError(err, "email") ?? (alreadyRegistered ? err.message : undefined),
           phone: getFieldError(err, "phone"),
           password: getFieldError(err, "password"),
           password_confirmation: getFieldError(err, "password_confirmation"),
         });
+        setEmailAlreadyRegistered(alreadyRegistered);
       } else {
-        setFormError("Pendaftaran gagal. Coba lagi.");
+        toast.error("Pendaftaran gagal. Coba lagi.");
       }
     } finally {
       setLoading(false);
     }
   }
+
+  function handleGoToResendOtp() {
+    const trimmed = email.trim();
+    if (!trimmed) return;
+    otpSession.setEmail(trimmed);
+    router.push("/verify-otp");
+  }
+
+  const submitDisabled = loading || cooldown > 0 || !turnstileToken;
 
   return (
     <div className="w-full max-w-[400px] mx-auto flex flex-col items-stretch">
@@ -77,13 +127,6 @@ export function DaftarForm() {
       <p className="mt-2 text-center text-sm text-muted-foreground">Isi data berikut. Kami akan mengirim kode verifikasi ke email Anda.</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        {formError ? (
-          <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2" role="alert">
-            <AlertCircle className="w-4 h-4 shrink-0" aria-hidden />
-            {formError}
-          </p>
-        ) : null}
-
         <div className="space-y-1.5">
           <Label htmlFor="daftar-nama" className="text-xs text-muted-foreground">
             Nama lengkap
@@ -120,6 +163,27 @@ export function DaftarForm() {
             aria-invalid={Boolean(fieldErrors.email)}
           />
           {fieldErrors.email ? <p className="text-xs text-destructive">{fieldErrors.email}</p> : null}
+          {emailAlreadyRegistered ? (
+            <div className="mt-2 flex flex-col gap-1.5 rounded-xl border border-border/60 bg-muted/40 pt-2 pb-4 px-3 text-xs text-muted-foreground">
+              <p>Sepertinya email ini sudah punya akun di sistem kami.</p>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <Link href="/masuk" className="font-medium text-foreground underline underline-offset-4 hover:opacity-90">
+                  Sudah terdaftar? Masuk
+                </Link>
+                <span aria-hidden className="text-muted-foreground/60">
+                  /
+                </span>
+                <button
+                  type="button"
+                  onClick={handleGoToResendOtp}
+                  disabled={!email.trim()}
+                  className="font-medium text-foreground underline underline-offset-4 hover:opacity-90 disabled:opacity-50 disabled:no-underline"
+                >
+                  Belum verifikasi? Kirim ulang kode OTP
+                </button>
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="space-y-1.5">
@@ -205,9 +269,19 @@ export function DaftarForm() {
           {fieldErrors.password_confirmation ? <p className="text-xs text-destructive">{fieldErrors.password_confirmation}</p> : null}
         </div>
 
+        <div className="flex justify-center">
+          <TurnstileWidget
+            ref={turnstileRef}
+            theme={turnstileTheme}
+            onVerify={setTurnstileToken}
+            onExpire={() => setTurnstileToken("")}
+            onError={() => setTurnstileToken("")}
+          />
+        </div>
+
         <button
           type="submit"
-          disabled={loading}
+          disabled={submitDisabled}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 mt-1"
           style={{ backgroundColor: BRAND_BLUE }}
         >
@@ -216,6 +290,8 @@ export function DaftarForm() {
               <Loader2 className="w-4 h-4 animate-spin shrink-0" aria-hidden />
               Memproses...
             </>
+          ) : cooldown > 0 ? (
+            `Coba lagi dalam ${cooldown}s`
           ) : (
             "Daftar"
           )}

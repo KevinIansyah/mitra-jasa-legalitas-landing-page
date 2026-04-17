@@ -67,11 +67,13 @@ export function useAuth(options: UseAuthOptions = {}) {
     email: string,
     password: string,
     rememberMe = false,
+    cfTurnstileToken?: string,
   ): Promise<LoginResponse | void> => {
     try {
       const response = await apiClient.post<LoginResponse>(AUTH_API.login, {
         email,
         password,
+        ...(cfTurnstileToken ? { cf_turnstile_token: cfTurnstileToken } : {}),
       });
 
       apiClient.setToken(response.token, rememberMe);
@@ -93,6 +95,11 @@ export function useAuth(options: UseAuthOptions = {}) {
 
   // ------------------------------------------------------------------
   // Register
+  //
+  // Catatan backend terbaru: kalau email sudah terdaftar (baik verified maupun
+  // belum), backend SELALU balikin 422. FE tidak lagi boleh auto masuk flow OTP
+  // dari response register untuk email existing -- user diarahkan ke halaman
+  // login / resend OTP secara manual oleh form.
   // ------------------------------------------------------------------
   const register = async (
     name: string,
@@ -100,6 +107,7 @@ export function useAuth(options: UseAuthOptions = {}) {
     phone: string,
     password: string,
     password_confirmation: string,
+    cfTurnstileToken?: string,
   ): Promise<RegisterResponse> => {
     try {
       const response = await apiClient.post<RegisterResponse>(
@@ -110,10 +118,11 @@ export function useAuth(options: UseAuthOptions = {}) {
           phone,
           password,
           password_confirmation,
+          ...(cfTurnstileToken ? { cf_turnstile_token: cfTurnstileToken } : {}),
         },
       );
 
-      otpSession.setEmail(response.email);
+      otpSession.setEmail(response.email ?? email);
 
       return response;
     } catch (error) {
@@ -157,9 +166,16 @@ export function useAuth(options: UseAuthOptions = {}) {
 
   // ------------------------------------------------------------------
   // Resend OTP
+  //
+  // Backend sekarang SELALU return 200 generic. Kalau `emailOverride` diisi,
+  // email itu yang dipakai & disimpan ke session (berguna untuk shortcut
+  // "Belum verifikasi? Kirim ulang kode" dari halaman register).
   // ------------------------------------------------------------------
-  const resendOtp = async (): Promise<ResendOtpResponse> => {
-    const email = otpSession.getEmail();
+  const resendOtp = async (
+    emailOverride?: string,
+    cfTurnstileToken?: string,
+  ): Promise<ResendOtpResponse> => {
+    const email = emailOverride?.trim() || otpSession.getEmail();
 
     if (!email) {
       throw new ApiError(
@@ -169,10 +185,19 @@ export function useAuth(options: UseAuthOptions = {}) {
     }
 
     try {
-      return await apiClient.post<ResendOtpResponse>(
+      const response = await apiClient.post<ResendOtpResponse>(
         AUTH_API.resendVerificationOtp,
-        { email },
+        {
+          email,
+          ...(cfTurnstileToken ? { cf_turnstile_token: cfTurnstileToken } : {}),
+        },
       );
+
+      if (emailOverride) {
+        otpSession.setEmail(email);
+      }
+
+      return response;
     } catch (error) {
       if (error instanceof ApiError) throw error;
       throw new ApiError('An unexpected error occurred', 500);
@@ -181,19 +206,24 @@ export function useAuth(options: UseAuthOptions = {}) {
 
   // ------------------------------------------------------------------
   // Forgot Password
+  //
+  // Backend sekarang SELALU return 200 generic (tidak memvalidasi eksistensi
+  // email). Kita simpan email dari input untuk dipakai pada step reset-password.
   // ------------------------------------------------------------------
   const forgotPassword = async (
     email: string,
+    cfTurnstileToken?: string,
   ): Promise<ForgotPasswordResponse> => {
     try {
       const response = await apiClient.post<ForgotPasswordResponse>(
         AUTH_API.forgotPassword,
         {
           email,
+          ...(cfTurnstileToken ? { cf_turnstile_token: cfTurnstileToken } : {}),
         },
       );
 
-      otpSession.setEmail(response.email);
+      otpSession.setEmail(response.email ?? email);
 
       return response;
     } catch (error) {

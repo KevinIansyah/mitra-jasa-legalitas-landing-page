@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Loader2, Eye, EyeOff, AlertCircle, ArrowLeft } from "lucide-react";
+import { Loader2, Eye, EyeOff, ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 import { useAuth, otpSession } from "@/hooks/use-auth";
+import { useAuthSubmitCooldown } from "@/hooks/use-auth-submit-cooldown";
 import { ApiError } from "@/lib/types/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,6 +20,7 @@ import { OtpInputSix } from "../../_components/otp-input-six";
 export function ResetPasswordForm() {
   const router = useRouter();
   const { resetPassword } = useAuth();
+  const { cooldown, handleRateLimit } = useAuthSubmitCooldown();
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState<string | null>(null);
   const [otp, setOtp] = useState("");
@@ -25,7 +28,6 @@ export function ResetPasswordForm() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<{
     otp?: string;
     password?: string;
@@ -45,15 +47,14 @@ export function ResetPasswordForm() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setFormError(null);
     setFieldErrors({});
     const code = otp.replace(/\D/g, "").slice(0, 8);
     if (code.length < 4) {
-      setFormError("Masukkan kode OTP yang valid.");
+      toast.error("Masukkan kode OTP yang valid.");
       return;
     }
     if (password !== passwordConfirmation) {
-      setFormError("Konfirmasi password tidak sama.");
+      toast.error("Konfirmasi password tidak sama.");
       return;
     }
     setLoading(true);
@@ -61,15 +62,19 @@ export function ResetPasswordForm() {
       await resetPassword(code, password, passwordConfirmation);
       router.push("/masuk");
     } catch (err) {
+      if (handleRateLimit(err)) {
+        setLoading(false);
+        return;
+      }
       if (err instanceof ApiError) {
-        setFormError(err.message);
+        toast.error(err.message);
         setFieldErrors({
           otp: getFieldError(err, "otp"),
           password: getFieldError(err, "password"),
           password_confirmation: getFieldError(err, "password_confirmation"),
         });
       } else {
-        setFormError("Gagal mengatur ulang password. Coba lagi.");
+        toast.error("Gagal mengatur ulang password. Coba lagi.");
       }
     } finally {
       setLoading(false);
@@ -94,13 +99,6 @@ export function ResetPasswordForm() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-        {formError ? (
-          <p className="text-sm text-destructive bg-destructive/10 border border-destructive/25 rounded-xl px-3 py-2.5 flex items-center gap-2" role="alert">
-            <AlertCircle className="w-4 h-4 shrink-0" aria-hidden />
-            {formError}
-          </p>
-        ) : null}
-
         <div className="space-y-1.5">
           <Label htmlFor="verify-otp" className="text-xs text-muted-foreground">
             Kode OTP (6 digit)
@@ -171,7 +169,7 @@ export function ResetPasswordForm() {
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={loading || cooldown > 0}
           className="w-full flex items-center justify-center gap-2 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60 mt-1"
           style={{ backgroundColor: BRAND_BLUE }}
         >
@@ -180,6 +178,8 @@ export function ResetPasswordForm() {
               <Loader2 className="w-4 h-4 animate-spin shrink-0" aria-hidden />
               Menyimpan...
             </>
+          ) : cooldown > 0 ? (
+            `Coba lagi dalam ${cooldown}s`
           ) : (
             "Simpan password"
           )}

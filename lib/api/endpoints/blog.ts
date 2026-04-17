@@ -40,14 +40,28 @@ export async function fetchBlogCategories(): Promise<BlogCategory[]> {
 export type BlogSubscriberSubscribeBody = {
   email: string;
   name?: string | null;
+  /** Honeypot field. Harus kosong dari user asli. */
+  website?: string;
+  cf_turnstile_token: string;
 };
 
-export async function postBlogSubscriberSubscribe(body: BlogSubscriberSubscribeBody): Promise<void> {
+export type BlogSubscriberSubscribeResponse = {
+  message?: string;
+};
+
+export async function postBlogSubscriberSubscribe(
+  body: BlogSubscriberSubscribeBody,
+): Promise<BlogSubscriberSubscribeResponse> {
   const payload: Record<string, string> = {
     email: body.email.trim(),
+    cf_turnstile_token: body.cf_turnstile_token,
+    website: body.website ?? "",
   };
   const name = body.name?.trim();
   if (name) payload.name = name;
 
-  await apiClient.post<unknown>("/blogs/subscribers", payload);
+  return apiClient.post<BlogSubscriberSubscribeResponse>(
+    "/blogs/subscribers",
+    payload,
+  );
 }

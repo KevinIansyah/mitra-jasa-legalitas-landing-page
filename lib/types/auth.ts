@@ -35,7 +35,7 @@ export interface ResendOtpResponse {
 }
 
 export interface ForgotPasswordResponse {
-  email: string;
+  email?: string;
   message: string;
 }
 
