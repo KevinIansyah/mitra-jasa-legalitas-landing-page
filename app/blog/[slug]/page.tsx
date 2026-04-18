@@ -57,10 +57,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = seo?.meta_title ?? seo?.og_title ?? `${post.title} - Mitra Jasa Legalitas`;
   const desc = seo?.meta_description ?? seo?.og_description ?? post.short_description ?? undefined;
 
-  const canonical =
-    seo?.canonical_url ??
-    (seo?.schema_markup?.breadcrumb as { itemListElement: { item: string }[] } | undefined)?.itemListElement.at(-1)?.item ??
-    `${defaultSiteUrl()}/blog/${post.slug}`;
+  const breadcrumbList = (seo?.schema_markup?.breadcrumb as { itemListElement?: unknown } | undefined)?.itemListElement;
+  const fromBreadcrumb =
+    Array.isArray(breadcrumbList) && breadcrumbList.length > 0
+      ? (breadcrumbList[breadcrumbList.length - 1] as { item?: string }).item
+      : undefined;
+  const canonical = seo?.canonical_url ?? fromBreadcrumb ?? `${defaultSiteUrl()}/blog/${post.slug}`;
 
   const keywords = [seo?.focus_keyword, ...(seo?.secondary_keywords ?? [])].filter(Boolean) as string[];
 
@@ -104,10 +106,12 @@ export default async function BlogDetailPage({ params }: { params: Promise<{ slu
 
   const related = post.related ?? [];
   const { html: articleHtml, toc } = addHeadingIdsToHtml(post.content ?? "");
-  const shareUrl =
-    post.seo?.canonical_url ??
-    (post.seo?.schema_markup?.breadcrumb as { itemListElement: { item: string }[] } | undefined)?.itemListElement.at(-1)?.item ??
-    `${defaultSiteUrl()}/blog/${post.slug}`;
+  const shareBreadcrumbList = (post.seo?.schema_markup?.breadcrumb as { itemListElement?: unknown } | undefined)?.itemListElement;
+  const shareFromBreadcrumb =
+    Array.isArray(shareBreadcrumbList) && shareBreadcrumbList.length > 0
+      ? (shareBreadcrumbList[shareBreadcrumbList.length - 1] as { item?: string }).item
+      : undefined;
+  const shareUrl = post.seo?.canonical_url ?? shareFromBreadcrumb ?? `${defaultSiteUrl()}/blog/${post.slug}`;
   const categoryLabel = post.category?.name ?? "Blog";
   const author = post.author;
 

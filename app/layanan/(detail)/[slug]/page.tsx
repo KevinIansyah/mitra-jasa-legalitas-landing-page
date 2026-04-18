@@ -72,7 +72,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const seo = service.seo;
 
-  const canonical = (seo?.schema_markup?.breadcrumb as { itemListElement: { item: string }[] } | undefined)?.itemListElement.at(-1)?.item ?? undefined;
+  const breadcrumbList = (seo?.schema_markup?.breadcrumb as { itemListElement?: unknown } | undefined)?.itemListElement;
+  const canonical =
+    Array.isArray(breadcrumbList) && breadcrumbList.length > 0
+      ? (breadcrumbList[breadcrumbList.length - 1] as { item?: string }).item
+      : undefined;
 
   const keywords = seo?.focus_keyword ? [seo.focus_keyword] : undefined;
 

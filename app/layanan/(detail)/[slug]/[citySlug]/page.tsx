@@ -70,19 +70,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const seo = data.seo;
 
-  const canonical = (seo.schema_markup?.breadcrumb as { itemListElement: { item: string }[] } | undefined)?.itemListElement.at(-1)?.item ?? undefined;
+  const breadcrumbList = (seo?.schema_markup?.breadcrumb as { itemListElement?: unknown } | undefined)?.itemListElement;
+  const canonical =
+    Array.isArray(breadcrumbList) && breadcrumbList.length > 0
+      ? (breadcrumbList[breadcrumbList.length - 1] as { item?: string }).item
+      : undefined;
 
-  const keywords = seo.focus_keyword ? [seo.focus_keyword] : undefined;
+  const keywords = seo?.focus_keyword ? [seo.focus_keyword] : undefined;
 
   return {
-    title: seo.meta_title ?? `${data.heading} | Mitra Jasa Legalitas`,
-    description: seo.meta_description ?? data.service.short_description ?? undefined,
+    title: seo?.meta_title ?? `${data.heading} | Mitra Jasa Legalitas`,
+    description: seo?.meta_description ?? data.service.short_description ?? undefined,
     keywords,
     alternates: canonical ? { canonical } : undefined,
-    robots: seo.robots ?? undefined,
+    robots: seo?.robots ?? undefined,
     openGraph: {
-      title: seo.meta_title ?? data.heading,
-      description: seo.meta_description ?? undefined,
+      title: seo?.meta_title ?? data.heading,
+      description: seo?.meta_description ?? undefined,
     },
   };
 }

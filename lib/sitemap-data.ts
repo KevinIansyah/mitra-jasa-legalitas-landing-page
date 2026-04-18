@@ -1,12 +1,40 @@
-import type { ServiceListItem } from "@/lib/types/service";
-import { getBlogsList } from "@/lib/api/endpoints/blog.server";
-import {
-  getCities,
-  getServiceDetail,
-  getServicesList,
-} from "@/lib/api/endpoints/service.server";
-import { absoluteUrl } from "@/lib/site-url";
 import type { MetadataRoute } from "next";
+import {
+  getSitemapData,
+  type SitemapChangeFreq,
+} from "@/lib/api/endpoints/sitemap.server";
+import { getServiceDetail, getServicesList } from "@/lib/api/endpoints/service.server";
+import type { ServiceListItem } from "@/lib/types/service";
+import { absoluteUrl } from "@/lib/site-url";
+
+type SitemapEntry = MetadataRoute.Sitemap[number];
+
+type ChangeFrequency = NonNullable<SitemapEntry["changeFrequency"]>;
+
+function toChangeFrequency(value: SitemapChangeFreq | undefined): ChangeFrequency | undefined {
+  if (!value) return undefined;
+  const allowed: ChangeFrequency[] = [
+    "always",
+    "hourly",
+    "daily",
+    "weekly",
+    "monthly",
+    "yearly",
+    "never",
+  ];
+  return allowed.includes(value as ChangeFrequency) ? (value as ChangeFrequency) : undefined;
+}
+
+function toLastModified(value: string | undefined): Date | undefined {
+  if (!value) return undefined;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? undefined : d;
+}
+
+function toPriority(value: number | undefined): number | undefined {
+  if (value === undefined || value === null) return undefined;
+  return Number.isFinite(value) ? value : undefined;
+}
 
 async function expandServiceCityPaths(
   services: ServiceListItem[],
@@ -25,86 +53,73 @@ async function expandServiceCityPaths(
 export async function fetchServiceCityPaths(): Promise<
   { slug: string; citySlug: string }[]
 > {
-  const { services } = await getServicesList({ sort: "popular" });
-  return expandServiceCityPaths(services);
-}
-
-async function fetchBlogSitemapEntries(): Promise<MetadataRoute.Sitemap> {
-  const first = await getBlogsList({ page: 1 });
-  const out: MetadataRoute.Sitemap = first.blogs.map((blog) => ({
-    url: absoluteUrl(`/blog/${blog.slug}`),
-    lastModified: new Date(blog.published_at),
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
-
-  for (let page = 2; page <= first.meta.last_page; page++) {
-    const data = await getBlogsList({ page });
-    out.push(
-      ...data.blogs.map((blog) => ({
-        url: absoluteUrl(`/blog/${blog.slug}`),
-        lastModified: new Date(blog.published_at),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      })),
-    );
+  try {
+    const data = await getSitemapData();
+    return data.service_city_pages.map((entry) => ({
+      slug: entry.service_slug,
+      citySlug: entry.city_slug,
+    }));
+  } catch {
+    const { services } = await getServicesList({ sort: "popular" });
+    return expandServiceCityPaths(services);
   }
-  return out;
 }
 
-function serviceCityPathsToSitemap(
-  paths: { slug: string; citySlug: string }[],
-): MetadataRoute.Sitemap {
-  return paths.map(({ slug, citySlug }) => ({
-    url: absoluteUrl(`/layanan/${slug}/${citySlug}`),
-    changeFrequency: "weekly" as const,
-    priority: 0.75,
-  }));
-}
-
-function servicesToDetailEntries(
-  services: ServiceListItem[],
-): MetadataRoute.Sitemap {
-  return services.map((service) => ({
-    url: absoluteUrl(`/layanan/${service.slug}`),
-    changeFrequency: "weekly",
-    priority: 0.85,
-  }));
-}
+const FALLBACK_STATIC_ROUTES: MetadataRoute.Sitemap = [
+  { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
+  { url: absoluteUrl("/layanan"), changeFrequency: "weekly", priority: 0.95 },
+  { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.9 },
+  { url: absoluteUrl("/kontak"), changeFrequency: "monthly", priority: 0.85 },
+  { url: absoluteUrl("/tentang"), changeFrequency: "monthly", priority: 0.85 },
+];
 
 export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/layanan"), changeFrequency: "weekly", priority: 0.95 },
-    { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.9 },
-    { url: absoluteUrl("/kontak"), changeFrequency: "monthly", priority: 0.85 },
-    { url: absoluteUrl("/tentang"), changeFrequency: "monthly", priority: 0.85 },
-  ];
-
   try {
-    const [{ services }, cities, blogEntries] = await Promise.all([
-      getServicesList({ sort: "popular" }),
-      getCities(),
-      fetchBlogSitemapEntries(),
-    ]);
-    const serviceCityPaths = await expandServiceCityPaths(services);
+    const data = await getSitemapData();
 
-    const serviceEntries = servicesToDetailEntries(services);
-    const cityEntries: MetadataRoute.Sitemap = cities.map((city) => ({
-      url: absoluteUrl(`/layanan/kota/${city.slug}`),
-      changeFrequency: "weekly",
-      priority: 0.8,
+    const staticEntries: MetadataRoute.Sitemap = data.static_pages.map((page) => ({
+      url: absoluteUrl(page.path),
+      lastModified: toLastModified(page.lastmod),
+      changeFrequency: toChangeFrequency(page.changefreq),
+      priority: toPriority(page.priority),
     }));
-    const serviceCityEntries = serviceCityPathsToSitemap(serviceCityPaths);
+
+    const serviceEntries: MetadataRoute.Sitemap = data.services.map((service) => ({
+      url: absoluteUrl(`/layanan/${service.slug}`),
+      lastModified: toLastModified(service.lastmod),
+      changeFrequency: toChangeFrequency(service.changefreq),
+      priority: toPriority(service.priority),
+    }));
+
+    const cityEntries: MetadataRoute.Sitemap = data.cities.map((city) => ({
+      url: absoluteUrl(`/layanan/kota/${city.slug}`),
+      lastModified: toLastModified(city.lastmod),
+      changeFrequency: toChangeFrequency(city.changefreq),
+      priority: toPriority(city.priority),
+    }));
+
+    const serviceCityEntries: MetadataRoute.Sitemap = data.service_city_pages.map((entry) => ({
+      url: absoluteUrl(`/layanan/${entry.service_slug}/${entry.city_slug}`),
+      lastModified: toLastModified(entry.lastmod),
+      changeFrequency: toChangeFrequency(entry.changefreq),
+      priority: toPriority(entry.priority),
+    }));
+
+    const blogEntries: MetadataRoute.Sitemap = data.blogs.map((blog) => ({
+      url: absoluteUrl(`/blog/${blog.slug}`),
+      lastModified: toLastModified(blog.lastmod),
+      changeFrequency: toChangeFrequency(blog.changefreq),
+      priority: toPriority(blog.priority),
+    }));
 
     return [
-      ...staticRoutes,
+      ...staticEntries,
       ...serviceEntries,
       ...cityEntries,
       ...blogEntries,
       ...serviceCityEntries,
     ];
   } catch {
-    return staticRoutes;
+    return FALLBACK_STATIC_ROUTES;
   }
 }
