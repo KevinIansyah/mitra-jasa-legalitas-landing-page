@@ -179,7 +179,7 @@ export function HeroSection({
               className="flex items-center gap-6 lg:gap-10"
             >
               <div>
-                <p className="text-3xl font-extrabold">
+                <p className="text-2xl md:text-3xl font-extrabold">
                   <CountUp to={stats.total_clients} suffix="+" duration={2.2} />
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
@@ -188,7 +188,7 @@ export function HeroSection({
               </div>
               <div className="w-px h-10 bg-gray-200 dark:bg-white/15" />
               <div>
-                <p className="text-3xl font-extrabold">
+                <p className="text-2xl md:text-3xl font-extrabold">
                   <CountUp
                     to={stats.years_experience}
                     suffix=" Thn"
@@ -201,7 +201,7 @@ export function HeroSection({
               </div>
               <div className="w-px h-10 bg-gray-200 dark:bg-white/15" />
               <div>
-                <p className="text-3xl font-extrabold">
+                <p className="text-2xl md:text-3xl font-extrabold">
                   <CountUp to={stats.total_reviews} duration={2} />
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
