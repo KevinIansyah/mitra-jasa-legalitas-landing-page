@@ -3,7 +3,16 @@
 import { motion } from "framer-motion";
 import { BRAND_BLUE, BRAND_ORANGE, EASE } from "@/lib/types/constants";
 
-export function PortalHero() {
+const DEFAULT_TITLE = "Portal klien";
+const DEFAULT_DESCRIPTION =
+  "Pantau ringkasan, proyek, proposal, estimasi, dan permintaan penawaran - satu tempat untuk kolaborasi dengan Mitra Jasa Legalitas.";
+
+export type PortalHeroProps = {
+  title?: string;
+  description?: string;
+};
+
+export function PortalHero({ title = DEFAULT_TITLE, description = DEFAULT_DESCRIPTION }: PortalHeroProps) {
   return (
     <section className="relative w-full overflow-hidden py-14 lg:py-16" style={{ backgroundColor: BRAND_BLUE }}>
       <div className="pointer-events-none absolute top-[-60px] right-[-60px] h-[220px] w-[220px] rounded-full opacity-10" style={{ backgroundColor: "white" }} aria-hidden />
@@ -16,11 +25,9 @@ export function PortalHero() {
           transition={{ duration: 0.6, ease: EASE }}
           className="max-w-2xl"
         >
-          <h1 className="mb-5 text-4xl font-extrabold leading-tight tracking-tight text-white lg:text-4xl">Portal klien</h1>
+          <h1 className="mb-5 text-4xl font-extrabold leading-tight tracking-tight text-white lg:text-4xl">{title}</h1>
 
-          <p className="max-w-xl text-base leading-relaxed text-white/90">
-            Pantau ringkasan, proyek, proposal, estimasi, dan permintaan penawaran - satu tempat untuk kolaborasi dengan Mitra Jasa Legalitas.
-          </p>
+          <p className="max-w-xl text-base leading-relaxed text-white/90">{description}</p>
         </motion.div>
       </div>
     </section>

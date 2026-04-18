@@ -71,6 +71,8 @@ const FALLBACK_STATIC_ROUTES: MetadataRoute.Sitemap = [
   { url: absoluteUrl("/blog"), changeFrequency: "weekly", priority: 0.9 },
   { url: absoluteUrl("/kontak"), changeFrequency: "monthly", priority: 0.85 },
   { url: absoluteUrl("/tentang"), changeFrequency: "monthly", priority: 0.85 },
+  { url: absoluteUrl("/syarat-ketentuan-layanan"), changeFrequency: "yearly", priority: 0.5 },
+  { url: absoluteUrl("/kebijakan-privasi"), changeFrequency: "yearly", priority: 0.5 },
 ];
 
 export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {

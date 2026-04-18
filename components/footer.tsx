@@ -173,8 +173,8 @@ export function Footer({ navigation }: FooterProps) {
           </p>
           <div className="flex items-center gap-5">
             {[
-              { label: "Kebijakan Privasi", href: "#" },
-              { label: "Syarat & Ketentuan", href: "#" },
+              { label: "Kebijakan Privasi", href: "/kebijakan-privasi" },
+              { label: "Syarat & Ketentuan", href: "/syarat-ketentuan-layanan" },
               { label: "Peta Situs", href: "/sitemap" },
             ].map((l) => (
               <Link key={l.label} href={l.href} className="text-xs text-white/30 hover:text-white/60 transition-colors">

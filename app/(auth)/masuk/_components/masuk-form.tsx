@@ -231,12 +231,12 @@ export function MasukForm() {
 
       <p className="mt-8 text-center text-[11px] font-medium leading-relaxed text-muted-foreground">
         Dengan melanjutkan, Anda menyetujui{" "}
-        <Link href="/tentang" className="underline underline-offset-2 hover:text-foreground">
-          ketentuan layanan
+        <Link href="/syarat-ketentuan-layanan" className="underline underline-offset-2 hover:text-foreground">
+          Syarat dan Ketentuan Layanan
         </Link>{" "}
         dan{" "}
-        <Link href="/kontak" className="underline underline-offset-2 hover:text-foreground">
-          kebijakan privasi
+        <Link href="/kebijakan-privasi" className="underline underline-offset-2 hover:text-foreground">
+          Kebijakan Privasi
         </Link>{" "}
         kami.
       </p>
