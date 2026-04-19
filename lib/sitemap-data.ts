@@ -114,8 +114,17 @@ export async function buildSitemapEntries(): Promise<MetadataRoute.Sitemap> {
       priority: toPriority(blog.priority),
     }));
 
+    const staticUrls = new Set(staticEntries.map((e) => e.url));
+    const legalStaticPages: MetadataRoute.Sitemap = (
+      [
+        { url: absoluteUrl("/syarat-ketentuan-layanan"), changeFrequency: "yearly" as const, priority: 0.5 },
+        { url: absoluteUrl("/kebijakan-privasi"), changeFrequency: "yearly" as const, priority: 0.5 },
+      ] satisfies MetadataRoute.Sitemap
+    ).filter((e) => !staticUrls.has(e.url));
+
     return [
       ...staticEntries,
+      ...legalStaticPages,
       ...serviceEntries,
       ...cityEntries,
       ...blogEntries,

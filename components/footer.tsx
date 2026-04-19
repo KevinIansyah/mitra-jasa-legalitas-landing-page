@@ -175,7 +175,7 @@ export function Footer({ navigation }: FooterProps) {
             {[
               { label: "Kebijakan Privasi", href: "/kebijakan-privasi" },
               { label: "Syarat & Ketentuan", href: "/syarat-ketentuan-layanan" },
-              { label: "Peta Situs", href: "/sitemap" },
+              { label: "Peta Situs", href: "/sitemap.xml" },
             ].map((l) => (
               <Link key={l.label} href={l.href} className="text-xs text-white/30 hover:text-white/60 transition-colors">
                 {l.label}

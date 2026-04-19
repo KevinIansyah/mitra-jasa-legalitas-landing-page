@@ -128,7 +128,7 @@ export function VerifyOtpForm() {
 
   return (
     <div className="w-full max-w-[400px] mx-auto flex flex-col items-stretch">
-      <Image src="/auth-logo.png" alt="" width={100} height={100} className="mx-auto mb-6 max-h-12 w-auto max-w-12 object-contain" priority />
+      <Image src="/auth-logo.png" alt="Logo Mitra Jasa Legalitas" width={100} height={100} className="mx-auto mb-6 max-h-12 w-auto max-w-12 object-contain" priority />
 
       <h1 className="text-center text-xl sm:text-2xl font-bold text-foreground tracking-tight">Verifikasi email</h1>
       <p className="mt-2 text-center text-sm text-muted-foreground">

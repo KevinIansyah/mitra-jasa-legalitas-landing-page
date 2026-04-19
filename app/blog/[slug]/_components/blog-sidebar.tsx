@@ -65,7 +65,7 @@ export function AuthorCard({ author }: { author: BlogAuthor }) {
   return (
     <div className="flex items-center gap-3">
       <div className="relative w-11 h-11 rounded-full shrink-0 overflow-hidden flex items-center justify-center text-sm font-bold text-white" style={{ backgroundColor: BRAND_BLUE }}>
-        {author.avatar ? <Image src={toR2ProxySrc(author.avatar)} alt="" fill className="object-cover" sizes="44px" /> : <span>{initials}</span>}
+        {author.avatar ? <Image src={toR2ProxySrc(author.avatar)} alt={`Foto profil ${author.name}`} fill className="object-cover" sizes="44px" /> : <span>{initials}</span>}
       </div>
       <div className="space-y-0.5">
         <p className="text-sm font-bold text-gray-900 dark:text-gray-100 leading-tight">{author.name}</p>
@@ -86,7 +86,13 @@ export function RelatedPostsSidebar({ posts }: { posts: BlogCard[] }) {
             <Link href={`/blog/${relatedPost.slug}`} className="group flex gap-3 items-start">
               <div className="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 bg-gray-100 dark:bg-white/10">
                 {relatedPost.featured_image ? (
-                  <Image src={toR2ProxySrc(relatedPost.featured_image)} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-110" sizes="56px" />
+                  <Image
+                    src={toR2ProxySrc(relatedPost.featured_image)}
+                    alt={`Gambar artikel: ${relatedPost.title}`}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="56px"
+                  />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-white/10">
                     <div className="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">

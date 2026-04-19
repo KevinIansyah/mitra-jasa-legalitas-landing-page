@@ -12,7 +12,7 @@ const getCachedCompanyInformation = cache(getCompanyInformation);
 
 const PAGE_TITLE = "Tentang Kami";
 const PAGE_DESCRIPTION = "Sejarah, misi, visi, dan nilai-nilai CV. Mitra Jasa Legalitas - konsultan legalitas & perizinan usaha sejak 2014, berbasis di Surabaya.";
-const PAGE_PATH = "/tentang-kami";
+const PAGE_PATH = "/tentang";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {

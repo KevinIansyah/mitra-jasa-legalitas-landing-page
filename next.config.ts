@@ -11,6 +11,12 @@ const extraHosts = (process.env.NEXT_IMAGE_REMOTE_HOSTNAMES ?? "")
   }));
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      { source: "/tentang-kami", destination: "/tentang", permanent: true },
+      { source: "/sitemap", destination: "/sitemap.xml", permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       {

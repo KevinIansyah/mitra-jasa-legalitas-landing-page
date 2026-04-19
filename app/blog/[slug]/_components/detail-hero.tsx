@@ -56,7 +56,7 @@ export function DetailHero({ post, categoryLabel, shareUrl, author }: BlogDetail
             <div className="flex items-center gap-3">
               <div className="relative w-9 h-9 rounded-full shrink-0 overflow-hidden bg-gray-200 dark:bg-white/10">
                 {author.avatar ? (
-                  <Image src={toR2ProxySrc(author.avatar)} alt="" fill className="object-cover" sizes="36px" />
+                  <Image src={toR2ProxySrc(author.avatar)} alt={`Foto profil ${author.name}`} fill className="object-cover" sizes="36px" />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white" style={{ backgroundColor: BRAND_BLUE }}>
                     {authorInitials(author.name)}
@@ -84,7 +84,7 @@ export function DetailHero({ post, categoryLabel, shareUrl, author }: BlogDetail
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="relative w-full aspect-video lg:aspect-16/6 rounded-t-3xl overflow-hidden bg-gray-100 dark:bg-white/5">
           {post.featured_image ? (
-            <Image src={toR2ProxySrc(post.featured_image)} alt="" fill priority className="object-cover" sizes="(max-width: 1200px) 100vw, 1152px" unoptimized />
+            <Image src={toR2ProxySrc(post.featured_image)} alt={`Gambar artikel: ${post.title}`} fill priority className="object-cover" sizes="(max-width: 1200px) 100vw, 1152px" unoptimized />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-16 h-16 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
