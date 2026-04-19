@@ -245,8 +245,9 @@ export function SettingsProfileForm({ initialUser }: Props) {
                         onPickFile();
                       }}
                       className="h-9 px-3 text-xs shadow-sm"
+                      aria-label="Ganti foto profil"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4 w-4" aria-hidden />
                     </Button>
                     <Button
                       variant="destructive"

@@ -197,6 +197,7 @@ function LogosCarousel({ slides, reduceMotion }: { slides: ClientLogoItem[][]; r
               type="button"
               role="tab"
               aria-selected={i === selected}
+              aria-label={`Tampilkan grup logo ${i + 1} dari ${slides.length}`}
               className={cn("h-2 rounded-full transition-all duration-300", i === selected ? "w-8 bg-brand-blue" : "w-2 bg-gray-300 hover:bg-gray-400 dark:bg-white/25 dark:hover:bg-white/40")}
               onClick={() => emblaApi?.scrollTo(i)}
             />

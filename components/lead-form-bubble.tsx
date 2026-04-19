@@ -89,10 +89,12 @@ export function LeadFormBubble({ onSubmit, onSkip }: LeadFormBubbleProps) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={loading}
+                aria-label="Simpan kontak"
+                aria-busy={loading}
                 className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold text-white transition-opacity disabled:opacity-60"
                 style={{ backgroundColor: "oklch(0.3811 0.1315 260.22)" }}
               >
-                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Simpan Kontak"}
+                {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden /> : "Simpan Kontak"}
               </button>
               <button
                 type="button"

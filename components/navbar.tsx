@@ -49,10 +49,10 @@ function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label="Toggle dark mode"
+      aria-label={isDark ? "Aktifkan tema terang" : "Aktifkan tema gelap"}
       className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-gray-100 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300"
     >
-      {isDark ? <Sun className="size-4.5" /> : <Moon className="size-4.5" />}
+      {isDark ? <Sun className="size-4.5" aria-hidden /> : <Moon className="size-4.5" aria-hidden />}
     </button>
   );
 }
@@ -431,8 +431,14 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
                 </>
               )}
             </div>
-            <button className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle menu">
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <button
+              type="button"
+              className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-expanded={isOpen}
+              aria-label={isOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
+            >
+              {isOpen ? <X className="w-5 h-5" aria-hidden /> : <Menu className="w-5 h-5" aria-hidden />}
             </button>
           </div>
         </div>
@@ -447,11 +453,13 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
 
           <div>
             <button
+              type="button"
               className="flex items-center justify-between w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-white/8 font-medium"
               onClick={() => setMobileOpen(mobileOpen === "layanan" ? null : "layanan")}
+              aria-expanded={mobileOpen === "layanan"}
             >
               Layanan
-              <ChevronDown className={cn("w-4 h-4 transition-transform", mobileOpen === "layanan" && "rotate-180")} />
+              <ChevronDown className={cn("w-4 h-4 transition-transform", mobileOpen === "layanan" && "rotate-180")} aria-hidden />
             </button>
             {mobileOpen === "layanan" && (
               <div className="mt-1 ml-2 max-h-[55vh] space-y-3 overflow-y-auto border-l-2 border-gray-100 pl-3 dark:border-white/10">

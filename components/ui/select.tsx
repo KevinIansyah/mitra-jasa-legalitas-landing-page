@@ -151,9 +151,10 @@ function SelectScrollUpButton({
         "flex cursor-default items-center justify-center py-1",
         className
       )}
+      aria-label="Gulir daftar ke atas"
       {...props}
     >
-      <ChevronUpIcon className="size-4" />
+      <ChevronUpIcon className="size-4" aria-hidden />
     </SelectPrimitive.ScrollUpButton>
   )
 }
@@ -169,9 +170,10 @@ function SelectScrollDownButton({
         "flex cursor-default items-center justify-center py-1",
         className
       )}
+      aria-label="Gulir daftar ke bawah"
       {...props}
     >
-      <ChevronDownIcon className="size-4" />
+      <ChevronDownIcon className="size-4" aria-hidden />
     </SelectPrimitive.ScrollDownButton>
   )
 }

@@ -52,8 +52,13 @@ export function ServiceToolbar({
               className="w-full pl-9 pr-8 py-2 text-sm rounded-full border border-gray-200 dark:border-white/15 bg-gray-50 dark:bg-white/8 text-gray-900 dark:text-gray-100 focus:outline-none focus:border-brand-blue focus:bg-white dark:focus:bg-white/12 transition-colors placeholder:text-gray-400"
             />
             {search && (
-              <button type="button" onClick={() => onSearchChange("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                <X className="w-3.5 h-3.5" />
+              <button
+                type="button"
+                onClick={() => onSearchChange("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Hapus teks pencarian"
+              >
+                <X className="w-3.5 h-3.5" aria-hidden />
               </button>
             )}
           </div>

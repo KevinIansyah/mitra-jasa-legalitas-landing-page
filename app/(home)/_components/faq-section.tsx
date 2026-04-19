@@ -82,6 +82,7 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
                   <button
                     type="button"
                     onClick={() => setOpenId(isOpen ? null : faqId)}
+                    aria-expanded={isOpen}
                     className="flex items-center gap-4 w-full p-5 text-left transition-colors active:bg-gray-50/90 dark:active:bg-white/5"
                   >
                     <span className="flex-1 text-sm font-semibold text-gray-900 dark:text-gray-100 leading-snug transition-colors group-hover/faq:text-brand-blue">
@@ -99,9 +100,9 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
                       }
                     >
                       {isOpen ? (
-                        <Minus className="w-3 h-3 text-white" />
+                        <Minus className="w-3 h-3 text-white" aria-hidden />
                       ) : (
-                        <Plus className="w-3 h-3 text-gray-500 dark:text-gray-400" />
+                        <Plus className="w-3 h-3 text-gray-500 dark:text-gray-400" aria-hidden />
                       )}
                     </span>
                   </button>

@@ -202,14 +202,26 @@ export function ProjectDetailView({ initialProject }: Props) {
                           <Tooltip>
                             {canUpload ? (
                               <TooltipTrigger asChild>
-                                <Button type="button" size="icon" className="rounded-md bg-brand-blue text-white hover:bg-brand-blue/90" onClick={() => setUploadModalDocument(document)}>
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  className="rounded-md bg-brand-blue text-white hover:bg-brand-blue/90"
+                                  aria-label={`Unggah berkas untuk ${document.name}`}
+                                  onClick={() => setUploadModalDocument(document)}
+                                >
                                   <ArrowUpFromLine className="size-3.5" aria-hidden />
                                 </Button>
                               </TooltipTrigger>
                             ) : (
                               <TooltipTrigger asChild>
                                 <span className="inline-flex">
-                                  <Button type="button" size="icon" className="rounded-md bg-brand-blue text-white hover:bg-brand-blue/90" disabled>
+                                  <Button
+                                    type="button"
+                                    size="icon"
+                                    className="rounded-md bg-brand-blue text-white hover:bg-brand-blue/90"
+                                    disabled
+                                    aria-label={`Unggah tidak tersedia untuk ${document.name}`}
+                                  >
                                     <ArrowUpFromLine className="size-3.5" aria-hidden />
                                   </Button>
                                 </span>
@@ -226,6 +238,7 @@ export function ProjectDetailView({ initialProject }: Props) {
                                   size="icon"
                                   className="rounded-md"
                                   disabled={downloadKey === `doc-${document.id}`}
+                                  aria-label={`Unduh dokumen ${document.name}`}
                                   onClick={() =>
                                     handleAuthenticatedDownload(
                                       `/projects/${project.id}/documents/${document.id}/download`,
@@ -314,6 +327,7 @@ export function ProjectDetailView({ initialProject }: Props) {
                                   size="icon"
                                   className="rounded-md"
                                   disabled={downloadKey === `del-${item.id}`}
+                                  aria-label={`Unduh deliverable ${item.name}`}
                                   onClick={() =>
                                     handleAuthenticatedDownload(
                                       `/projects/${project.id}/deliverables/${item.id}/download`,
