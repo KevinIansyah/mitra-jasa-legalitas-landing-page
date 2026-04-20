@@ -293,7 +293,7 @@ export function ChatWidget() {
         const botMsg: Message = {
           id: `b-${Date.now()}`,
           role: "bot",
-          text: `${msgText} Membuat sesi baru...`,
+          text: `${msgText} Menghubungkan ulang...`,
           time: formatTimeLabel(),
         };
         setMessages((m) => [...m, botMsg]);
@@ -311,7 +311,7 @@ export function ChatWidget() {
             const okMsg: Message = {
               id: `b-${Date.now()}-ok`,
               role: "bot",
-              text: "Sesi baru siap. Silakan kirim ulang pesan Anda.",
+              text: "Koneksi diperbarui. Silakan kirim ulang pesan Anda.",
               time: formatTimeLabel(),
             };
             setMessages((m) => [...m, okMsg]);
