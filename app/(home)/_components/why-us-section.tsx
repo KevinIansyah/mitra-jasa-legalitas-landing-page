@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Zap, BadgeDollarSign, UsersRound, MessageCircleHeart, ShieldCheck, Headphones, ArrowRight, CheckCircle2 } from "lucide-react";
 import { CountUp } from "./count-up";
 import { SectionHeading } from "../../../components/section-heading";
-import type { HomeStats } from "@/lib/types/home";
+import type { HomeStats, WhatsappCta } from "@/lib/types/home";
 import { EASE } from "@/lib/types/constants";
 
 function buildWhyUsStats(homeStats: HomeStats) {
@@ -90,10 +90,12 @@ const highlights = ["Dokumen 100% sah secara hukum", "Pendampingan end-to-end", 
 
 type WhyUsProps = {
   stats: HomeStats;
+  whatsappCta: WhatsappCta | null;
 };
 
-export function WhyUsSection({ stats }: WhyUsProps) {
+export function WhyUsSection({ stats, whatsappCta }: WhyUsProps) {
   const statItems = buildWhyUsStats(stats);
+  const waHref = whatsappCta?.wa_me_with_message?.trim() || whatsappCta?.wa_me?.trim() || "";
 
   return (
     <section className="py-20 lg:py-28 bg-surface-card overflow-hidden">
@@ -151,17 +153,33 @@ export function WhyUsSection({ stats }: WhyUsProps) {
               ))}
             </div>
 
-            <Link
-              href="/daftar"
-              className="relative z-10 mt-8 inline-flex items-center gap-2 self-start px-6 py-3 rounded-full text-sm font-semibold transition-opacity hover:opacity-90 group"
-              style={{
-                backgroundColor: "oklch(0.7319 0.1856 52.89)",
-                color: "white",
-              }}
-            >
-              Mulai Konsultasi Gratis
-              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-            </Link>
+            {waHref ? (
+              <a
+                href={waHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative z-10 mt-8 inline-flex items-center gap-2 self-start px-6 py-3 rounded-full text-sm font-semibold transition-opacity hover:opacity-90 group"
+                style={{
+                  backgroundColor: "oklch(0.7319 0.1856 52.89)",
+                  color: "white",
+                }}
+              >
+                Mulai Konsultasi Gratis
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </a>
+            ) : (
+              <Link
+                href="/daftar"
+                className="relative z-10 mt-8 inline-flex items-center gap-2 self-start px-6 py-3 rounded-full text-sm font-semibold transition-opacity hover:opacity-90 group"
+                style={{
+                  backgroundColor: "oklch(0.7319 0.1856 52.89)",
+                  color: "white",
+                }}
+              >
+                Mulai Konsultasi Gratis
+                <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+            )}
           </motion.div>
 
           {/* ───────────────── Right ───────────────── */}

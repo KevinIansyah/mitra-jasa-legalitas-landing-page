@@ -68,7 +68,7 @@ export default async function Page() {
       <TrustBadges />
       <ClientLogosSection clientCompanies={home.client_companies} />
       <ServicesSection featuredServices={home.featured_services} />
-      <WhyUsSection stats={home.stats} />
+      <WhyUsSection stats={home.stats} whatsappCta={home.whatsapp_cta} />
       <HowItWorksSection />
       <NetworkSection />
       <CaseStudySection stories={home.client_success_stories} />

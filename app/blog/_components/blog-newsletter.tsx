@@ -46,7 +46,7 @@ export function BlogNewsletter() {
     e.preventDefault();
     if (!email.trim()) return;
     if (!apiAvailable) {
-      toast.error("Layanan belum dikonfigurasi. Periksa NEXT_PUBLIC_API_URL pada environment.");
+      toast.error("Layanan belum dikonfigurasi.");
       return;
     }
     if (!turnstileToken) {
@@ -95,7 +95,7 @@ export function BlogNewsletter() {
             badge="Newsletter"
             title={
               <>
-                Dapatkan Tips Legalitas Bisnis
+                Dapatkan Tips Legalitas Bisnis{" "} 
                 <br className="hidden sm:block" />
                 <span style={{ color: "oklch(0.7319 0.1856 52.89)" }}>Langsung di Inbox Anda</span>
               </>

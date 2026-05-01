@@ -465,34 +465,56 @@ export function Navbar({ navigation, initialUser = null }: NavbarProps) {
               <div className="mt-1 ml-2 max-h-[55vh] space-y-3 overflow-y-auto border-l-2 border-gray-100 pl-3 dark:border-white/10">
                 {serviceCategories.length === 0 ? (
                   <Link href="/layanan" className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/8" onClick={() => setIsOpen(false)}>
-                    Lihat layanan
+                    Lihat Semua Layanan
                   </Link>
                 ) : (
-                  serviceCategories.map((category) => (
-                    <div key={category.id} className="space-y-1">
-                      <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">{category.name}</p>
-                      {category.services.map((service) => (
-                        <Link
-                          key={service.id}
-                          href={`/layanan/${service.slug}`}
-                          className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/8"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <span className="flex flex-wrap items-center gap-1.5 font-medium text-gray-800 dark:text-gray-200">
-                            {service.name}
-                            {service.is_popular && (
-                              <span className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase text-white" style={{ backgroundColor: BRAND_BLUE }}>
-                                Populer
-                              </span>
-                            )}
-                          </span>
-                          {service.short_description ? (
-                            <span className="mt-0.5 block min-h-0 min-w-0 text-xs text-gray-500 wrap-anywhere line-clamp-2 dark:text-gray-500">{service.short_description}</span>
-                          ) : null}
-                        </Link>
-                      ))}
-                    </div>
-                  ))
+                  <>
+                    {serviceCategories.map((category) => (
+                      <div key={category.id} className="space-y-1">
+                        <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">{category.name}</p>
+                        {category.services.map((service) => (
+                          <Link
+                            key={service.id}
+                            href={`/layanan/${service.slug}`}
+                            className="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-white/8"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <span className="flex flex-wrap items-center gap-1.5 font-medium text-gray-800 dark:text-gray-200">
+                              {service.name}
+                              <div className="flex shrink-0 items-center gap-1">
+                                {service.is_popular && (
+                                  <div
+                                    className="inline-flex items-center gap px-2 py-0.5 rounded-full text-[10px] font-bold text-white"
+                                    style={{
+                                      backgroundColor: "oklch(0.7319 0.1856 52.89)",
+                                    }}
+                                  >
+                                    Populer
+                                  </div>
+                                )}
+                                {service.is_featured && (
+                                  <div className="inline-flex items-center gap px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                                    Unggulan
+                                  </div>
+                                )}
+                              </div>
+                            </span>
+                            {service.short_description ? (
+                              <span className="mt-0.5 block min-h-0 min-w-0 text-xs text-gray-500 wrap-anywhere line-clamp-2 dark:text-gray-500">{service.short_description}</span>
+                            ) : null}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                    <Link
+                      href="/layanan"
+                      className="mt-3 flex items-center justify-center rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                      style={{ backgroundColor: BRAND_BLUE }}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      Lihat Semua Layanan
+                    </Link>
+                  </>
                 )}
               </div>
             )}
